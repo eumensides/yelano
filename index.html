@@ -7,7 +7,7 @@
     <style>
         .video-container {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr); /* 改为5列 */
             gap: 10px;
             margin: 20px 0;
         }
@@ -16,13 +16,13 @@
         }
         video {
             width: 100%;
-            max-width: 300px;
+            max-width: 250px; /* 稍微减小宽度以适应更多列 */
             height: auto;
         }
     </style>
 </head>
 <body>
-    <h1>欢迎来到海蓝的留言版!</h1>
+    <h1>欢迎来到我的留言版!</h1>
     
     <!-- 直播窗口区域 -->
     <div class="video-container">
@@ -58,6 +58,34 @@
             <video id="video8" controls></video>
             <p>山海胜景</p>
         </div>
+        <div class="video-item">
+            <video id="video9" controls></video>
+            <p>太平湾畔</p>
+        </div>
+        <div class="video-item">
+            <video id="video10" controls></video>
+            <p>奥帆中心</p>
+        </div>
+        <div class="video-item">
+            <video id="video11" controls></video>
+            <p>五四广场</p>
+        </div>
+        <div class="video-item">
+            <video id="video12" controls></video>
+            <p>胶宁高架银川西路</p>
+        </div>
+        <div class="video-item">
+            <video id="video13" controls></video>
+            <p>胶宁高架福州路口</p>
+        </div>
+        <div class="video-item">
+            <video id="video14" controls></video>
+            <p>快速路大润发南京路</p>
+        </div>
+        <div class="video-item">
+            <video id="video15" controls></video>
+            <p>太平角海岬</p>
+        </div>
     </div>
 
     <!-- 留言表单 -->
@@ -73,7 +101,7 @@
 
     <footer>
         <p>
-            <span>© 2025 海蓝 微信【treenjoy】 </span>
+            <span>© 2025 Yelano 版权所有</span>
             <a href="https://beian.miit.gov.cn/" 
                target="_blank" 
                rel="noreferrer noopener">
@@ -94,7 +122,14 @@
             { id: 'video5', url: 'http://play.zhihuiwenlvyun.com/live/shouzifeng.m3u8' },
             { id: 'video6', url: 'http://play.zhihuiwenlvyun.com/live/lingqifeng.m3u8' },
             { id: 'video7', url: 'http://play.zhihuiwenlvyun.com/live/erlongshan.m3u8' },
-            { id: 'video8', url: 'http://play.zhihuiwenlvyun.com/live/shanhaishengjing.m3u8' }
+            { id: 'video8', url: 'http://play.zhihuiwenlvyun.com/live/shanhaishengjing.m3u8' },
+            { id: 'video9', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/6cf6c074ce8070489151af48ad13ca71/1.m3u8' },
+            { id: 'video10', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/dba5f5df47dc14a9b08385b1c22faadf/1.m3u8' },
+            { id: 'video11', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/51d10523f0a1fdcda5c4223babe1682c/1.m3u8' },
+            { id: 'video12', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/e41ccb39c3292d868d6c72b66082a3f2/1.m3u8' },
+            { id: 'video13', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/833fddf8b8271df2cf38835d14a2a3a5/1.m3u8' },
+            { id: 'video14', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/8db708403e7ad9c1a00c539c703b8ae0/1.m3u8' },
+            { id: 'video15', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/eb43a644427fb8349dcee68178054782/1.m3u8' }
         ];
 
         // 初始化每个视频播放器
@@ -106,7 +141,6 @@
                 hls.loadSource(source.url);
                 hls.attachMedia(video);
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                // 对于原生支持HLS的浏览器（如Safari）
                 video.src = source.url;
             }
         });
