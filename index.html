@@ -4,9 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>留言版</title>
+    <style>
+        .video-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .video-item {
+            text-align: center;
+        }
+        video {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
     <h1>欢迎来到我的留言版!</h1>
+    
+    <!-- 直播窗口区域 -->
+    <div class="video-container">
+        <div class="video-item">
+            <video id="video1" controls></video>
+            <p>仰口狮子峰</p>
+        </div>
+        <div class="video-item">
+            <video id="video2" controls></video>
+            <p>北九水潮音瀑</p>
+        </div>
+        <div class="video-item">
+            <video id="video3" controls></video>
+            <p>太清宫太清湾</p>
+        </div>
+        <div class="video-item">
+            <video id="video4" controls></video>
+            <p>巨峰下站</p>
+        </div>
+        <div class="video-item">
+            <video id="video5" controls></video>
+            <p>仰口寿字峰</p>
+        </div>
+        <div class="video-item">
+            <video id="video6" controls></video>
+            <p>巨峰灵旗峰</p>
+        </div>
+        <div class="video-item">
+            <video id="video7" controls></video>
+            <p>二龙山</p>
+        </div>
+        <div class="video-item">
+            <video id="video8" controls></video>
+            <p>山海胜景</p>
+        </div>
+    </div>
+
+    <!-- 留言表单 -->
     <form action="https://formsubmit.co/1@yelano.com" method="POST">
         <label for="name">姓名：</label>
         <input type="text" id="name" name="name" required><br><br>
@@ -15,16 +69,47 @@
         <textarea id="message" name="message" rows="4" required></textarea><br><br>
         
         <input type="submit" value="提交">
-       <footer>
-    <p>
-        <span>© 2025 Yelano 版权所有</span>
-        <a href="https://beian.miit.gov.cn/" 
-           target="_blank" 
-           rel="noreferrer noopener">
-            浙ICP备2020032421号
-        </a>
-    </p>
-</footer>
     </form>
+
+    <footer>
+        <p>
+            <span>© 2025 Yelano 版权所有</span>
+            <a href="https://beian.miit.gov.cn/" 
+               target="_blank" 
+               rel="noreferrer noopener">
+                浙ICP备2020032421号
+            </a>
+        </p>
+    </footer>
+
+    <!-- 引入HLS.js -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script>
+        // m3u8直播源数组
+        const videoSources = [
+            { id: 'video1', url: 'http://play.zhihuiwenlvyun.com/live/shizifeng.m3u8' },
+            { id: 'video2', url: 'http://play.zhihuiwenlvyun.com/live/chaoyinpu.m3u8' },
+            { id: 'video3', url: 'http://play.zhihuiwenlvyun.com/live/taiqingwan.m3u8' },
+            { id: 'video4', url: 'http://play.zhihuiwenlvyun.com/live/jufengxiazhan.m3u8' },
+            { id: 'video5', url: 'http://play.zhihuiwenlvyun.com/live/shouzifeng.m3u8' },
+            { id: 'video6', url: 'http://play.zhihuiwenlvyun.com/live/lingqifeng.m3u8' },
+            { id: 'video7', url: 'http://play.zhihuiwenlvyun.com/live/erlongshan.m3u8' },
+            { id: 'video8', url: 'http://play.zhihuiwenlvyun.com/live/shanhaishengjing.m3u8' }
+        ];
+
+        // 初始化每个视频播放器
+        videoSources.forEach(source => {
+            const video = document.getElementById(source.id);
+            
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(source.url);
+                hls.attachMedia(video);
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                // 对于原生支持HLS的浏览器（如Safari）
+                video.src = source.url;
+            }
+        });
+    </script>
 </body>
 </html>
