@@ -52,7 +52,7 @@
 
     <footer>
         <p>
-            <span>© 2025 Yelano 版权所有</span>
+            <span>© 20250403 Yelano 版权所有</span>
             <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer noopener">
                 浙ICP备2020032421号
             </a>
@@ -61,16 +61,20 @@
 
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
-        const proxyUrl = 'https://api.allorigins.win/raw?url=';
-        const videoSources = [
-            { id: 'video1', url: proxyUrl + 'http://play.zhihuiwenlvyun.com/live/shizifeng.m3u8' },
-            { id: 'video2', url: proxyUrl + 'http://play.zhihuiwenlvyun.com/live/chaoyinpu.m3u8' },
-            { id: 'video3', url: proxyUrl + 'http://play.zhihuiwenlvyun.com/live/taiqingwan.m3u8' },
-            { id: 'video4', url: proxyUrl + 'http://play.zhihuiwenlvyun.com/live/jufengxiazhan.m3u8' },
-            { id: 'video5', url: proxyUrl + 'http://play.zhihuiwenlvyun.com/live/shouzifeng.m3u8' },
-            { id: 'video6', url: proxyUrl + 'http://play.zhihuiwenlvyun.com/live/lingqifeng.m3u8' },
-            { id: 'video7', url: proxyUrl + 'http://play.zhihuiwenlvyun.com/live/erlongshan.m3u8' },
-            { id: 'video8', url: proxyUrl + 'http://play.zhihuiwenlvyun.com/live/shanhaishengjing.m3u8' },
+        // 前8个HTTP链接（之前在手机Chrome上能正常显示）
+        const httpVideoSources = [
+            { id: 'video1', url: 'http://play.zhihuiwenlvyun.com/live/shizifeng.m3u8' },
+            { id: 'video2', url: 'http://play.zhihuiwenlvyun.com/live/chaoyinpu.m3u8' },
+            { id: 'video3', url: 'http://play.zhihuiwenlvyun.com/live/taiqingwan.m3u8' },
+            { id: 'video4', url: 'http://play.zhihuiwenlvyun.com/live/jufengxiazhan.m3u8' },
+            { id: 'video5', url: 'http://play.zhihuiwenlvyun.com/live/shouzifeng.m3u8' },
+            { id: 'video6', url: 'http://play.zhihuiwenlvyun.com/live/lingqifeng.m3u8' },
+            { id: 'video7', url: 'http://play.zhihuiwenlvyun.com/live/erlongshan.m3u8' },
+            { id: 'video8', url: 'http://play.zhihuiwenlvyun.com/live/shanhaishengjing.m3u8' }
+        ];
+
+        // 后7个HTTPS链接（当前在所有平台都能正常显示）
+        const httpsVideoSources = [
             { id: 'video9', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/6cf6c074ce8070489151af48ad13ca71/1.m3u8' },
             { id: 'video10', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/dba5f5df47dc14a9b08385b1c22faadf/1.m3u8' },
             { id: 'video11', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/51d10523f0a1fdcda5c4223babe1682c/1.m3u8' },
@@ -80,28 +84,50 @@
             { id: 'video15', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/eb43a644427fb8349dcee68178054782/1.m3u8' }
         ];
 
-        videoSources.forEach(source => {
+        // 处理前8个HTTP链接
+        httpVideoSources.forEach(source => {
             const video = document.getElementById(source.id);
             if (Hls.isSupported()) {
                 const hls = new Hls({
                     enableWorker: true,
                     lowLatencyMode: true,
-                    backBufferLength: 90,
-                    xhrSetup: function(xhr) {
-                        xhr.withCredentials = false; // 确保不发送凭据
-                    }
+                    backBufferLength: 90
                 });
                 hls.loadSource(source.url);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.ERROR, (event, data) => {
                     if (data.fatal) {
-                        console.error(`Error loading ${source.url}: ${data.details}`);
+                        console.error(`HTTP Error loading ${source.url}: ${data.details}`);
                     }
                 });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = source.url;
                 video.addEventListener('error', () => {
-                    console.error(`Native HLS error for ${source.url}`);
+                    console.error(`HTTP Native HLS error for ${source.url}`);
+                });
+            }
+        });
+
+        // 处理后7个HTTPS链接
+        httpsVideoSources.forEach(source => {
+            const video = document.getElementById[source.id);
+            if (Hls.isSupported()) {
+                const hls = new Hls({
+                    enableWorker: true,
+                    lowLatencyMode: true,
+                    backBufferLength: 90
+                });
+                hls.loadSource(source.url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.ERROR, (event, data) => {
+                    if (data.fatal) {
+                        console.error(`HTTPS Error loading ${source.url}: ${data.details}`);
+                    }
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = source.url;
+                video.addEventListener('error', () => {
+                    console.error(`HTTPS Native HLS error for ${source.url}`);
                 });
             }
         });
