@@ -61,15 +61,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
+        const proxyUrl = 'https://api.allorigins.win/raw?url=';
         const videoSources = [
-            { id: 'video1', url: 'https://play.zhihuiwenlvyun.com/live/shizifeng.m3u8' },
-            { id: 'video2', url: 'https://play.zhihuiwenlvyun.com/live/chaoyinpu.m3u8' },
-            { id: 'video3', url: 'https://play.zhihuiwenlvyun.com/live/taiqingwan.m3u8' },
-            { id: 'video4', url: 'https://play.zhihuiwenlvyun.com/live/jufengxiazhan.m3u8' },
-            { id: 'video5', url: 'https://play.zhihuiwenlvyun.com/live/shouzifeng.m3u8' },
-            { id: 'video6', url: 'https://play.zhihuiwenlvyun.com/live/lingqifeng.m3u8' },
-            { id: 'video7', url: 'https://play.zhihuiwenlvyun.com/live/erlongshan.m3u8' },
-            { id: 'video8', url: 'https://play.zhihuiwenlvyun.com/live/shanhaishengjing.m3u8' },
+            { id: 'video1', url: proxyUrl + 'http://play.zhihuiwenlvyun.com/live/shizifeng.m3u8' },
+            { id: 'video2', url: proxyUrl + 'http://play.zhihuiwenlvyun.com/live/chaoyinpu.m3u8' },
+            { id: 'video3', url: proxyUrl + 'http://play.zhihuiwenlvyun.com/live/taiqingwan.m3u8' },
+            { id: 'video4', url: proxyUrl + 'http://play.zhihuiwenlvyun.com/live/jufengxiazhan.m3u8' },
+            { id: 'video5', url: proxyUrl + 'http://play.zhihuiwenlvyun.com/live/shouzifeng.m3u8' },
+            { id: 'video6', url: proxyUrl + 'http://play.zhihuiwenlvyun.com/live/lingqifeng.m3u8' },
+            { id: 'video7', url: proxyUrl + 'http://play.zhihuiwenlvyun.com/live/erlongshan.m3u8' },
+            { id: 'video8', url: proxyUrl + 'http://play.zhihuiwenlvyun.com/live/shanhaishengjing.m3u8' },
             { id: 'video9', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/6cf6c074ce8070489151af48ad13ca71/1.m3u8' },
             { id: 'video10', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/dba5f5df47dc14a9b08385b1c22faadf/1.m3u8' },
             { id: 'video11', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/51d10523f0a1fdcda5c4223babe1682c/1.m3u8' },
@@ -85,7 +86,10 @@
                 const hls = new Hls({
                     enableWorker: true,
                     lowLatencyMode: true,
-                    backBufferLength: 90
+                    backBufferLength: 90,
+                    xhrSetup: function(xhr) {
+                        xhr.withCredentials = false; // 确保不发送凭据
+                    }
                 });
                 hls.loadSource(source.url);
                 hls.attachMedia(video);
