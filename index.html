@@ -7,7 +7,7 @@
     <style>
         .video-container {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(5, 1fr); /* 改为5列 */
             gap: 10px;
             margin: 20px 0;
         }
@@ -16,7 +16,7 @@
         }
         video {
             width: 100%;
-            max-width: 250px;
+            max-width: 250px; /* 稍微减小宽度以适应更多列 */
             height: auto;
         }
     </style>
@@ -24,45 +24,97 @@
 <body>
     <h1>欢迎来到我的留言版!</h1>
     
+    <!-- 直播窗口区域 -->
     <div class="video-container">
-        <div class="video-item"><video id="video1" controls></video><p>仰口狮子峰</p></div>
-        <div class="video-item"><video id="video2" controls></video><p>北九水潮音瀑</p></div>
-        <div class="video-item"><video id="video3" controls></video><p>太清宫太清湾</p></div>
-        <div class="video-item"><video id="video4" controls></video><p>巨峰下站</p></div>
-        <div class="video-item"><video id="video5" controls></video><p>仰口寿字峰</p></div>
-        <div class="video-item"><video id="video6" controls></video><p>巨峰灵旗峰</p></div>
-        <div class="video-item"><video id="video7" controls></video><p>二龙山</p></div>
-        <div class="video-item"><video id="video8" controls></video><p>山海胜景</p></div>
-        <div class="video-item"><video id="video9" controls></video><p>太平湾畔</p></div>
-        <div class="video-item"><video id="video10" controls></video><p>奥帆中心</p></div>
-        <div class="video-item"><video id="video11" controls></video><p>五四广场</p></div>
-        <div class="video-item"><video id="video12" controls></video><p>胶宁高架银川西路</p></div>
-        <div class="video-item"><video id="video13" controls></video><p>胶宁高架福州路口</p></div>
-        <div class="video-item"><video id="video14" controls></video><p>快速路大润发南京路</p></div>
-        <div class="video-item"><video id="video15" controls></video><p>太平角海岬</p></div>
+        <div class="video-item">
+            <video id="video1" controls></video>
+            <p>仰口狮子峰</p>
+        </div>
+        <div class="video-item">
+            <video id="video2" controls></video>
+            <p>北九水潮音瀑</p>
+        </div>
+        <div class="video-item">
+            <video id="video3" controls></video>
+            <p>太清宫太清湾</p>
+        </div>
+        <div class="video-item">
+            <video id="video4" controls></video>
+            <p>巨峰下站</p>
+        </div>
+        <div class="video-item">
+            <video id="video5" controls></video>
+            <p>仰口寿字峰</p>
+        </div>
+        <div class="video-item">
+            <video id="video6" controls></video>
+            <p>巨峰灵旗峰</p>
+        </div>
+        <div class="video-item">
+            <video id="video7" controls></video>
+            <p>二龙山</p>
+        </div>
+        <div class="video-item">
+            <video id="video8" controls></video>
+            <p>山海胜景</p>
+        </div>
+        <div class="video-item">
+            <video id="video9" controls></video>
+            <p>太平湾畔</p>
+        </div>
+        <div class="video-item">
+            <video id="video10" controls></video>
+            <p>奥帆中心</p>
+        </div>
+        <div class="video-item">
+            <video id="video11" controls></video>
+            <p>五四广场</p>
+        </div>
+        <div class="video-item">
+            <video id="video12" controls></video>
+            <p>胶宁高架银川西路</p>
+        </div>
+        <div class="video-item">
+            <video id="video13" controls></video>
+            <p>胶宁高架福州路口</p>
+        </div>
+        <div class="video-item">
+            <video id="video14" controls></video>
+            <p>快速路大润发南京路</p>
+        </div>
+        <div class="video-item">
+            <video id="video15" controls></video>
+            <p>太平角海岬</p>
+        </div>
     </div>
 
+    <!-- 留言表单 -->
     <form action="https://formsubmit.co/1@yelano.com" method="POST">
         <label for="name">姓名：</label>
         <input type="text" id="name" name="name" required><br><br>
+        
         <label for="message">留言：</label><br>
         <textarea id="message" name="message" rows="4" required></textarea><br><br>
+        
         <input type="submit" value="提交">
     </form>
 
     <footer>
         <p>
-            <span>© 20250403 Yelano 版权所有</span>
-            <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer noopener">
+            <span>© 202504 Yelano 版权所有</span>
+            <a href="https://beian.miit.gov.cn/" 
+               target="_blank" 
+               rel="noreferrer noopener">
                 浙ICP备2020032421号
             </a>
         </p>
     </footer>
 
+    <!-- 引入HLS.js -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
-        // 前8个HTTP链接（之前在手机Chrome上能正常显示）
-        const httpVideoSources = [
+        // m3u8直播源数组
+        const videoSources = [
             { id: 'video1', url: 'http://play.zhihuiwenlvyun.com/live/shizifeng.m3u8' },
             { id: 'video2', url: 'http://play.zhihuiwenlvyun.com/live/chaoyinpu.m3u8' },
             { id: 'video3', url: 'http://play.zhihuiwenlvyun.com/live/taiqingwan.m3u8' },
@@ -70,11 +122,7 @@
             { id: 'video5', url: 'http://play.zhihuiwenlvyun.com/live/shouzifeng.m3u8' },
             { id: 'video6', url: 'http://play.zhihuiwenlvyun.com/live/lingqifeng.m3u8' },
             { id: 'video7', url: 'http://play.zhihuiwenlvyun.com/live/erlongshan.m3u8' },
-            { id: 'video8', url: 'http://play.zhihuiwenlvyun.com/live/shanhaishengjing.m3u8' }
-        ];
-
-        // 后7个HTTPS链接（当前在所有平台都能正常显示）
-        const httpsVideoSources = [
+            { id: 'video8', url: 'http://play.zhihuiwenlvyun.com/live/shanhaishengjing.m3u8' },
             { id: 'video9', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/6cf6c074ce8070489151af48ad13ca71/1.m3u8' },
             { id: 'video10', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/dba5f5df47dc14a9b08385b1c22faadf/1.m3u8' },
             { id: 'video11', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/51d10523f0a1fdcda5c4223babe1682c/1.m3u8' },
@@ -84,51 +132,16 @@
             { id: 'video15', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/eb43a644427fb8349dcee68178054782/1.m3u8' }
         ];
 
-        // 处理前8个HTTP链接
-        httpVideoSources.forEach(source => {
+        // 初始化每个视频播放器
+        videoSources.forEach(source => {
             const video = document.getElementById(source.id);
+            
             if (Hls.isSupported()) {
-                const hls = new Hls({
-                    enableWorker: true,
-                    lowLatencyMode: true,
-                    backBufferLength: 90
-                });
+                const hls = new Hls();
                 hls.loadSource(source.url);
                 hls.attachMedia(video);
-                hls.on(Hls.Events.ERROR, (event, data) => {
-                    if (data.fatal) {
-                        console.error(`HTTP Error loading ${source.url}: ${data.details}`);
-                    }
-                });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = source.url;
-                video.addEventListener('error', () => {
-                    console.error(`HTTP Native HLS error for ${source.url}`);
-                });
-            }
-        });
-
-        // 处理后7个HTTPS链接
-        httpsVideoSources.forEach(source => {
-            const video = document.getElementById[source.id);
-            if (Hls.isSupported()) {
-                const hls = new Hls({
-                    enableWorker: true,
-                    lowLatencyMode: true,
-                    backBufferLength: 90
-                });
-                hls.loadSource(source.url);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.ERROR, (event, data) => {
-                    if (data.fatal) {
-                        console.error(`HTTPS Error loading ${source.url}: ${data.details}`);
-                    }
-                });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = source.url;
-                video.addEventListener('error', () => {
-                    console.error(`HTTPS Native HLS error for ${source.url}`);
-                });
             }
         });
     </script>
