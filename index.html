@@ -7,7 +7,7 @@
     <style>
         .video-container {
             display: grid;
-            grid-template-columns: repeat(5, 1fr); /* 改为5列 */
+            grid-template-columns: repeat(5, 1fr);
             gap: 10px;
             margin: 20px 0;
         }
@@ -16,13 +16,34 @@
         }
         video {
             width: 100%;
-            max-width: 250px; /* 稍微减小宽度以适应更多列 */
+            max-width: 250px;
             height: auto;
+        }
+        .weather-container {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .weather-container h2 {
+            margin: 0 0 10px;
+        }
+        .weather-container p {
+            margin: 5px 0;
+        }
+        .weather-icon {
+            width: 50px;
+            height: 50px;
+            vertical-align: middle;
         }
     </style>
 </head>
 <body>
-    <h1>欢迎来到我的留言版!</h1>
+    <h1>欢迎来到海蓝的留言版!</h1>
     
     <!-- 直播窗口区域 -->
     <div class="video-container">
@@ -88,6 +109,26 @@
         </div>
     </div>
 
+    <!-- 天气信息区域 -->
+    <div class="weather-container">
+        <h2>青岛今日天气</h2>
+        <p id="location">加载中...</p>
+        <p id="weather-description"></p>
+        <p id="weather-icon"></p>
+        <p id="temperature"></p>
+        <p id="feels-like"></p>
+        <p id="temp-min"></p>
+        <p id="temp-max"></p>
+        <p id="pressure"></p>
+        <p id="humidity"></p>
+        <p id="visibility"></p>
+        <p id="wind"></p>
+        <p id="wind-gust"></p>
+        <p id="clouds"></p>
+        <p id="sunrise"></p>
+        <p id="sunset"></p>
+    </div>
+
     <!-- 留言表单 -->
     <form action="https://formsubmit.co/1@yelano.com" method="POST">
         <label for="name">姓名：</label>
@@ -101,7 +142,7 @@
 
     <footer>
         <p>
-            <span>© 2025 Yelano 版权所有</span>
+            <span>© 今天天气不错，一起约伴爬山，加我的微信【Treenjoy】</span>
             <a href="https://beian.miit.gov.cn/" 
                target="_blank" 
                rel="noreferrer noopener">
@@ -140,10 +181,74 @@
                 const hls = new Hls();
                 hls.loadSource(source.url);
                 hls.attachMedia(video);
+                hls.on(Hls.Events.ERROR, (event, data) => {
+                    if (data.fatal) {
+                        console.error(`Error loading ${source.url}: ${data.details}`);
+                    }
+                });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = source.url;
+                video.addEventListener('error', () => {
+                    console.error(`Native HLS error for ${source.url}`);
+                });
             }
         });
+
+        // 获取青岛天气数据
+        fetch('https://api.openweathermap.org/data/2.5/weather?q=Qingdao&appid=554f1703f14566f84382895cc93568eb&units=metric')
+            .then(response => response.json())
+            .then(data => {
+                const location = document.getElementById('location');
+                const description = document.getElementById('weather-description');
+                const weatherIcon = document.getElementById('weather-icon');
+                const temperature = document.getElementById('temperature');
+                const feelsLike = document.getElementById('feels-like');
+                const tempMin = document.getElementById('temp-min');
+                const tempMax = document.getElementById('temp-max');
+                const pressure = document.getElementById('pressure');
+                const humidity = document.getElementById('humidity');
+                const visibility = document.getElementById('visibility');
+                const wind = document.getElementById('wind');
+                const windGust = document.getElementById('wind-gust');
+                const clouds = document.getElementById('clouds');
+                const sunrise = document.getElementById('sunrise');
+                const sunset = document.getElementById('sunset');
+
+                // 转换时间戳为本地时间
+                const sunriseTime = new Date(data.sys.sunrise * 1000).toLocaleTimeString('zh-CN');
+                const sunsetTime = new Date(data.sys.sunset * 1000).toLocaleTimeString('zh-CN');
+
+                // 转换风向角度为方向
+                const windDirection = degToDirection(data.wind.deg);
+
+                location.textContent = `地区：${data.name}, ${data.sys.country}`;
+                description.textContent = `天气：${data.weather[0].description}`;
+                weatherIcon.innerHTML = `<img src="http://openweathermap.org/img/wn/${data.weather[0].icon}.png" class="weather-icon" alt="Weather Icon">`;
+                temperature.textContent = `当前温度：${data.main.temp} °C`;
+                feelsLike.textContent = `体感温度：${data.main.feels_like} °C`;
+                tempMin.textContent = `最低温度：${data.main.temp_min} °C`;
+                tempMax.textContent = `最高温度：${data.main.temp_max} °C`;
+                pressure.textContent = `气压：${data.main.pressure} hPa`;
+                humidity.textContent = `湿度：${data.main.humidity}%`;
+                visibility.textContent = `能见度：${data.visibility / 1000} 公里`;
+                wind.textContent = `风速：${data.wind.speed} m/s，方向：${windDirection}`;
+                windGust.textContent = `阵风：${data.wind.gust || '无数据'} m/s`;
+                clouds.textContent = `云量：${data.clouds.all}%`;
+                sunrise.textContent = `日出：${sunriseTime}`;
+                sunset.textContent = `日落：${sunsetTime}`;
+            })
+            .catch(error => {
+                console.error('Error fetching weather data:', error);
+                document.getElementById('location').textContent = '无法加载天气数据';
+            });
+
+        // 辅助函数：将风向角度转换为方向
+        function degToDirection(deg) {
+            const directions = ['北', '东北偏北', '东北', '东北偏东', '东', '东南偏东', '东南', '东南偏南', 
+                                '南', '西南偏南', '西南', '西南偏西', '西', '西北偏西', '西北', '西北偏北'];
+            const index = Math.round(deg / 22.5) % 16;
+            return directions[index];
+        }
     </script>
 </body>
 </html>
