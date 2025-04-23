@@ -7,7 +7,7 @@
     <style>
         .video-container {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(5, 1fr); /* 改为5列 */
             gap: 10px;
             margin: 20px 0;
         }
@@ -16,125 +16,75 @@
         }
         video {
             width: 100%;
-            max-width: 250px;
+            max-width: 250px; /* 稍微减小宽度以适应更多列 */
             height: auto;
-        }
-        .info-card {
-            background: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            height: 180px;
-            box-sizing: border-box;
-            overflow-y: auto;
-        }
-        .info-card h3 {
-            margin: 0 0 10px;
-            font-size: 1.2em;
-        }
-        .info-card p {
-            margin: 5px 0;
-            font-size: 0.9em;
-        }
-        .error {
-            color: red;
-            font-size: 0.9em;
-        }
-        @media (max-width: 768px) {
-            .video-container {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        @media (max-width: 480px) {
-            .video-container {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
 <body>
-    <h1>欢迎来到海蓝的留言版!</h1>
+    <h1>欢迎来到我的留言版!</h1>
     
     <!-- 直播窗口区域 -->
     <div class="video-container">
         <div class="video-item">
-            <video id="video1" controls aria-label="仰口狮子峰直播"></video>
+            <video id="video1" controls></video>
             <p>仰口狮子峰</p>
         </div>
         <div class="video-item">
-            <video id="video2" controls aria-label="北九水潮音瀑直播"></video>
+            <video id="video2" controls></video>
             <p>北九水潮音瀑</p>
         </div>
         <div class="video-item">
-            <video id="video3" controls aria-label="太清宫太清湾直播"></video>
+            <video id="video3" controls></video>
             <p>太清宫太清湾</p>
         </div>
         <div class="video-item">
-            <video id="video4" controls aria-label="巨峰下站直播"></video>
+            <video id="video4" controls></video>
             <p>巨峰下站</p>
         </div>
         <div class="video-item">
-            <video id="video5" controls aria-label="仰口寿字峰直播"></video>
+            <video id="video5" controls></video>
             <p>仰口寿字峰</p>
         </div>
         <div class="video-item">
-            <video id="video6" controls aria-label="巨峰灵旗峰直播"></video>
+            <video id="video6" controls></video>
             <p>巨峰灵旗峰</p>
         </div>
         <div class="video-item">
-            <video id="video7" controls aria-label="二龙山直播"></video>
+            <video id="video7" controls></video>
             <p>二龙山</p>
         </div>
         <div class="video-item">
-            <video id="video8" controls aria-label="山海胜景直播"></video>
+            <video id="video8" controls></video>
             <p>山海胜景</p>
         </div>
         <div class="video-item">
-            <video id="video9" controls aria-label="太平湾畔直播"></video>
+            <video id="video9" controls></video>
             <p>太平湾畔</p>
         </div>
         <div class="video-item">
-            <video id="video10" controls aria-label="奥帆中心直播"></video>
+            <video id="video10" controls></video>
             <p>奥帆中心</p>
         </div>
         <div class="video-item">
-            <video id="video11" controls aria-label="五四广场直播"></video>
+            <video id="video11" controls></video>
             <p>五四广场</p>
         </div>
         <div class="video-item">
-            <video id="video12" controls aria-label="胶宁高架银川西路直播"></video>
+            <video id="video12" controls></video>
             <p>胶宁高架银川西路</p>
         </div>
         <div class="video-item">
-            <video id="video13" controls aria-label="胶宁高架福州路口直播"></video>
+            <video id="video13" controls></video>
             <p>胶宁高架福州路口</p>
         </div>
         <div class="video-item">
-            <video id="video14" controls aria-label="快速路大润发南京路直播"></video>
+            <video id="video14" controls></video>
             <p>快速路大润发南京路</p>
         </div>
         <div class="video-item">
-            <video id="video15" controls aria-label="太平角海岬直播"></video>
+            <video id="video15" controls></video>
             <p>太平角海岬</p>
-        </div>
-        <div class="video-item">
-            <div id="weather-card" class="info-card">
-                <h3>青岛今日天气</h3>
-                <p id="weather-loading">加载中...</p>
-                <div id="weather-data" style="display: none;">
-                    <p><strong>温度：</strong><span id="weather-temp"></span></p>
-                    <p><strong>湿度：</strong><span id="weather-humidity"></span></p>
-                    <p><strong>风力：</strong><span id="weather-wind"></span></p>
-                    <p><strong>降雨量：</strong><span id="weather-rainfall"></span></p>
-                    <p><strong>天气描述：</strong><span id="weather-description"></span></p>
-                    <p><strong>气压：</strong><span id="weather-pressure"></span></p>
-                    <p><strong>能见度：</strong><span id="weather-visibility"></span></p>
-                    <p><strong>日出：</strong><span id="weather-sunrise"></span></p>
-                    <p><strong>日落：</strong><span id="weather-sunset"></span></p>
-                    <p><strong>更新时间：</strong><span id="weather-update-time"></span></p>
-                </div>
-            </div>
-            <p>青岛天气预报</p>
         </div>
     </div>
 
@@ -142,36 +92,58 @@
     <form action="https://formsubmit.co/1@yelano.com" method="POST">
         <label for="name">姓名：</label>
         <input type="text" id="name" name="name" required><br><br>
+        
         <label for="message">留言：</label><br>
         <textarea id="message" name="message" rows="4" required></textarea><br><br>
+        
         <input type="submit" value="提交">
     </form>
 
     <footer>
         <p>
-            <span>© 2025 海蓝网页制作</span>
-            <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer noopener">
+            <span>© 2025 Yelano 版权所有</span>
+            <a href="https://beian.miit.gov.cn/" 
+               target="_blank" 
+               rel="noreferrer noopener">
                 浙ICP备2020032421号
             </a>
         </p>
     </footer>
 
-    <!-- 引入 Hls.js -->
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
+    <!-- 引入HLS.js -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script>
-        // 直播源数组
+        // m3u8直播源数组
         const videoSources = [
-            { id: 'video1', url: 'http://play.zhihuiwenlvyun.com/live/shizifeng.m3u8', name: '仰口狮子峰' },
-            { id: 'video2', url: 'http://play.zhihuiwenlvyun.com/live/chaoyinpu.m3u8', name: '北九水潮音瀑' },
-            { id: 'video3', url: 'http://play.zhihuiwenlvyun.com/live/taiqingwan.m3u8', name: '太清宫太清湾' },
-            { id: 'video4', url: 'http://play.zhihuiwenlvyun.com/live/jufengxiazhan.m3u8', name: '巨峰下站' },
-            { id: 'video5', url: 'http://play.zhihuiwenlvyun.com/live/shouzifeng.m3u8', name: '仰口寿字峰' },
-            { id: 'video6', url: 'http://play.zhihuiwenlvyun.com/live/lingqifeng.m3u8', name: '巨峰灵旗峰' },
-            { id: 'video7', url: 'http://play.zhihuiwenlvyun.com/live/erlongshan.m3u8', name: '二龙山' },
-            { id: 'video8', url: 'http://play.zhihuiwenlvyun.com/live/shanhaishengjing.m3u8', name: '山海胜景' },
-            { id: 'video9', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/6cf6c074ce8070489151af48ad13ca71/1.m3u8', name: '太平湾畔' },
-            { id: 'video10', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/dba5f5df47dc14a9b08385b1c22faadf/1.m3u8', name: '奥帆中心' },
-            { id: 'video11', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/51d10523f0a1fdcda5c4223babe1682c/1.m3u8', name: '五四广场' },
-            { id: 'video12', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/e41ccb39c3292d868d6c72b66082a3f2/1.m3u8', name: '胶宁高架银川西路' },
-            { id: 'video13', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/833fddf8b8271df2cf38835d14a2a3a5/1.m3u8', name: '胶宁高架福州路口' },
-            { id: 'video14', url: 'https://hlspull.qtv.com.cn/v31faxcg
+            { id: 'video1', url: 'http://play.zhihuiwenlvyun.com/live/shizifeng.m3u8' },
+            { id: 'video2', url: 'http://play.zhihuiwenlvyun.com/live/chaoyinpu.m3u8' },
+            { id: 'video3', url: 'http://play.zhihuiwenlvyun.com/live/taiqingwan.m3u8' },
+            { id: 'video4', url: 'http://play.zhihuiwenlvyun.com/live/jufengxiazhan.m3u8' },
+            { id: 'video5', url: 'http://play.zhihuiwenlvyun.com/live/shouzifeng.m3u8' },
+            { id: 'video6', url: 'http://play.zhihuiwenlvyun.com/live/lingqifeng.m3u8' },
+            { id: 'video7', url: 'http://play.zhihuiwenlvyun.com/live/erlongshan.m3u8' },
+            { id: 'video8', url: 'http://play.zhihuiwenlvyun.com/live/shanhaishengjing.m3u8' },
+            { id: 'video9', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/6cf6c074ce8070489151af48ad13ca71/1.m3u8' },
+            { id: 'video10', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/dba5f5df47dc14a9b08385b1c22faadf/1.m3u8' },
+            { id: 'video11', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/51d10523f0a1fdcda5c4223babe1682c/1.m3u8' },
+            { id: 'video12', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/e41ccb39c3292d868d6c72b66082a3f2/1.m3u8' },
+            { id: 'video13', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/833fddf8b8271df2cf38835d14a2a3a5/1.m3u8' },
+            { id: 'video14', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/8db708403e7ad9c1a00c539c703b8ae0/1.m3u8' },
+            { id: 'video15', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/eb43a644427fb8349dcee68178054782/1.m3u8' }
+        ];
+
+        // 初始化每个视频播放器
+        videoSources.forEach(source => {
+            const video = document.getElementById(source.id);
+            
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(source.url);
+                hls.attachMedia(video);
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = source.url;
+            }
+        });
+    </script>
+</body>
+</html>
