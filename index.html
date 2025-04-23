@@ -19,7 +19,7 @@
             max-width: 250px;
             height: auto;
         }
-        .weather-container {
+        .weather-container, .tide-container {
             margin: 20px 0;
             padding: 20px;
             border: 1px solid #ccc;
@@ -29,10 +29,10 @@
             margin-left: auto;
             margin-right: auto;
         }
-        .weather-container h2 {
+        .weather-container h2, .tide-container h2 {
             margin: 0 0 10px;
         }
-        .weather-container p {
+        .weather-container p, .tide-container p {
             margin: 5px 0;
         }
         .weather-icon {
@@ -43,7 +43,7 @@
     </style>
 </head>
 <body>
-    <h1>欢迎来到海蓝的留言版!</h1>
+    <h1>欢迎来到我的留言版!</h1>
     
     <!-- 直播窗口区域 -->
     <div class="video-container">
@@ -112,13 +112,13 @@
     <!-- 天气信息区域 -->
     <div class="weather-container">
         <h2>青岛今日天气</h2>
-        <p id="location">加载中...</p>
+        <p id="date">加载中...</p>
+        <p id="lunar-date"></p>
+        <p id="location"></p>
         <p id="weather-description"></p>
         <p id="weather-icon"></p>
         <p id="temperature"></p>
         <p id="feels-like"></p>
-        <p id="temp-min"></p>
-        <p id="temp-max"></p>
         <p id="pressure"></p>
         <p id="humidity"></p>
         <p id="visibility"></p>
@@ -127,22 +127,29 @@
         <p id="clouds"></p>
         <p id="sunrise"></p>
         <p id="sunset"></p>
+        <p id="fire-rainbow"></p>
+    </div>
+
+    <!-- 潮汐信息区域 -->
+    <div class="tide-container">
+        <h2>青岛今日潮汐与赶海建议</h2>
+        <p id="tide-status">加载中...</p>
+        <p id="tide-times"></p>
+        <p id="catch-sea"></p>
     </div>
 
     <!-- 留言表单 -->
     <form action="https://formsubmit.co/1@yelano.com" method="POST">
         <label for="name">姓名：</label>
         <input type="text" id="name" name="name" required><br><br>
-        
         <label for="message">留言：</label><br>
         <textarea id="message" name="message" rows="4" required></textarea><br><br>
-        
         <input type="submit" value="提交">
     </form>
 
     <footer>
         <p>
-            <span>© 今天天气不错，一起约伴爬山，加我的微信【Treenjoy】</span>
+            <span>© 2025 Yelano 版权所有</span>
             <a href="https://beian.miit.gov.cn/" 
                target="_blank" 
                rel="noreferrer noopener">
@@ -153,12 +160,14 @@
 
     <!-- 引入HLS.js -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <!-- 引入农历转换库 -->
+    <script src="https://cdn.jsdelivr10cdn.com/chinese-lunar@0.1.3/chinese-lunar.min.js"></script>
     <script>
         // m3u8直播源数组
         const videoSources = [
             { id: 'video1', url: 'http://play.zhihuiwenlvyun.com/live/shizifeng.m3u8' },
             { id: 'video2', url: 'http://play.zhihuiwenlvyun.com/live/chaoyinpu.m3u8' },
-            { id: 'video3', url: 'http://play.zhihuiwenlvyun.com/live/taiqingwan.m3u8' },
+            { id  id: 'video3', url: 'http://play.zhihuiwenlvyun.com/live/taiqingwan.m3u8' },
             { id: 'video4', url: 'http://play.zhihuiwenlvyun.com/live/jufengxiazhan.m3u8' },
             { id: 'video5', url: 'http://play.zhihuiwenlvyun.com/live/shouzifeng.m3u8' },
             { id: 'video6', url: 'http://play.zhihuiwenlvyun.com/live/lingqifeng.m3u8' },
@@ -176,7 +185,6 @@
         // 初始化每个视频播放器
         videoSources.forEach(source => {
             const video = document.getElementById(source.id);
-            
             if (Hls.isSupported()) {
                 const hls = new Hls();
                 hls.loadSource(source.url);
@@ -194,6 +202,18 @@
             }
         });
 
+        // 获取阳历和阴历日期
+        const today = new Date();
+        document.getElementById('date').textContent = `阳历：${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`;
+        try {
+            const lunar = window.chineseLunar;
+            const lunarDate = lunar.solarToLunar(today);
+            document.getElementById('lunar-date').textContent = `阴历：${lunarDate.lunarYearName}年${lunarDate.lunarMonthName}${lunarDate.lunarDayName}`;
+        } catch (e) {
+            document.getElementById('lunar-date').textContent = '无法加载阴历数据';
+            console.error('Lunar date error:', e);
+        }
+
         // 获取青岛天气数据
         fetch('https://api.openweathermap.org/data/2.5/weather?q=Qingdao&appid=554f1703f14566f84382895cc93568eb&units=metric')
             .then(response => response.json())
@@ -203,8 +223,6 @@
                 const weatherIcon = document.getElementById('weather-icon');
                 const temperature = document.getElementById('temperature');
                 const feelsLike = document.getElementById('feels-like');
-                const tempMin = document.getElementById('temp-min');
-                const tempMax = document.getElementById('temp-max');
                 const pressure = document.getElementById('pressure');
                 const humidity = document.getElementById('humidity');
                 const visibility = document.getElementById('visibility');
@@ -213,21 +231,18 @@
                 const clouds = document.getElementById('clouds');
                 const sunrise = document.getElementById('sunrise');
                 const sunset = document.getElementById('sunset');
+                const fireRainbow = document.getElementById('fire-rainbow');
 
-                // 转换时间戳为本地时间
                 const sunriseTime = new Date(data.sys.sunrise * 1000).toLocaleTimeString('zh-CN');
                 const sunsetTime = new Date(data.sys.sunset * 1000).toLocaleTimeString('zh-CN');
-
-                // 转换风向角度为方向
                 const windDirection = degToDirection(data.wind.deg);
+                const fireRainbowProbability = calculateFireRainbowProbability(data.clouds.all, data.main.humidity, data.wind.speed);
 
                 location.textContent = `地区：${data.name}, ${data.sys.country}`;
                 description.textContent = `天气：${data.weather[0].description}`;
                 weatherIcon.innerHTML = `<img src="http://openweathermap.org/img/wn/${data.weather[0].icon}.png" class="weather-icon" alt="Weather Icon">`;
                 temperature.textContent = `当前温度：${data.main.temp} °C`;
                 feelsLike.textContent = `体感温度：${data.main.feels_like} °C`;
-                tempMin.textContent = `最低温度：${data.main.temp_min} °C`;
-                tempMax.textContent = `最高温度：${data.main.temp_max} °C`;
                 pressure.textContent = `气压：${data.main.pressure} hPa`;
                 humidity.textContent = `湿度：${data.main.humidity}%`;
                 visibility.textContent = `能见度：${data.visibility / 1000} 公里`;
@@ -236,10 +251,32 @@
                 clouds.textContent = `云量：${data.clouds.all}%`;
                 sunrise.textContent = `日出：${sunriseTime}`;
                 sunset.textContent = `日落：${sunsetTime}`;
+                fireRainbow.textContent = `火烧云概率：${fireRainbowProbability}%`;
             })
             .catch(error => {
                 console.error('Error fetching weather data:', error);
                 document.getElementById('location').textContent = '无法加载天气数据';
+            });
+
+        // 获取青岛潮汐数据（使用QWeather API）
+        const tideDate = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
+        fetch(`https://mv5n8k7max.re.qweatherapi.com/v7/ocean/tide?location=P2951&date=${tideDate}&key=<your_key>`)
+            .then(response => response.json())
+            .then(data => {
+                const tideStatus = `今日潮汐（${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日）：`;
+                const tideTimes = data.tideTable.map(t => ({
+                    type: t.type === 'L' ? '低潮' : '高潮',
+                    time: new Date(t.fxTime).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }),
+                    height: `${t.height} m`
+                }));
+                document.getElementById('tide-status').textContent = tideStatus;
+                document.getElementById('tide-times').textContent = `潮汐时间：${tideTimes.map(t => `${t.type} ${t.time} (${t.height})`).join(', ')}`;
+                const catchSeaAdvice = calculateCatchSeaAdvice(getLunarDay(), { times: tideTimes });
+                document.getElementById('catch-sea').textContent = catchSeaAdvice;
+            })
+            .catch(error => {
+                console.error('Error fetching tide data:', error);
+                document.getElementById('tide-status').textContent = '无法加载潮汐数据';
             });
 
         // 辅助函数：将风向角度转换为方向
@@ -248,6 +285,43 @@
                                 '南', '西南偏南', '西南', '西南偏西', '西', '西北偏西', '西北', '西北偏北'];
             const index = Math.round(deg / 22.5) % 16;
             return directions[index];
+        }
+
+        // 辅助函数：计算火烧云概率
+        function calculateFireRainbowProbability(cloudCover, humidity, windSpeed) {
+            let probability = 50;
+            if (cloudCover < 20) probability += 20;
+            else if (cloudCover < 50) probability += 10;
+            else probability -= 20;
+            if (humidity > 60) probability += 15;
+            else if (humidity < 30) probability -= 10;
+            if (windSpeed >= 2 && windSpeed <= 5) probability += 10;
+            else if (windSpeed > 8) probability -= 15;
+            return Math.max(0, Math.min(100, Math.round(probability)));
+        }
+
+        // 辅助函数：获取阴历日
+        function getLunarDay() {
+            try {
+                const lunar = window.chineseLunar;
+                const lunarDate = lunar.solarToLunar(new Date());
+                return parseInt(lunarDate.lunarDayName.replace('初', '').replace('十', '1').replace('廿', '2').replace('三十', '30'));
+            } catch (e) {
+                return 1;
+            }
+        }
+
+        // 辅助函数：推测赶海建议
+        function calculateCatchSeaAdvice(lunarDay, tideData) {
+            const isBigTide = (lunarDay >= 1 && lunarDay <= 3) || (lunarDay >= 14 && lunarDay <= 17);
+            const lowTideTimes = tideData.times.filter(t => t.type === '低潮').map(t => t.time);
+            if (isBigTide && lowTideTimes.length > 0) {
+                return `今日为大潮期间（阴历${lunarDay}日），适合赶海。推荐时间段：${lowTideTimes.join(' 和 ')} 前后1小时。`;
+            } else if (lowTideTimes.length > 0) {
+                return `今日非大潮期间（阴历${lunarDay}日），赶海条件一般。推荐时间段：${lowTideTimes.join(' 和 ')} 前后1小时。`;
+            } else {
+                return '今日无低潮数据，暂不建议赶海。';
+            }
         }
     </script>
 </body>
