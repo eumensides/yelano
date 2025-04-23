@@ -52,17 +52,66 @@
     <h1>欢迎来到我的留言版!</h1>
     
     <div class="video-container">
-        <!-- 视频项保持不变 -->
-        <div class="video-item">
+        <div class="video-item" id="video-item-1">
             <video id="video1" controls aria-label="仰口狮子峰直播"></video>
             <p>仰口狮子峰</p>
         </div>
-        <!-- ... 其他视频项 ... -->
-        <div class="video-item">
+        <div class="video-item" id="video-item-2">
+            <video id="video2" controls aria-label="北九水潮音瀑直播"></video>
+            <p>北九水潮音瀑</p>
+        </div>
+        <div class="video-item" id="video-item-3">
+            <video id="video3" controls aria-label="太清宫太清湾直播"></video>
+            <p>太清宫太清湾</p>
+        </div>
+        <div class="video-item" id="video-item-4">
+            <video id="video4" controls aria-label="巨峰下站直播"></video>
+            <p>巨峰下站</p>
+        </div>
+        <div class="video-item" id="video-item-5">
+            <video id="video5" controls aria-label="仰口寿字峰直播"></video>
+            <p>仰口寿字峰</p>
+        </div>
+        <div class="video-item" id="video-item-6">
+            <video id="video6" controls aria-label="巨峰灵旗峰直播"></video>
+            <p>巨峰灵旗峰</p>
+        </div>
+        <div class="video-item" id="video-item-7">
+            <video id="video7" controls aria-label="二龙山直播"></video>
+            <p>二龙山</p>
+        </div>
+        <div class="video-item" id="video-item-8">
+            <video id="video8" controls aria-label="山海胜景直播"></video>
+            <p>山海胜景</p>
+        </div>
+        <div class="video-item" id="video-item-9">
+            <video id="video9" controls aria-label="太平湾畔直播"></video>
+            <p>太平湾畔</p>
+        </div>
+        <div class="video-item" id="video-item-10">
+            <video id="video10" controls aria-label="奥帆中心直播"></video>
+            <p>奥帆中心</p>
+        </div>
+        <div class="video-item" id="video-item-11">
+            <video id="video11" controls aria-label="五四广场直播"></video>
+            <p>五四广场</p>
+        </div>
+        <div class="video-item" id="video-item-12">
+            <video id="video12" controls aria-label="胶宁高架银川西路直播"></video>
+            <p>胶宁高架银川西路</p>
+        </div>
+        <div class="video-item" id="video-item-13">
+            <video id="video13" controls aria-label="胶宁高架福州路口直播"></video>
+            <p>胶宁高架福州路口</p>
+        </div>
+        <div class="video-item" id="video-item-14">
+            <video id="video14" controls aria-label="快速路大润发南京路直播"></video>
+            <p>快速路大润发南京路</p>
+        </div>
+        <div class="video-item" id="video-item-15">
             <video id="video15" controls aria-label="太平角海岬直播"></video>
             <p>太平角海岬</p>
         </div>
-        <!-- 天气窗口 -->
         <div class="video-item">
             <div id="weather-card" class="info-card">
                 <h3>青岛今日天气</h3>
@@ -76,20 +125,34 @@
                     <p><strong>日出：</strong><span id="weather-sunrise"></span></p>
                     <p><strong>日落：</strong><span id="weather-sunset"></span></p>
                     <p><strong>更新时间：</strong><span id="weather-update-time"></span></p>
+                    <canvas id="weather-chart" height="100"></canvas>
                 </div>
             </div>
             <p>青岛天气预报</p>
         </div>
-        <!-- 火烧云窗口 -->
         <div class="video-item">
             <div id="fire-rainbow-card" class="info-card">
                 <h3>今日火烧云几率</h3>
-                <p id="fire-rainbow-loading" style="display: none;">加载中...</p>
-                <div id="fire-rainbow-data">
-                    <p><strong>几率：</strong><span id="fire-rainbow-probability">30% (更新于 2025-04-22)</span></p>
+                <p id="fire-rainbow-loading">加载中...</p>
+                <div id="fire-rainbow-data" style="display: none;">
+                    <p><strong>几率：</strong><span id="fire-rainbow-probability"></span></p>
                 </div>
             </div>
             <p>青岛火烧云预报</p>
+        </div>
+        <div class="video-item">
+            <div id="tide-card" class="info-card">
+                <h3>青岛今日潮汐</h3>
+                <p id="tide-loading">加载中...</p>
+                <div id="tide-data" style="display: none;">
+                    <p><strong>第一次高潮：</strong><span id="tide-high1"></span></p>
+                    <p><strong>第一次低潮：</strong><span id="tide-low1"></span></p>
+                    <p><strong>第二次高潮：</strong><span id="tide-high2"></span></p>
+                    <p><strong>第二次低潮：</strong><span id="tide-low2"></span></p>
+                    <p><strong>更新时间：</strong><span id="tide-update-time"></span></p>
+                </div>
+            </div>
+            <p>青岛潮汐预报</p>
         </div>
     </div>
 
@@ -111,62 +174,76 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.js"></script>
     <script>
-        // 视频初始化（不变）
+        // 视频初始化
         const videoSources = [
-            { id: 'video1', url: 'http://play.zhihuiwenlvyun.com/live/shizifeng.m3u8' },
-            // ... 其他视频源 ...
-            { id: 'video15', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/eb43a644427fb8349dcee68178054782/1.m3u8' }
+            { id: 'video1', url: 'http://play.zhihuiwenlvyun.com/live/shizifeng.m3u8', name: '仰口狮子峰' },
+            { id: 'video2', url: 'http://play.zhihuiwenlvyun.com/live/chaoyinpu.m3u8', name: '北九水潮音瀑' },
+            { id: 'video3', url: 'http://play.zhihuiwenlvyun.com/live/taiqingwan.m3u8', name: '太清宫太清湾' },
+            { id: 'video4', url: 'http://play.zhihuiwenlvyun.com/live/jufengxiazhan.m3u8', name: '巨峰下站' },
+            { id: 'video5', url: 'http://play.zhihuiwenlvyun.com/live/shouzifeng.m3u8', name: '仰口寿字峰' },
+            { id: 'video6', url: 'http://play.zhihuiwenlvyun.com/live/lingqifeng.m3u8', name: '巨峰灵旗峰' },
+            { id: 'video7', url: 'http://play.zhihuiwenlvyun.com/live/erlongshan.m3u8', name: '二龙山' },
+            { id: 'video8', url: 'http://play.zhihuiwenlvyun.com/live/shanhaishengjing.m3u8', name: '山海胜景' },
+            { id: 'video9', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/6cf6c074ce8070489151af48ad13ca71/1.m3u8', name: '太平湾畔' },
+            { id: 'video10', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/dba5f5df47dc14a9b08385b1c22faadf/1.m3u8', name: '奥帆中心' },
+            { id: 'video11', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/51d10523f0a1fdcda5c4223babe1682c/1.m3u8', name: '五四广场' },
+            { id: 'video12', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/e41ccb39c3292d868d6c72b66082a3f2/1.m3u8', name: '胶宁高架银川西路' },
+            { id: 'video13', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/833fddf8b8271df2cf38835d14a2a3a5/1.m3u8', name: '胶宁高架福州路口' },
+            { id: 'video14', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/8db708403e7ad9c1a00c539c703b8ae0/1.m3u8', name: '快速路大润发南京路' },
+            { id: 'video15', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/eb43a644427fb8349dcee68178054782/1.m3u8', name: '太平角海岬' }
         ];
 
         videoSources.forEach(source => {
             const video = document.getElementById(source.id);
+            const videoItem = document.getElementById(`video-item-${source.id.replace('video', '')}`);
             if (Hls.isSupported()) {
-                const hls = new Hls();
+                const hls = new Hls({
+                    enableWorker: true,
+                    lowLatencyMode: true,
+                    backBufferLength: 90
+                });
                 hls.loadSource(source.url);
                 hls.attachMedia(video);
                 hls.on(Hls.Events.ERROR, (event, data) => {
                     if (data.fatal) {
-                        video.parentElement.innerHTML += '<p>无法加载视频，请稍后重试</p>';
+                        videoItem.innerHTML = `<p>${source.name}：无法加载视频，请稍后重试</p>`;
                     }
                 });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = source.url;
+                video.addEventListener('error', () => {
+                    videoItem.innerHTML = `<p>${source.name}：您的浏览器不支持此视频格式</p>`;
+                });
             } else {
-                video.parentElement.innerHTML += '<p>您的浏览器不支持此视频格式</p>';
+                videoItem.innerHTML = `<p>${source.name}：您的浏览器不支持此视频格式</p>`;
             }
         });
 
-        // 天气数据获取（OpenWeatherMap）
+        // 天气数据获取
         async function fetchWeatherData() {
             const weatherCard = document.getElementById('weather-card');
             const weatherLoading = document.getElementById('weather-loading');
             const weatherData = document.getElementById('weather-data');
 
-            const apiKey = '554f1703f14566f84382895cc93568eb'; // 你的 API 密钥
-            const url = `https://api.openweathermap.org/data/2.5/weather?q=Qingdao,CN&appid=${apiKey}&units=metric&lang=zh_cn`;
+            const apiKey = '554f1703f14566f84382895cc93568eb';
+            const currentUrl = `https://api.openweathermap.org/data/2.5/weather?q=Qingdao,CN&appid=${apiKey}&units=metric&lang=zh_cn`;
+            const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?q=Qingdao,CN&appid=${apiKey}&units=metric&lang=zh_cn`;
 
             try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    if (response.status === 401) {
-                        throw new Error('API 密钥无效，请检查密钥');
-                    } else if (response.status === 429) {
-                        throw new Error('API 调用超限，请稍后重试');
-                    } else {
-                        throw new Error('无法获取天气数据');
-                    }
-                }
+                const currentResponse = await fetch(currentUrl);
+                if (!currentResponse.ok) throw new Error('无法获取当前天气数据');
 
-                const data = await response.json();
-                const temp = `${Math.round(data.main.temp)}°C`;
-                const humidity = `${data.main.humidity}%`;
-                const wind = `${data.wind.speed} m/s ${data.wind.deg}°`;
-                const rainfall = data.rain ? `${data.rain['1h'] || 0} mm` : '0 mm';
-                const extreme = data.weather[0].main.includes('Storm') ? '可能有风暴' : '无';
-                const sunrise = new Date(data.sys.sunrise * 1000).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
-                const sunset = new Date(data.sys.sunset * 1000).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
-                const updateTime = new Date(data.dt * 1000).toLocaleString('zh-CN');
+                const currentData = await currentResponse.json();
+                const temp = `${Math.round(currentData.main.temp)}°C`;
+                const humidity = `${currentData.main.humidity}%`;
+                const wind = `${currentData.wind.speed} m/s ${currentData.wind.deg}°`;
+                const rainfall = currentData.rain ? `${currentData.rain['1h'] || 0} mm` : '0 mm';
+                const extreme = currentData.weather[0].main.includes('Storm') ? '可能有风暴' : '无';
+                const sunrise = new Date(currentData.sys.sunrise * 1000).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+                const sunset = new Date(currentData.sys.sunset * 1000).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+                const updateTime = new Date(currentData.dt * 1000).toLocaleString('zh-CN');
 
                 document.getElementById('weather-temp').textContent = temp;
                 document.getElementById('weather-humidity').textContent = humidity;
@@ -177,23 +254,35 @@
                 document.getElementById('weather-sunset').textContent = sunset;
                 document.getElementById('weather-update-time').textContent = updateTime;
 
-                weatherLoading.style.display = 'none';
-                weatherData.style.display = 'block';
-            } catch (error) {
-                console.error('天气数据获取错误:', error.message);
-                weatherLoading.textContent = `无法加载天气数据：${error.message}`;
-            }
-        }
+                const forecastResponse = await fetch(forecastUrl);
+                if (!forecastResponse.ok) throw new Error('无法获取预报数据');
 
-        // 火烧云数据（手动更新，稍后提供替代方案）
-        function displayFireRainbowData() {
-            document.getElementById('fire-rainbow-loading').style.display = 'none';
-            document.getElementById('fire-rainbow-data').style.display = 'block';
-        }
+                const forecastData = await forecastResponse.json();
+                const hourlyData = forecastData.list.slice(0, 8);
 
-        // 初始化
-        fetchWeatherData();
-        displayFireRainbowData();
-    </script>
-</body>
-</html>
+                const labels = hourlyData.map(item => new Date(item.dt * 1000).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }));
+                const temperatures = hourlyData.map(item => Math.round(item.main.temp));
+
+                const ctx = document.getElementById('weather-chart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: '温度 (°C)',
+                            data: temperatures,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: { title: { display: true, text: '时间' } },
+                            y: { title: { display: true, text: '温度 (°C)' } }
+                        },
+                        plugins: {
+                            legend: { display: true },
+                            tooltip
