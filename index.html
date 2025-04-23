@@ -1,86 +1,239 @@
-// m3u8直播源数组
-const videoSources = [
-    { id: 'video1', url: 'http://play.zhihuiwenlvyun.com/live/shizifeng.m3u8' },
-    { id: 'video2', url: 'http://play.zhihuiwenlvyun.com/live/chaoyinpu.m3u8' },
-    { id: 'video3', url: 'http://play.zhihuiwenlvyun.com/live/taiqingwan.m3u8' },
-    { id: 'video4', url: 'http://play.zhihuiwenlvyun.com/live/jufengxiazhan.m3u8' },
-    { id: 'video5', url: 'http://play.zhihuiwenlvyun.com/live/shouzifeng.m3u8' },
-    { id: 'video6', url: 'http://play.zhihuiwenlvyun.com/live/lingqifeng.m3u8' },
-    { id: 'video7', url: 'http://play.zhihuiwenlvyun.com/live/erlongshan.m3u8' },
-    { id: 'video8', url: 'http://play.zhihuiwenlvyun.com/live/shanhaishengjing.m3u8' },
-    { id: 'video9', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/6cf6c074ce8070489151af48ad13ca71/1.m3u8' },
-    { id: 'video10', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/dba5f5df47dc14a9b08385b1c22faadf/1.m3u8' },
-    { id: 'video11', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/51d10523f0a1fdcda5c4223babe1682c/1.m3u8' },
-    { id: 'video12', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/e41ccb39c3292d868d6c72b66082a3f2/1.m3u8' },
-    { id: 'video13', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/833fddf8b8271df2cf38835d14a2a3a5/1.m3u8' },
-    { id: 'video14', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/8db708403e7ad9c1a00c539c703b8ae0/1.m3u8' },
-    { id: 'video15', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/eb43a644427fb8349dcee68178054782/1.m3u8' }
-];
-
-// 初始化每个视频播放器
-videoSources.forEach(source => {
-    const video = document.getElementById(source.id);
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>海蓝留言版</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        h1 { text-align: center; color: #333; }
+        .video-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .video-item {
+            text-align: center;
+        }
+        video {
+            width: 100%;
+            max-width: 250px;
+            height: auto;
+            border-radius: 5px;
+        }
+        .weather-container {
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 600px;
+            background: #f9f9f9;
+        }
+        .weather-container h2 {
+            margin: 0 0 15px;
+            color: #444;
+        }
+        .weather-container p {
+            margin: 8px 0;
+            font-size: 16px;
+        }
+        .weather-icon {
+            width: 50px;
+            height: 50px;
+            vertical-align: middle;
+        }
+        form {
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: center;
+        }
+        label { font-weight: bold; }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
+            background: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background: #0056b3;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>欢迎来到海蓝的留言版！</h1>
     
-    if (Hls.isSupported()) {
-        const hls = new Hls();
-        hls.loadSource(source.url);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.ERROR, (event, data) => {
-            if (data.fatal) {
-                console.error(`Error loading ${source.url}: ${data.details}`);
+    <!-- 直播窗口区域 -->
+    <div class="video-container">
+        <div class="video-item"><video id="video1" controls></video><p>仰口狮子峰</p></div>
+        <div class="video-item"><video id="video2" controls></video><p>北九水潮音瀑</p></div>
+        <div class="video-item"><video id="video3" controls></video><p>太清宫太清湾</p></div>
+        <div class="video-item"><video id="video4" controls></video><p>巨峰下站</p></div>
+        <div class="video-item"><video id="video5" controls></video><p>仰口寿字峰</p></div>
+        <div class="video-item"><video id="video6" controls></video><p>巨峰灵旗峰</p></div>
+        <div class="video-item"><video id="video7" controls></video><p>二龙山</p></div>
+        <div class="video-item"><video id="video8" controls></video><p>山海胜景</p></div>
+        <div class="video-item"><video id="video9" controls></video><p>太平湾畔</p></div>
+        <div class="video-item"><video id="video10" controls></video><p>奥帆中心</p></div>
+        <div class="video-item"><video id="video11" controls></video><p>五四广场</p></div>
+        <div class="video-item"><video id="video12" controls></video><p>胶宁高架银川西路</p></div>
+        <div class="video-item"><video id="video13" controls></video><p>胶宁高架福州路口</p></div>
+        <div class="video-item"><video id="video14" controls></video><p>快速路大润发南京路</p></div>
+        <div class="video-item"><video id="video15" controls></video><p>太平角海岬</p></div>
+    </div>
+
+    <!-- 天气信息区域 -->
+    <div class="weather-container">
+        <h2>青岛今日天气</h2>
+        <p id="location">加载中...</p>
+        <p id="weather-description"></p>
+        <p id="weather-icon"></p>
+        <p id="temperature"></p>
+        <p id="feelsンとlike"></p>
+        <p id="temp-min"></p>
+        <p id="temp-max"></p>
+        <p id="pressure"></p>
+        <p id="humidity"></p>
+        <p id="visibility"></p>
+        <p id="wind"></p>
+        <p id="wind-gust"></p>
+        <p id="clouds"></p>
+        <p id="sunrise"></p>
+        <p id="sunset"></p>
+    </div>
+
+    <!-- 留言表单 -->
+    <form action="https://formsubmit.co/1@yelano.com" method="POST">
+        <label for="name">姓名：</label>
+        <input type="text" id="name" name="name" required><br>
+        <label for="message">留言：</label><br>
+        <textarea id="message" name="message" rows="4" required></textarea><br>
+        <input type="submit" value="提交">
+    </form>
+
+    <footer>
+        <p>
+            <span>© 今天天气不错，一起约伴爬山，加我的微信【Treenjoy】</span>
+            <a href="https://beian.miit.gov.cn/" target="_blank" rel="noreferrer noopener">
+                浙ICP备2020032421号
+            </a>
+        </p>
+    </footer>
+
+    <!-- 引入HLS.js -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script>
+        // m3u8直播源数组
+        const videoSources = [
+            { id: 'video1', url: 'http://play.zhihuiwenlvyun.com/live/shizifeng.m3u8' },
+            { id: 'video2', url: 'http://play.zhihuiwenlvyun.com/live/chaoyinpu.m3u8' },
+            { id: 'video3', url: 'http://play.zhihuiwenlvyun.com/live/taiqingwan.m3u8' },
+            { id: 'video4', url: 'http://play.zhihuiwenlvyun.com/live/jufengxiazhan.m3u8' },
+            { id: 'video5', url: 'http://play.zhihuiwenlvyun.com/live/shouzifeng.m3u8' },
+            { id: 'video6', url: 'http://play.zhihuiwenlvyun.com/live/lingqifeng.m3u8' },
+            { id: 'video7', url: 'http://play.zhihuiwenlvyun.com/live/erlongshan.m3u8' },
+            { id: 'video8', url: 'http://play.zhihuiwenlvyun.com/live/shanhaishengjing.m3u8' },
+            { id: 'video9', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/6cf6c074ce8070489151af48ad13ca71/1.m3u8' },
+            { id: 'video10', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/dba5f5df47dc14a9b08385b1c22faadf/1.m3u8' },
+            { id: 'video11', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/51d10523f0a1fdcda5c4223babe1682c/1.m3u8' },
+            { id: 'video12', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/e41ccb39c3292d868d6c72b66082a3f2/1.m3u8' },
+            { id: 'video13', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/833fddf8b8271df2cf38835d14a2a3a5/1.m3u8' },
+            { id: 'video14', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/8db708403e7ad9c1a00c539c703b8ae0/1.m3u8' },
+            { id: 'video15', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/eb43a644427fb8349dcee68178054782/1.m3u8' }
+        ];
+
+        // 初始化视频播放器
+        videoSources.forEach(source => {
+            const video = document.getElementById(source.id);
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(source.url);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.ERROR, (event, data) => {
+                    if (data.fatal) console.error(`视频加载失败 ${source.url}: ${data.details}`);
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = source.url;
+                video.addEventListener('error', () => console.error(`原生HLS错误 ${source.url}`));
             }
         });
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = source.url;
-        video.addEventListener('error', () => {
-            console.error(`Native HLS error for ${source.url}`);
-        });
-    }
-});
 
-// 获取青岛天气数据（QWeather API）
-fetch('https://mv5n8k7max.re.qweatherapi.com/v7/weather/now?location=101120201&key=6c6631dbef6f4d2393574cc5d327178f')
-    .then(response => response.json())
-    .then(data => {
-        if (data.code !== '200') {
-            throw new Error(`QWeather API error: ${data.code}`);
-        }
+        // 获取青岛天气数据（和风天气API）
+        const apiBase = 'https://mv5n8k7max.re.qweatherapi.com/v7/weather';
+        const apiKey = '6c6631dbef6f4d2393574cc5d327178f';
+        const location = '101120201'; // 青岛地点ID
 
-        const location = document.getElementById('location');
-        const description = document.getElementById('weather-description');
-        const weatherIcon = document.getElementById('weather-icon');
-        const temperature = document.getElementById('temperature');
-        const feelsLike = document.getElementById('feels-like');
-        const tempMin = document.getElementById('temp-min');
-        const tempMax = document.getElementById('temp-max');
-        const pressure = document.getElementById('pressure');
-        const humidity = document.getElementById('humidity');
-        const visibility = document.getElementById('visibility');
-        const wind = document.getElementById('wind');
-        const windGust = document.getElementById('wind-gust');
-        const clouds = document.getElementById('clouds');
-        const sunrise = document.getElementById('sunrise');
-        const sunset = document.getElementById('sunset');
+        // 获取DOM元素
+        const elements = {
+            location: document.getElementById('location'),
+            description: document.getElementById('weather-description'),
+            weatherIcon: document.getElementById('weather-icon'),
+            temperature: document.getElementById('temperature'),
+            feelsLike: document.getElementById('feels-like'),
+            tempMin: document.getElementById('temp-min'),
+            tempMax: document.getElementById('temp-max'),
+            pressure: document.getElementById('pressure'),
+            humidity: document.getElementById('humidity'),
+            visibility: document.getElementById('visibility'),
+            wind: document.getElementById('wind'),
+            windGust: document.getElementById('wind-gust'),
+            clouds: document.getElementById('clouds'),
+            sunrise: document.getElementById('sunrise'),
+            sunset: document.getElementById('sunset')
+        };
 
-        // QWeather doesn't provide min/max temp or sunrise/sunset in the "now" API, so these will be placeholders
-        // You can fetch them from the QWeather 7-day forecast API if needed
-        location.textContent = `地区：青岛, 中国`;
-        description.textContent = `天气：${data.now.text}`;
-        weatherIcon.innerHTML = `<img src="https://a.hecdn.net/img/weather/icon/v3/${data.now.icon}.png" class="weather-icon" alt="Weather Icon">`;
-        temperature.textContent = `当前温度：${data.now.temp} °C`;
-        feelsLike.textContent = `体感温度：${data.now.feelsLike} °C`;
-        tempMin.textContent = `最低温度：无数据`;
-        tempMax.textContent = `最高温度：无数据`;
-        pressure.textContent = `气压：${data.now.pressure} hPa`;
-        humidity.textContent = `湿度：${data.now.humidity}%`;
-        visibility.textContent = `能见度：${data.now.vis} 公里`;
-        wind.textContent = `风速：${data.now.windSpeed} km/h，方向：${data.now.windDir}`;
-        windGust.textContent = `阵风：无数据`;
-        clouds.textContent = `云量：${data.now.cloud || '0'}%`;
-        sunrise.textContent = `日出：无数据`;
-        sunset.textContent = `日落：无数据`;
-    })
-    .catch(error => {
-        console.error('Error fetching weather data:', error);
-        document.getElementById('location').textContent = '无法加载天气数据';
-    });
+        // 错误处理函数
+        const handleError = (error) => {
+            console.error('天气数据加载失败:', error);
+            elements.location.textContent = '无法加载天气数据';
+        };
+
+        // 同时获取实时天气和每日天气
+        Promise.all([
+            fetch(`${apiBase}/now?location=${location}&key=${apiKey}`).then(res => res.json()),
+            fetch(`${apiBase}/7d?location=${location}&key=${apiKey}`).then(res => res.json())
+        ])
+        .then(([nowData, dailyData]) => {
+            if (nowData.code !== '200' || dailyData.code !== '200') {
+                throw new Error(`API错误: 实时天气 ${nowData.code}, 每日天气 ${dailyData.code}`);
+            }
+
+            // 实时天气数据
+            const now = nowData.now;
+            const today = dailyData.daily[0]; // 今日天气
+
+            elements.location.textContent = `地区：青岛，中国`;
+            elements.description.textContent = `天气状况：${now.text}`;
+            elements.weatherIcon.innerHTML = `<img src="https://a.hecdn.net/img/weather/icon/v3/${now.icon}.png" class="weather-icon" alt="天气图标">`;
+            elements.temperature.textContent = `当前温度：${now.temp} °C`;
+            elements.feelsLike.textContent = `体感温度：${now.feelsLike} °C`;
+            elements.tempMin.textContent = `最低温度：${today.tempMin} °C`;
+            elements.tempMax.textContent = `最高温度：${today.tempMax} °C`;
+            elements.pressure.textContent = `气压：${now.pressure} hPa`;
+            elements.humidity.textContent = `湿度：${now.humidity}%`;
+            elements.visibility.textContent = `能见度：${now.vis} 公里`;
+            elements.wind.textContent = `风速：${now.windSpeed} 公里/小时，方向：${now.windDir}`;
+            elements.windGust.textContent = `阵风：无数据`; // 和风无阵风数据
+            elements.clouds.textContent = `云量：${now.cloud || '0'}%`;
+            elements.sunrise.textContent = `日出：${today.sunrise}`;
+            elements.sunset.textContent = `日落：${today.sunset}`;
+        })
+        .catch(handleError);
+    </script>
+</body>
+</html>
