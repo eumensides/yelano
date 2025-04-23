@@ -1,319 +1,86 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>留言版</title>
-    <style>
-        .video-container {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
-            margin: 20px 0;
-        }
-        .video-item {
-            text-align: center;
-        }
-        video {
-            width: 100%;
-            max-width: 250px;
-            height: auto;
-        }
-        .weather-container, .tide-container {
-            margin: 20px 0;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            text-align: center;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .weather-container h2, .tide-container h2 {
-            margin: 0 0 10px;
-        }
-        .weather-container p, .tide-container p {
-            margin: 5px 0;
-        }
-        .weather-icon {
-            width: 50px;
-            height: 50px;
-            vertical-align: middle;
-        }
-    </style>
-</head>
-<body>
-    <h1>欢迎来到1的留言版!</h1>
+// m3u8直播源数组
+const videoSources = [
+    { id: 'video1', url: 'http://play.zhihuiwenlvyun.com/live/shizifeng.m3u8' },
+    { id: 'video2', url: 'http://play.zhihuiwenlvyun.com/live/chaoyinpu.m3u8' },
+    { id: 'video3', url: 'http://play.zhihuiwenlvyun.com/live/taiqingwan.m3u8' },
+    { id: 'video4', url: 'http://play.zhihuiwenlvyun.com/live/jufengxiazhan.m3u8' },
+    { id: 'video5', url: 'http://play.zhihuiwenlvyun.com/live/shouzifeng.m3u8' },
+    { id: 'video6', url: 'http://play.zhihuiwenlvyun.com/live/lingqifeng.m3u8' },
+    { id: 'video7', url: 'http://play.zhihuiwenlvyun.com/live/erlongshan.m3u8' },
+    { id: 'video8', url: 'http://play.zhihuiwenlvyun.com/live/shanhaishengjing.m3u8' },
+    { id: 'video9', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/6cf6c074ce8070489151af48ad13ca71/1.m3u8' },
+    { id: 'video10', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/dba5f5df47dc14a9b08385b1c22faadf/1.m3u8' },
+    { id: 'video11', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/51d10523f0a1fdcda5c4223babe1682c/1.m3u8' },
+    { id: 'video12', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/e41ccb39c3292d868d6c72b66082a3f2/1.m3u8' },
+    { id: 'video13', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/833fddf8b8271df2cf38835d14a2a3a5/1.m3u8' },
+    { id: 'video14', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/8db708403e7ad9c1a00c539c703b8ae0/1.m3u8' },
+    { id: 'video15', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/eb43a644427fb8349dcee68178054782/1.m3u8' }
+];
+
+// 初始化每个视频播放器
+videoSources.forEach(source => {
+    const video = document.getElementById(source.id);
     
-    <!-- 直播窗口区域 -->
-    <div class="video-container">
-        <div class="video-item">
-            <video id="video1" controls></video>
-            <p>仰口狮子峰</p>
-        </div>
-        <div class="video-item">
-            <video id="video2" controls></video>
-            <p>北九水潮音瀑</p>
-        </div>
-        <div class="video-item">
-            <video id="video3" controls></video>
-            <p>太清宫太清湾</p>
-        </div>
-        <div class="video-item">
-            <video id="video4" controls></video>
-            <p>巨峰下站</p>
-        </div>
-        <div class="video-item">
-            <video id="video5" controls></video>
-            <p>仰口寿字峰</p>
-        </div>
-        <div class="video-item">
-            <video id="video6" controls></video>
-            <p>巨峰灵旗峰</p>
-        </div>
-        <div class="video-item">
-            <video id="video7" controls></video>
-            <p>二龙山</p>
-        </div>
-        <div class="video-item">
-            <video id="video8" controls></video>
-            <p>山海胜景</p>
-        </div>
-        <div class="video-item">
-            <video id="video9" controls></video>
-            <p>太平湾畔</p>
-        </div>
-        <div class="video-item">
-            <video id="video10" controls></video>
-            <p>奥帆中心</p>
-        </div>
-        <div class="video-item">
-            <video id="video11" controls></video>
-            <p>五四广场</p>
-        </div>
-        <div class="video-item">
-            <video id="video12" controls></video>
-            <p>胶宁高架银川西路</p>
-        </div>
-        <div class="video-item">
-            <video id="video13" controls></video>
-            <p>胶宁高架福州路口</p>
-        </div>
-        <div class="video-item">
-            <video id="video14" controls></video>
-            <p>快速路大润发南京路</p>
-        </div>
-        <div class="video-item">
-            <video id="video15" controls></video>
-            <p>太平角海岬</p>
-        </div>
-    </div>
-
-    <!-- 天气信息区域 -->
-    <div class="weather-container">
-        <h2>青岛今日天气</h2>
-        <p id="date">加载中...</p>
-        <p id="lunar-date"></p>
-        <p id="location"></p>
-        <p id="weather-description"></p>
-        <p id="weather-icon"></p>
-        <p id="temperature"></p>
-        <p id="feels-like"></p>
-        <p id="pressure"></p>
-        <p id="humidity"></p>
-        <p id="visibility"></p>
-        <p id="wind"></p>
-        <p id="wind-gust"></p>
-        <p id="clouds"></p>
-        <p id="sunrise"></p>
-        <p id="sunset"></p>
-        <p id="fire-rainbow"></p>
-    </div>
-
-    <!-- 潮汐信息区域 -->
-    <div class="tide-container">
-        <h2>青岛今日潮汐与赶海建议</h2>
-        <p id="tide-status">加载中...</p>
-        <p id="tide-times"></p>
-        <p id="catch-sea"></p>
-    </div>
-
-    <!-- 留言表单 -->
-    <form action="https://formsubmit.co/1@yelano.com" method="POST">
-        <label for="name">姓名：</label>
-        <input type="text" id="name" name="name" required><br><br>
-        <label for="message">留言：</label><br>
-        <textarea id="message" name="message" rows="4" required></textarea><br><br>
-        <input type="submit" value="提交">
-    </form>
-
-    <footer>
-        <p>
-            <span>© 2025 Yelano 版权所有</span>
-            <a href="https://beian.miit.gov.cn/" 
-               target="_blank" 
-               rel="noreferrer noopener">
-                浙ICP备2020032421号
-            </a>
-        </p>
-    </footer>
-
-    <!-- 引入HLS.js -->
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <script>
-        // m3u8直播源数组
-        const videoSources = [
-            { id: 'video1', url: 'http://play.zhihuiwenlvyun.com/live/shizifeng.m3u8' },
-            { id: 'video2', url: 'http://play.zhihuiwenlvyun.com/live/chaoyinpu.m3u8' },
-            { id: 'video3', url: 'http://play.zhihuiwenlvyun.com/live/taiqingwan.m3u8' },
-            { id: 'video4', url: 'http://play.zhihuiwenlvyun.com/live/jufengxiazhan.m3u8' },
-            { id: 'video5', url: 'http://play.zhihuiwenlvyun.com/live/shouzifeng.m3u8' },
-            { id: 'video6', url: 'http://play.zhihuiwenlvyun.com/live/lingqifeng.m3u8' },
-            { id: 'video7', url: 'http://play.zhihuiwenlvyun.com/live/erlongshan.m3u8' },
-            { id: 'video8', url: 'http://play.zhihuiwenlvyun.com/live/shanhaishengjing.m3u8' },
-            { id: 'video9', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/6cf6c074ce8070489151af48ad13ca71/1.m3u8' },
-            { id: 'video10', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/dba5f5df47dc14a9b08385b1c22faadf/1.m3u8' },
-            { id: 'video11', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/51d10523f0a1fdcda5c4223babe1682c/1.m3u8' },
-            { id: 'video12', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/e41ccb39c3292d868d6c72b66082a3f2/1.m3u8' },
-            { id: 'video13', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/833fddf8b8271df2cf38835d14a2a3a5/1.m3u8' },
-            { id: 'video14', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/8db708403e7ad9c1a00c539c703b8ae0/1.m3u8' },
-            { id: 'video15', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/eb43a644427fb8349dcee68178054782/1.m3u8' }
-        ];
-
-        // 初始化每个视频播放器
-        videoSources.forEach(source => {
-            const video = document.getElementById(source.id);
-            if (Hls.isSupported()) {
-                const hls = new Hls();
-                hls.loadSource(source.url);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.ERROR, (event, data) => {
-                    if (data.fatal) {
-                        console.error(`Error loading ${source.url}: ${data.details}`);
-                    }
-                });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = source.url;
-                video.addEventListener('error', () => {
-                    console.error(`Native HLS error for ${source.url}`);
-                });
+    if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(source.url);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.ERROR, (event, data) => {
+            if (data.fatal) {
+                console.error(`Error loading ${source.url}: ${data.details}`);
             }
         });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = source.url;
+        video.addEventListener('error', () => {
+            console.error(`Native HLS error for ${source.url}`);
+        });
+    }
+});
 
-        // 获取阳历和阴历日期
-        const today = new Date();
-        document.getElementById('date').textContent = `阳历：${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`;
-        const tideDate = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
-        
-        // 获取阴历数据（使用QWeather API）
-        fetch(`https://mv5n8k7max.re.qweatherapi.com/v7/historical/daily?location=P2951&date=${tideDate}&key=6c6631dbef6f4d2393574cc5d327178f`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.code !== '200') {
-                    throw new Error(`Lunar API error: ${data.code}`);
-                }
-                const lunar = data.daily[0].lunar;
-                document.getElementById('lunar-date').textContent = `阴历：${lunar.year}年${lunar.month}${lunar.day}`;
-            })
-            .catch(error => {
-                console.error('Error fetching lunar data:', error);
-                document.getElementById('lunar-date').textContent = '无法加载阴历数据';
-            });
+// 获取青岛天气数据（QWeather API）
+fetch('https://mv5n8k7max.re.qweatherapi.com/v7/weather/now?location=101120201&key=6c6631dbef6f4d2393574cc5d327178f')
+    .then(response => response.json())
+    .then(data => {
+        if (data.code !== '200') {
+            throw new Error(`QWeather API error: ${data.code}`);
+        }
 
-        // 获取青岛天气数据
-        fetch('https://api.openweathermap.org/data/2.5/weather?q=Qingdao&appid=554f1703f14566f84382895cc93568eb&units=metric')
-            .then(response => response.json())
-            .then(data => {
-                const location = document.getElementById('location');
-                const description = document.getElementById('weather-description');
-                const weatherIcon = document.getElementById('weather-icon');
-                const temperature = document.getElementById('temperature');
-                const feelsLike = document.getElementById('feels-like');
-                const pressure = document.getElementById('pressure');
-                const humidity = document.getElementById('humidity');
-                const visibility = document.getElementById('visibility');
-                const wind = document.getElementById('wind');
-                const windGust = document.getElementById('wind-gust');
-                const clouds = document.getElementById('clouds');
-                const sunrise = document.getElementById('sunrise');
-                const sunset = document.getElementById('sunset');
-                const fireRainbow = document.getElementById('fire-rainbow');
+        const location = document.getElementById('location');
+        const description = document.getElementById('weather-description');
+        const weatherIcon = document.getElementById('weather-icon');
+        const temperature = document.getElementById('temperature');
+        const feelsLike = document.getElementById('feels-like');
+        const tempMin = document.getElementById('temp-min');
+        const tempMax = document.getElementById('temp-max');
+        const pressure = document.getElementById('pressure');
+        const humidity = document.getElementById('humidity');
+        const visibility = document.getElementById('visibility');
+        const wind = document.getElementById('wind');
+        const windGust = document.getElementById('wind-gust');
+        const clouds = document.getElementById('clouds');
+        const sunrise = document.getElementById('sunrise');
+        const sunset = document.getElementById('sunset');
 
-                const sunriseTime = new Date(data.sys.sunrise * 1000).toLocaleTimeString('zh-CN');
-                const sunsetTime = new Date(data.sys.sunset * 1000).toLocaleTimeString('zh-CN');
-                const windDirection = degToDirection(data.wind.deg);
-                const fireRainbowProbability = calculateFireRainbowProbability(data.clouds.all, data.main.humidity, data.wind.speed);
-
-                location.textContent = `地区：${data.name}, ${data.sys.country}`;
-                description.textContent = `天气：${data.weather[0].description}`;
-                weatherIcon.innerHTML = `<img src="http://openweathermap.org/img/wn/${data.weather[0].icon}.png" class="weather-icon" alt="Weather Icon">`;
-                temperature.textContent = `当前温度：${data.main.temp} °C`;
-                feelsLike.textContent = `体感温度：${data.main.feels_like} °C`;
-                pressure.textContent = `气压：${data.main.pressure} hPa`;
-                humidity.textContent = `湿度：${data.main.humidity}%`;
-                visibility.textContent = `能见度：${data.visibility / 1000} 公里`;
-                wind.textContent = `风速：${data.wind.speed} m/s，方向：${windDirection}`;
-                windGust.textContent = `阵风：${data.wind.gust || '无数据'} m/s`;
-                clouds.textContent = `云量：${data.clouds.all}%`;
-                sunrise.textContent = `日出：${sunriseTime}`;
-                sunset.textContent = `日落：${sunsetTime}`;
-                fireRainbow.textContent = `火烧云概率：${fireRainbowProbability}%`;
-            })
-            .catch(error => {
-                console.error('Error fetching weather data:', error);
-                document.getElementById('location').textContent = '无法加载天气数据';
-            });
-
-        // 获取青岛潮汐数据（使用QWeather API）
-        fetch(`https://mv5n8k7max.re.qweatherapi.com/v7/ocean/tide?location=P2951&date=${tideDate}&key=6c6631dbef6f4d2393574cc5d327178f`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.code !== '200') {
-                    throw new Error(`Tide API error: ${data.code}`);
-                }
-                console.log('QWeather Tide Data:', data.tideTable); // 调试：输出原始潮汐数据
-                const tideStatus = `今日潮汐（${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日）：`;
-                const tideTimes = data.tideTable.map(t => ({
-                    type: t.type === 'L' ? '低潮' : '高潮',
-                    time: new Date(t.fxTime).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }),
-                    height: `${t.height} m`
-                }));
-                document.getElementById('tide-status').textContent = tideStatus;
-                document.getElementById('tide-times').textContent = `潮汐时间：${tideTimes.map(t => `${t.type} ${t.time} (${t.height})`).join(', ')}`;
-                
-                // 获取阴历日期用于赶海建议
-                fetch(`https://mv5n8k7max.re.qweatherapi.com/v7/historical/daily?location=P2951&date=${tideDate}&key=6c6631dbef6f4d2393574cc5d327178f`)
-                    .then(response => response.json())
-                    .then(lunarData => {
-                        if (lunarData.code !== '200') {
-                            throw new Error(`Lunar API error: ${lunarData.code}`);
-                        }
-                        const lunar = lunarData.daily[0].lunar;
-                        const lunarDay = parseLunarDay(lunar.day);
-                        const catchSeaAdvice = calculateCatchSeaAdvice(lunarDay, lunar.month + lunar.day, tideTimes);
-                        document.getElementById('catch-sea').textContent = catchSeaAdvice;
-                    })
-                    .catch(error => {
-                        console.error('Error fetching lunar data for tide:', error);
-                        document.getElementById('catch-sea').textContent = '无法加载赶海建议';
-                    });
-            })
-            .catch(error => {
-                console.error('Error fetching tide data:', error);
-                document.getElementById('tide-status').textContent = '无法加载潮汐数据';
-            });
-
-        // 备用：WorldTides API（若QWeather数据不准确，取消注释并替换密钥）
-        /*
-        fetch('https://www.worldtides.info/api/v3?extremes&lat=36.0986&lon=120.3719&key=<your_worldtides_key>')
-            .then(response => response.json())
-            .then(data => {
-                console.log('WorldTides Data:', data.extremes); // 调试：输出原始潮汐数据
-                const tideStatus = `今日潮汐（${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日）：`;
-                const tideTimes = data.extremes.map(t => ({
-                    type: t.type === 'Low' ? '低潮' : '高潮',
-                    time: new Date(t.time).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }),
-                    height: `${t.height} m`
-                }));
-                document.getElementById('tide-status').textContent = tideStatus;
-                document.getElementById('tide-times').textContent = `潮汐时间：${tideTimes.map(t => `${t.type} ${t.time} (${t.height
+        // QWeather doesn't provide min/max temp or sunrise/sunset in the "now" API, so these will be placeholders
+        // You can fetch them from the QWeather 7-day forecast API if needed
+        location.textContent = `地区：青岛, 中国`;
+        description.textContent = `天气：${data.now.text}`;
+        weatherIcon.innerHTML = `<img src="https://a.hecdn.net/img/weather/icon/v3/${data.now.icon}.png" class="weather-icon" alt="Weather Icon">`;
+        temperature.textContent = `当前温度：${data.now.temp} °C`;
+        feelsLike.textContent = `体感温度：${data.now.feelsLike} °C`;
+        tempMin.textContent = `最低温度：无数据`;
+        tempMax.textContent = `最高温度：无数据`;
+        pressure.textContent = `气压：${data.now.pressure} hPa`;
+        humidity.textContent = `湿度：${data.now.humidity}%`;
+        visibility.textContent = `能见度：${data.now.vis} 公里`;
+        wind.textContent = `风速：${data.now.windSpeed} km/h，方向：${data.now.windDir}`;
+        windGust.textContent = `阵风：无数据`;
+        clouds.textContent = `云量：${data.now.cloud || '0'}%`;
+        sunrise.textContent = `日出：无数据`;
+        sunset.textContent = `日落：无数据`;
+    })
+    .catch(error => {
+        console.error('Error fetching weather data:', error);
+        document.getElementById('location').textContent = '无法加载天气数据';
+    });
