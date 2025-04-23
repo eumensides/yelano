@@ -43,7 +43,7 @@
     </style>
 </head>
 <body>
-    <h1>欢迎来到我的留言版!</h1>
+    <h1>欢迎来到海蓝的留言版!</h1>
     
     <!-- 直播窗口区域 -->
     <div class="video-container">
@@ -149,7 +149,7 @@
 
     <footer>
         <p>
-            <span>© 2025 Yelano 版权所有</span>
+            <span>© 今天如果天气不错，一起约伴爬山，我的微信号Treenjoy</span>
             <a href="https://beian.miit.gov.cn/" 
                target="_blank" 
                rel="noreferrer noopener">
@@ -260,7 +260,7 @@
 
         // 获取青岛潮汐数据（使用QWeather API）
         const tideDate = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
-        fetch(`https://mv5n8k7max.re.qweatherapi.com/v7/ocean/tide?location=P2951&date=${tideDate}&key=<your_key>`)
+        fetch(`https://mv5n8k7max.re.qweatherapi.com/v7/ocean/tide?location=P2951&date=${tideDate}&key=<6c6631dbef6f4d2393574cc5d327178f>`)
             .then(response => response.json())
             .then(data => {
                 const tideStatus = `今日潮汐（${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日）：`;
