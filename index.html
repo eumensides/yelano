@@ -40,6 +40,18 @@
             height: 50px;
             vertical-align: middle;
         }
+        /* 新增友情链接样式 */
+        .friend-links {
+            margin-top: 10px;
+        }
+        .friend-links a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #007bff;
+        }
+        .friend-links a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -121,8 +133,7 @@
         <p id="weather-icon"></p>
         <p id="temperature"></p>
         <p id="feels-like"></p>
-        <p id="temp-min"></p>
-        <p id="temp-max"></p>
+        <!-- 移除最低温度和最高温度 -->
         <p id="pressure"></p>
         <p id="humidity"></p>
         <p id="visibility"></p>
@@ -146,12 +157,16 @@
 
     <footer>
         <p>
-            <span>© 今天天气不错，一起约伴爬山，加我的微信【Treenjoy】</span>
-            <a href="https://beian.miit.gov.cn/" 
-               target="_blank" 
-               rel="noreferrer noopener">
-                浙ICP备2020032421号
-            </a>
+            <span>© 朝而往，暮而归，四时之景不同，而乐意无穷也，我的微信Treenjoy】</span>
+         
+        </p>
+        <!-- 新增友情链接 -->
+        <p class="friend-links">
+            友情链接：
+            <a href="https://sunsetbot.top/" target="_blank" rel="noreferrer noopener">火烧云</a>
+            <a href="https://www.skylinewebcams.com/zh/webcam/china/shandong/qingdao/qingdao.html" target="_blank" rel="noreferrer noopener">跨海大桥</a>
+            <a href="https://typhoon.nmc.cn/web.html" target="_blank" rel="noreferrer noopener">台风</a>
+            <a href="https://www.chaoxb.com/46" target="_blank" rel="noreferrer noopener">潮汐</a>
         </p>
     </footer>
 
@@ -208,8 +223,6 @@
                 const weatherIcon = document.getElementById('weather-icon');
                 const temperature = document.getElementById('temperature');
                 const feelsLike = document.getElementById('feels-like');
-                const tempMin = document.getElementById('temp-min');
-                const tempMax = document.getElementById('temp-max');
                 const pressure = document.getElementById('pressure');
                 const humidity = document.getElementById('humidity');
                 const visibility = document.getElementById('visibility');
@@ -231,8 +244,6 @@
                 weatherIcon.innerHTML = `<img src="http://openweathermap.org/img/wn/${data.weather[0].icon}.png" class="weather-icon" alt="Weather Icon">`;
                 temperature.textContent = `当前温度：${data.main.temp} °C`;
                 feelsLike.textContent = `体感温度：${data.main.feels_like} °C`;
-                tempMin.textContent = `最低温度：${data.main.temp_min} °C`;
-                tempMax.textContent = `最高温度：${data.main.temp_max} °C`;
                 pressure.textContent = `气压：${data.main.pressure} hPa`;
                 humidity.textContent = `湿度：${data.main.humidity}%`;
                 visibility.textContent = `能见度：${data.visibility / 1000} 公里`;
