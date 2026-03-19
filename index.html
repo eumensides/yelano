@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="海蓝的留言版，提供青岛实时直播、天气信息及留言功能。">
     
-    <!-- ===== 微信朋友圈分享缩略图 已配置 ===== -->
+    <!-- 微信朋友圈分享缩略图 -->
     <meta property="og:title" content="山海观 - 海蓝">
     <meta property="og:description" content="海蓝的留言版，提供青岛实时直播、天气信息及留言功能。">
     <meta property="og:image" content="https://raw.githubusercontent.com/eumensides/yelano/refs/heads/main/300_300.jpg">
-    <meta property="og:url" content="你的网站地址">
+    <meta property="og:url" content="https://你的域名/">
     <meta property="og:type" content="website">
     
     <title>山海观 - 海蓝</title>
@@ -19,7 +19,7 @@
             font-family: Arial, sans-serif;
             margin: 0 auto;
             max-width: 1200px;
-            padding: 20px;
+            padding: 20px 20px 80px 20px; /* 底部留出音乐播放器空间 */
         }
 
         /* 视频容器样式 */
@@ -110,18 +110,30 @@
             padding-top: 10px;
             border-top: 1px solid #eee;
         }
+
+        /* 网易云音乐播放器 固定底部 */
+        .music-player {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            background: #fff;
+            z-index: 999;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body>
 
-    <!-- ===== 微信分享用隐藏缩略图（不影响页面）===== -->
+    <!-- 微信分享隐藏图 -->
     <div style="position:absolute;left:-9999px;top:0;width:300px;height:300px;">
         <img src="https://raw.githubusercontent.com/eumensides/yelano/refs/heads/main/300_300.jpg" alt="分享图">
     </div>
 
     <h1>好客青岛&大美崂山欢迎您!</h1>
     
-    <!-- 直播窗口区域（已删除第10、16个视频） -->
+    <!-- 直播窗口区域 -->
     <div class="video-container">
         <div class="video-item">
             <video id="video1" controls aria-label="仰口狮子峰直播"></video>
@@ -230,10 +242,21 @@
         </p>
     </footer>
 
+    <!-- 网易云音乐歌单播放器 固定底部 自动播放 -->
+    <div class="music-player">
+        <iframe 
+            src="https://music.163.com/outchain/player?type=0&id=12641098226&auto=1&height=66" 
+            width="330" 
+            height="66" 
+            frameborder="0" 
+            scrolling="no">
+        </iframe>
+    </div>
+
     <!-- 引入HLS.js -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.12/dist/hls.min.js"></script>
     <script>
-        // m3u8直播源数组（已删除第10、16个视频，第1-9个链接添加2026后缀）
+        // m3u8直播源数组
         const videoSources = [
             { id: 'video1', url: 'http://play.zhihuiwenlvyun.com/live/shizifeng2026.m3u8', name: '仰口狮子峰' },
             { id: 'video2', url: 'http://play.zhihuiwenlvyun.com/live/chaoyinpu2026.m3u8', name: '北九水潮音瀑' },
@@ -254,10 +277,7 @@
         // 初始化视频播放器
         videoSources.forEach(source => {
             const video = document.getElementById(source.id);
-            if (!video) {
-                console.error(`Video element with ID ${source.id} not found.`);
-                return;
-            }
+            if (!video) return;
 
             if (Hls.isSupported()) {
                 const hls = new Hls();
@@ -265,18 +285,15 @@
                 hls.attachMedia(video);
                 hls.on(Hls.Events.ERROR, (event, data) => {
                     if (data.fatal) {
-                        console.error(`Fatal HLS error for ${source.name} (${source.url}): ${data.details}`);
                         video.poster = 'https://via.placeholder.com/250x150?text=加载失败';
                     }
                 });
             } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                 video.src = source.url;
                 video.addEventListener('error', () => {
-                    console.error(`Native HLS error for ${source.name} (${source.url})`);
                     video.poster = 'https://via.placeholder.com/250x150?text=加载失败';
                 });
             } else {
-                console.error(`HLS not supported for ${source.name}.`);
                 video.poster = 'https://via.placeholder.com/250x150?text=不支持HLS';
             }
         });
@@ -284,9 +301,7 @@
         // 获取青岛天气数据
         fetch('https://api.openweathermap.org/data/2.5/weather?q=Qingdao&appid=554f1703f14566f84382895cc93568eb&units=metric')
             .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                 return response.json();
             })
             .then(data => {
@@ -306,14 +321,10 @@
                     sunset: document.getElementById('sunset')
                 };
 
-                // 转换时间戳为本地时间
                 const sunriseTime = new Date(data.sys.sunrise * 1000).toLocaleTimeString('zh-CN');
                 const sunsetTime = new Date(data.sys.sunset * 1000).toLocaleTimeString('zh-CN');
-
-                // 转换风向角度为方向
                 const windDirection = degToDirection(data.wind.deg);
 
-                // 更新天气信息
                 elements.location.textContent = `地区：${data.name}, ${data.sys.country}`;
                 elements.description.textContent = `天气：${data.weather[0].description}`;
                 elements.weatherIcon.innerHTML = `<img src="http://openweathermap.org/img/wn/${data.weather[0].icon}.png" class="weather-icon" alt="${data.weather[0].description}">`;
@@ -333,7 +344,6 @@
                 document.getElementById('location').textContent = '无法加载天气数据，请稍后重试';
             });
 
-        // 辅助函数：将风向角度转换为方向
         function degToDirection(deg) {
             const directions = ['北', '东北偏北', '东北', '东北偏东', '东', '东南偏东', '东南', '东南偏南', 
                                 '南', '西南偏南', '西南', '西南偏西', '西', '西北偏西', '西北', '西北偏北'];
