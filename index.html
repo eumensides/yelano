@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="海蓝的留言版，提供青岛实时直播、天气信息及留言功能。">
+    
+    <!-- ===== 微信朋友圈分享缩略图 已配置 ===== -->
+    <meta property="og:title" content="山海观 - 海蓝">
+    <meta property="og:description" content="海蓝的留言版，提供青岛实时直播、天气信息及留言功能。">
+    <meta property="og:image" content="https://raw.githubusercontent.com/eumensides/yelano/refs/heads/main/300_300.jpg">
+    <meta property="og:url" content="你的网站地址">
+    <meta property="og:type" content="website">
+    
     <title>山海观 - 海蓝</title>
     <style>
         /* 全局样式 */
@@ -105,6 +113,12 @@
     </style>
 </head>
 <body>
+
+    <!-- ===== 微信分享用隐藏缩略图（不影响页面）===== -->
+    <div style="position:absolute;left:-9999px;top:0;width:300px;height:300px;">
+        <img src="https://raw.githubusercontent.com/eumensides/yelano/refs/heads/main/300_300.jpg" alt="分享图">
+    </div>
+
     <h1>好客青岛&大美崂山欢迎您!</h1>
     
     <!-- 直播窗口区域（已删除第10、16个视频） -->
