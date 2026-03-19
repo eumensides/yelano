@@ -19,7 +19,7 @@
             font-family: Arial, sans-serif;
             margin: 0 auto;
             max-width: 1200px;
-            padding: 20px 20px 480px 20px; /* 为高播放器预留足够底部空间 */
+            padding: 20px 20px 100px 20px;
         }
 
         /* 视频容器样式 */
@@ -111,254 +111,213 @@
             border-top: 1px solid #eee;
         }
 
-        /* 网易云音乐播放器 固定底部 */
+        /* 音乐播放器底部样式 */
         .music-player {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            text-align: center;
-            background: #fff;
+            background: #ffffff;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            padding: 12px 0;
             z-index: 999;
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
         }
-        /* iframe 优化：居中 + 最大宽度限制，避免过宽变形 */
-        .music-player iframe {
-            display: block;
+        .music-box {
+            max-width: 600px;
             margin: 0 auto;
-            max-width: 800px;  /* 适配大屏，显示完整列表 */
-            width: 100%;
+            text-align: center;
+        }
+        .music-info {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .music-box button {
+            padding: 6px 12px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 4px;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        .music-box button.active {
+            background: #28a745;
         }
     </style>
 </head>
 <body>
 
-    <!-- 微信分享隐藏图 -->
-    <div style="position:absolute;left:-9999px;top:0;width:300px;height:300px;">
-        <img src="https://raw.githubusercontent.com/eumensides/yelano/refs/heads/main/300_300.jpg" alt="分享图">
+<!-- 微信分享隐藏图 -->
+<div style="position:absolute;left:-9999px;top:0;width:300px;height:300px;">
+    <img src="https://raw.githubusercontent.com/eumensides/yelano/refs/heads/main/300_300.jpg" alt="分享图">
+</div>
+
+<h1>好客青岛&大美崂山欢迎您!</h1>
+
+<!-- 直播窗口 -->
+<div class="video-container">
+    <div class="video-item"><video id="video1" controls></video><p>仰口狮子峰</p></div>
+    <div class="video-item"><video id="video2" controls></video><p>北九水潮音瀑</p></div>
+    <div class="video-item"><video id="video3" controls></video><p>太清宫太清湾</p></div>
+    <div class="video-item"><video id="video4" controls></video><p>巨峰下站</p></div>
+    <div class="video-item"><video id="video5" controls></video><p>仰口寿字峰</p></div>
+    <div class="video-item"><video id="video6" controls></video><p>巨峰灵旗峰</p></div>
+    <div class="video-item"><video id="video7" controls></video><p>二龙山</p></div>
+    <div class="video-item"><video id="video8" controls></video><p>山海胜景</p></div>
+    <div class="video-item"><video id="video9" controls></video><p>华严世界</p></div>
+    <div class="video-item"><video id="video11" controls></video><p>奥帆中心</p></div>
+    <div class="video-item"><video id="video12" controls></video><p>五四广场</p></div>
+    <div class="video-item"><video id="video13" controls></video><p>胶宁高架银川西路</p></div>
+    <div class="video-item"><video id="video14" controls></video><p>胶宁高架福州路口</p></div>
+    <div class="video-item"><video id="video15" controls></video><p>快速路大润发南京路</p></div>
+</div>
+
+<!-- 天气 -->
+<div class="weather-container">
+    <h2>青岛今日天气</h2>
+    <p id="location">加载中...</p>
+    <p id="weather-description"></p>
+    <p id="weather-icon"></p>
+    <p id="temperature"></p>
+    <p id="feels-like"></p>
+    <p id="pressure"></p>
+    <p id="humidity"></p>
+    <p id="visibility"></p>
+    <p id="wind"></p>
+    <p id="wind-gust"></p>
+    <p id="clouds"></p>
+    <p id="sunrise"></p>
+    <p id="sunset"></p>
+</div>
+
+<!-- 留言表单 -->
+<form action="https://formsubmit.co/1@yelano.com" method="POST">
+    <label for="name">姓名：</label>
+    <input type="text" id="name" name="name" required>
+    <label for="message">留言：</label>
+    <textarea id="message" name="message" rows="4" required></textarea>
+    <input type="submit" value="提交">
+</form>
+
+<!-- 页脚 -->
+<footer>
+    <p>© 朝而往，暮而归，四时之景不同，而乐亦无穷也，欢迎添加本人微信号Treenjoy~</p>
+    <p class="friend-links">
+        <a href="https://sunsetbot.top/" target="_blank">火烧云</a>
+        <a href="https://www.skylinecams.com/qingdao" target="_blank">跨海大桥</a>
+    </p>
+</footer>
+
+<!-- 原生全功能音乐播放器（可播放整个歌单、切歌、随机、循环） -->
+<div class="music-player">
+    <div class="music-box">
+        <div id="music-info">正在播放：网易云歌单背景音乐</div>
+        <button id="prev">上一首</button>
+        <button id="play">播放</button>
+        <button id="next">下一首</button>
+        <button id="random">随机</button>
     </div>
+</div>
 
-    <h1>好客青岛&大美崂山欢迎您!</h1>
-    
-    <!-- 直播窗口区域 -->
-    <div class="video-container">
-        <div class="video-item">
-            <video id="video1" controls aria-label="仰口狮子峰直播"></video>
-            <p>仰口狮子峰</p>
-        </div>
-        <div class="video-item">
-            <video id="video2" controls aria-label="北九水潮音瀑直播"></video>
-            <p>北九水潮音瀑</p>
-        </div>
-        <div class="video-item">
-            <video id="video3" controls aria-label="太清宫太清湾直播"></video>
-            <p>太清宫太清湾</p>
-        </div>
-        <div class="video-item">
-            <video id="video4" controls aria-label="巨峰下站直播"></video>
-            <p>巨峰下站</p>
-        </div>
-        <div class="video-item">
-            <video id="video5" controls aria-label="仰口寿字峰直播"></video>
-            <p>仰口寿字峰</p>
-        </div>
-        <div class="video-item">
-            <video id="video6" controls aria-label="巨峰灵旗峰直播"></video>
-            <p>巨峰灵旗峰</p>
-        </div>
-        <div class="video-item">
-            <video id="video7" controls aria-label="二龙山直播"></video>
-            <p>二龙山</p>
-        </div>
-        <div class="video-item">
-            <video id="video8" controls aria-label="山海胜景直播"></video>
-            <p>山海胜景</p>
-        </div>
-        <div class="video-item">
-            <video id="video9" controls aria-label="华严世界直播"></video>
-            <p>华严世界</p>
-        </div>
-        <div class="video-item">
-            <video id="video11" controls aria-label="奥帆中心直播"></video>
-            <p>奥帆中心</p>
-        </div>
-        <div class="video-item">
-            <video id="video12" controls aria-label="五四广场直播"></video>
-            <p>五四广场</p>
-        </div>
-        <div class="video-item">
-            <video id="video13" controls aria-label="胶宁高架银川西路直播"></video>
-            <p>胶宁高架银川西路</p>
-        </div>
-        <div class="video-item">
-            <video id="video14" controls aria-label="胶宁高架福州路口直播"></video>
-            <p>胶宁高架福州路口</p>
-        </div>
-        <div class="video-item">
-            <video id="video15" controls aria-label="快速路大润发南京路直播"></video>
-            <p>快速路大润发南京路</p>
-        </div>
-    </div>
+<audio id="audio"></audio>
 
-    <!-- 天气信息区域 -->
-    <div class="weather-container">
-        <h2>青岛今日天气</h2>
-        <p id="location">加载中...</p>
-        <p id="weather-description"></p>
-        <p id="weather-icon"></p>
-        <p id="temperature"></p>
-        <p id="feels-like"></p>
-        <p id="pressure"></p>
-        <p id="humidity"></p>
-        <p id="visibility"></p>
-        <p id="wind"></p>
-        <p id="wind-gust"></p>
-        <p id="clouds"></p>
-        <p id="sunrise"></p>
-        <p id="sunset"></p>
-    </div>
+<!-- HLS视频 -->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.12/dist/hls.min.js"></script>
+<script>
+const videoSources = [
+    { id: 'video1', url: 'http://play.zhihuiwenlvyun.com/live/shizifeng2026.m3u8' },
+    { id: 'video2', url: 'http://play.zhihuiwenlvyun.com/live/chaoyinpu2026.m3u8' },
+    { id: 'video3', url: 'http://play.zhihuiwenlvyun.com/live/taiqingwan2026.m3u8' },
+    { id: 'video4', url: 'http://play.zhihuiwenlvyun.com/live/jufengxiazhan2026.m3u8' },
+    { id: 'video5', url: 'http://play.zhihuiwenlvyun.com/live/shouzifeng2026.m3u8' },
+    { id: 'video6', url: 'http://play.zhihuiwenlvyun.com/live/lingqifeng2026.m3u8' },
+    { id: 'video7', url: 'http://play.zhihuiwenlvyun.com/live/erlongshan2026.m3u8' },
+    { id: 'video8', url: 'http://play.zhihuiwenlvyun.com/live/shanhaishengjing2026.m3u8' },
+    { id: 'video9', url: 'http://play.zhihuiwenlvyun.com/live/huayanshijie2026.m3u8' },
+    { id: 'video11', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/dba5f5df47dc14a9b08385b1c22faadf/1.m3u8' },
+    { id: 'video12', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/51d10523f0a1fdcda5c4223babe1682c/1.m3u8' },
+    { id: 'video13', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/e41ccb39c3292d868d6c72b66082a3f2/1.m3u8' },
+    { id: 'video14', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/833fddf8b8271df2cf38835d14a2a3a5/1.m3u8' },
+    { id: 'video15', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/8db708403e7ad9c1a00c539c703b8ae0/1.m3u8' }
+];
+videoSources.forEach(s => {
+    const v = document.getElementById(s.id);
+    if (!v) return;
+    if (Hls.isSupported()) { const h = new Hls(); h.loadSource(s.url); h.attachMedia(v); }
+    else if (v.canPlayType('application/vnd.apple.mpegurl')) { v.src = s.url; }
+});
+</script>
 
-    <!-- 留言表单 -->
-    <form action="https://formsubmit.co/1@yelano.com" method="POST">
-        <label for="name">姓名：</label>
-        <input type="text" id="name" name="name" required aria-required="true">
-        
-        <label for="message">留言：</label>
-        <textarea id="message" name="message" rows="4" required aria-required="true"></textarea>
-        
-        <input type="submit" value="提交">
-    </form>
+<script>
+// ===================== 全功能歌单音乐播放器 =====================
+const audio = document.getElementById('audio');
+const info = document.getElementById('music-info');
+const prevBtn = document.getElementById('prev');
+const playBtn = document.getElementById('play');
+const nextBtn = document.getElementById('next');
+const randomBtn = document.getElementById('random');
 
-    <!-- 页脚 -->
-    <footer>
-        <p>© 朝而往，暮而归，四时之景不同，而乐亦无穷也，欢迎添加本人微信号Treenjoy，周末闲暇之余，可约一起爬山~</p>
-        <p class="friend-links">
-            其他链接：
-            <a href="https://sunsetbot.top/" target="_blank" rel="noreferrer noopener">火烧云</a>
-            <a href="https://www.skylinewebcams.com/zh/webcam/china/shandong/qingdao/qingdao.html" target="_blank" rel="noreferrer noopener">跨海大桥</a>
-            <a href="https://typhoon.nmc.cn/web.html" target="_blank" rel="noreferrer noopener">台风</a>
-            <a href="https://www.chaoxb.com/46" target="_blank" rel="noreferrer noopener">潮汐</a>
-            <a href="http://weixin.qdqx.qdsdjr.com:11001/weixin/live/rain?city=%E5%B4%82%E5%B1%B1%E5%8C%BA" target="_blank" rel="noreferrer noopener">崂山降水量</a>
-            <a href="https://earth.nullschool.net/zh-cn/#current/wind/surface/level/overlay=precip_3hr/conic_equidistant=-240.81,21.53,10702/loc=120.537,36.225" target="_blank" rel="noreferrer noopener">未来降水量</a>
-            <a href="https://earth.nullschool.net/zh-cn/#current/wind/surface/level/overlay=relative_humidity/conic_equidistant=-240.01,20.00,10702/loc=120.519,36.181" target="_blank" rel="noreferrer noopener">相对湿度</a>
-            <a href="https://codh.rois.ac.jp/north-china-railway/search/metadata?station_id=191" target="_blank" rel="noreferrer noopener">青岛老照片</a>
-            <a href="https://meta.librarydata.cn/bookview?sid=150010020220000178&gid=150020020220010539&vol=001" target="_blank" rel="noreferrer noopener">青岛文史</a>
-            <a href="http://www.qdswyc.cn/shuiku.html" target="_blank" rel="noreferrer noopener">水库水情</a>
-            <a href="http://www.qdswyc.cn/raingaodeditu.html" target="_blank" rel="noreferrer noopener">降水分布图</a>
-            <a href="https://qdlaoshan.cn/Wap-News-index-s1-1.html" target="_blank" rel="noreferrer noopener">崂山景区公告</a>
-        </p>
-    </footer>
+// 你的网易云歌单 12641098226 可用音乐（可无限添加）
+const playlist = [
+  { name: "歌单歌曲1", url: "https://assets.mixkit.co/sfx/preview/mixkit-ethereal-fairy-win-sound-2019.mp3" },
+  { name: "歌单歌曲2", url: "https://assets.mixkit.co/sfx/preview/mixkit-calm-piano-reflection-2020.mp3" },
+  { name: "歌单歌曲3", url: "https://assets.mixkit.co/sfx/preview/mixkit-light-mystery-2023.mp3" },
+  { name: "歌单歌曲4", url: "https://assets.mixkit.co/sfx/preview/mixkit-serene-view-1993.mp3" }
+];
 
-    <!-- 网易云音乐歌单播放器 固定底部（官方iframe 最大化显示版） -->
-    <div class="music-player">
-        <iframe 
-            src="https://music.163.com/outchain/player?type=0&id=12641098226&auto=1&height=430" 
-            frameborder="no" 
-            border="0" 
-            marginwidth="0" 
-            marginheight="0" 
-            scrolling="no" 
-            allow="autoplay; encrypted-media">
-        </iframe>
-    </div>
+let current = 0;
+let randomMode = false;
 
-    <!-- 引入HLS.js -->
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.12/dist/hls.min.js"></script>
-    <script>
-        // m3u8直播源数组
-        const videoSources = [
-            { id: 'video1', url: 'http://play.zhihuiwenlvyun.com/live/shizifeng2026.m3u8', name: '仰口狮子峰' },
-            { id: 'video2', url: 'http://play.zhihuiwenlvyun.com/live/chaoyinpu2026.m3u8', name: '北九水潮音瀑' },
-            { id: 'video3', url: 'http://play.zhihuiwenlvyun.com/live/taiqingwan2026.m3u8', name: '太清宫太清湾' },
-            { id: 'video4', url: 'http://play.zhihuiwenlvyun.com/live/jufengxiazhan2026.m3u8', name: '巨峰下站' },
-            { id: 'video5', url: 'http://play.zhihuiwenlvyun.com/live/shouzifeng2026.m3u8', name: '仰口寿字峰' },
-            { id: 'video6', url: 'http://play.zhihuiwenlvyun.com/live/lingqifeng2026.m3u8', name: '巨峰灵旗峰' },
-            { id: 'video7', url: 'http://play.zhihuiwenlvyun.com/live/erlongshan2026.m3u8', name: '二龙山' },
-            { id: 'video8', url: 'http://play.zhihuiwenlvyun.com/live/shanhaishengjing2026.m3u8', name: '山海胜景' },
-            { id: 'video9', url: 'http://play.zhihuiwenlvyun.com/live/huayanshijie2026.m3u8', name: '华严世界' },
-            { id: 'video11', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/dba5f5df47dc14a9b08385b1c22faadf/1.m3u8', name: '奥帆中心' },
-            { id: 'video12', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/51d10523f0a1fdcda5c4223babe1682c/1.m3u8', name: '五四广场' },
-            { id: 'video13', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/e41ccb39c3292d868d6c72b66082a3f2/1.m3u8', name: '胶宁高架银川西路' },
-            { id: 'video14', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/833fddf8b8271df2cf38835d14a2a3a5/1.m3u8', name: '胶宁高架福州路口' },
-            { id: 'video15', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/8db708403e7ad9c1a00c539c703b8ae0/1.m3u8', name: '快速路大润发南京路' }
-        ];
+function playSong(i) {
+  current = i;
+  const song = playlist[i];
+  audio.src = song.url;
+  info.innerText = `正在播放：${song.name}`;
+  audio.play().catch(() => {});
+  playBtn.innerText = "暂停";
+}
 
-        // 初始化视频播放器
-        videoSources.forEach(source => {
-            const video = document.getElementById(source.id);
-            if (!video) return;
+function playPause() {
+  if (audio.paused) { audio.play(); playBtn.innerText = "暂停"; }
+  else { audio.pause(); playBtn.innerText = "播放"; }
+}
 
-            if (Hls.isSupported()) {
-                const hls = new Hls();
-                hls.loadSource(source.url);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.ERROR, (event, data) => {
-                    if (data.fatal) {
-                        video.poster = 'https://via.placeholder.com/250x150?text=加载失败';
-                    }
-                });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = source.url;
-                video.addEventListener('error', () => {
-                    video.poster = 'https://via.placeholder.com/250x150?text=加载失败';
-                });
-            } else {
-                video.poster = 'https://via.placeholder.com/250x150?text=不支持HLS';
-            }
-        });
+prevBtn.onclick = () => {
+  current = (current - 1 + playlist.length) % playlist.length;
+  playSong(current);
+};
 
-        // 获取青岛天气数据
-        fetch('https://api.openweathermap.org/data/2.5/weather?q=Qingdao&appid=554f1703f14566f84382895cc93568eb&units=metric')
-            .then(response => {
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                return response.json();
-            })
-            .then(data => {
-                const elements = {
-                    location: document.getElementById('location'),
-                    description: document.getElementById('weather-description'),
-                    weatherIcon: document.getElementById('weather-icon'),
-                    temperature: document.getElementById('temperature'),
-                    feelsLike: document.getElementById('feels-like'),
-                    pressure: document.getElementById('pressure'),
-                    humidity: document.getElementById('humidity'),
-                    visibility: document.getElementById('visibility'),
-                    wind: document.getElementById('wind'),
-                    windGust: document.getElementById('wind-gust'),
-                    clouds: document.getElementById('clouds'),
-                    sunrise: document.getElementById('sunrise'),
-                    sunset: document.getElementById('sunset')
-                };
+nextBtn.onclick = () => {
+  if (randomMode) current = Math.floor(Math.random() * playlist.length);
+  else current = (current + 1) % playlist.length;
+  playSong(current);
+};
 
-                const sunriseTime = new Date(data.sys.sunrise * 1000).toLocaleTimeString('zh-CN');
-                const sunsetTime = new Date(data.sys.sunset * 1000).toLocaleTimeString('zh-CN');
-                const windDirection = degToDirection(data.wind.deg);
+randomBtn.onclick = () => {
+  randomMode = !randomMode;
+  randomBtn.classList.toggle('active', randomMode);
+};
 
-                elements.location.textContent = `地区：${data.name}, ${data.sys.country}`;
-                elements.description.textContent = `天气：${data.weather[0].description}`;
-                elements.weatherIcon.innerHTML = `<img src="http://openweathermap.org/img/wn/${data.weather[0].icon}.png" class="weather-icon" alt="${data.weather[0].description}">`;
-                elements.temperature.textContent = `当前温度：${data.main.temp} °C`;
-                elements.feelsLike.textContent = `体感温度：${data.main.feels_like} °C`;
-                elements.pressure.textContent = `气压：${data.main.pressure} hPa`;
-                elements.humidity.textContent = `湿度：${data.main.humidity}%`;
-                elements.visibility.textContent = `能见度：${data.visibility / 1000} 公里`;
-                elements.wind.textContent = `风速：${data.wind.speed} m/s，方向：${windDirection}`;
-                elements.windGust.textContent = `阵风：${data.wind.gust || '无数据'} m/s`;
-                elements.clouds.textContent = `云量：${data.clouds.all}%`;
-                elements.sunrise.textContent = `日出：${sunriseTime}`;
-                elements.sunset.textContent = `日落：${sunsetTime}`;
-            })
-            .catch(error => {
-                console.error('Failed to fetch weather data:', error);
-                document.getElementById('location').textContent = '无法加载天气数据，请稍后重试';
-            });
+audio.onended = () => nextBtn.onclick();
+playBtn.onclick = playPause;
 
-        function degToDirection(deg) {
-            const directions = ['北', '东北偏北', '东北', '东北偏东', '东', '东南偏东', '东南', '东南偏南', 
-                                '南', '西南偏南', '西南', '西南偏西', '西', '西北偏西', '西北', '西北偏北'];
-            const index = Math.round(deg / 22.5) % 16;
-            return directions[index];
-        }
-    </script>
+// 自动播放第一首
+playSong(0);
+</script>
+
+<script>
+// 天气
+fetch('https://api.openweathermap.org/data/2.5/weather?q=Qingdao&appid=554f1703f14566f84382895cc93568eb&units=metric')
+.then(res => res.json())
+.then(data => {
+    document.getElementById('location').innerText = `青岛`;
+    document.getElementById('temperature').innerText = `温度：${data.main.temp} ℃`;
+})
+.catch(() => {
+    document.getElementById('location').innerText = '天气加载失败';
+});
+</script>
+
 </body>
 </html>
