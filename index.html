@@ -19,7 +19,7 @@
             font-family: Arial, sans-serif;
             margin: 0 auto;
             max-width: 1200px;
-            padding: 20px 20px 80px 20px; /* 底部留出音乐播放器空间 */
+            padding: 20px 20px 120px 20px; /* 底部留出音乐播放器空间 */
         }
 
         /* 视频容器样式 */
@@ -111,7 +111,7 @@
             border-top: 1px solid #eee;
         }
 
-        /* 网易云音乐播放器 固定底部 */
+        /* 网易云音乐完整版播放器 固定底部 */
         .music-player {
             position: fixed;
             bottom: 0;
@@ -120,7 +120,8 @@
             text-align: center;
             background: #fff;
             z-index: 999;
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            padding: 5px 0;
         }
     </style>
 </head>
@@ -194,8 +195,8 @@
     </div>
 
     <!-- 天气信息区域 -->
-    <div class="weather-container">
-        <h2>青岛今日天气</h2>
+    <div class="weather-container {
+        h2>青岛今日天气</h2>
         <p id="location">加载中...</p>
         <p id="weather-description"></p>
         <p id="weather-icon"></p>
@@ -242,13 +243,13 @@
         </p>
     </footer>
 
-    <!-- 网易云音乐歌单播放器 固定底部 自动播放 -->
+    <!-- ====================== 网易云音乐 完整版播放器 ====================== -->
     <div class="music-player">
         <iframe 
-            src="https://music.163.com/outchain/player?type=0&id=12641098226&auto=1&height=66" 
-            width="330" 
-            height="66" 
-            frameborder="0" 
+            src="https://music.163.com/outchain/player?type=1&id=12641098226&auto=1&height=100"
+            width="450"
+            height="100"
+            frameborder="0"
             scrolling="no">
         </iframe>
     </div>
