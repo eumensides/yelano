@@ -1,0 +1,807 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>达格列净片医保购买指南 - 青岛地区最优惠方案</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#10b981',
+                        accent: '#f59e0b',
+                        warning: '#ef4444',
+                        info: '#6366f1',
+                        light: '#f3f4f6',
+                        dark: '#1f2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'card': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        'card-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .glass-effect {
+                background: rgba(255, 255, 255, 0.25);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+            }
+            .gradient-bg {
+                background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            .card-transition {
+                transition: all 0.3s ease;
+            }
+            .pulse-animation {
+                animation: pulse 2s infinite;
+            }
+            @keyframes pulse {
+                0%, 100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.7;
+                }
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <!-- 导航栏 -->
+    <nav class="gradient-bg text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fa fa-heartbeat text-2xl"></i>
+                    <h1 class="text-xl font-bold text-shadow">医保用药指南</h1>
+                </div>
+                <div class="hidden md:flex space-x-6">
+                    <a href="#overview" class="hover:text-accent transition-colors">药品概述</a>
+                    <a href="#comparison" class="hover:text-accent transition-colors">报销对比</a>
+                    <a href="#family" class="hover:text-accent transition-colors">家庭共济</a>
+                    <a href="#recommendations" class="hover:text-accent transition-colors">购买建议</a>
+                </div>
+                <button class="md:hidden text-white focus:outline-none" id="mobile-menu-button">
+                    <i class="fa fa-bars text-xl"></i>
+                </button>
+            </div>
+            <!-- 移动端菜单 -->
+            <div id="mobile-menu" class="md:hidden hidden mt-4 pb-2">
+                <a href="#overview" class="block py-2 hover:text-accent transition-colors">药品概述</a>
+                <a href="#comparison" class="block py-2 hover:text-accent transition-colors">报销对比</a>
+                <a href="#family" class="block py-2 hover:text-accent transition-colors">家庭共济</a>
+                <a href="#recommendations" class="block py-2 hover:text-accent transition-colors">购买建议</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- 头部信息 -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">达格列净片医保购买指南</h1>
+            <p class="text-xl text-gray-600">青岛地区最优惠购买方案分析</p>
+            <div class="w-24 h-1 bg-primary mx-auto mt-6 rounded-full"></div>
+        </header>
+
+        <!-- 药品概述 -->
+        <section id="overview" class="mb-16">
+            <div class="bg-white rounded-xl shadow-card p-8 card-transition hover:shadow-card-hover">
+                <div class="flex items-center mb-6">
+                    <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white mr-4">
+                        <i class="fa fa-medkit text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800">药品基本信息</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">达格列净片</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-secondary mt-1 mr-3"></i>
+                                <span><strong>医保类型：</strong>医保目录乙类药品</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-secondary mt-1 mr-3"></i>
+                                <span><strong>挂网价格：</strong>48.83元/盒（14片/盒）</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-secondary mt-1 mr-3"></i>
+                                <span><strong>生产企业：</strong>阿斯利康制药有限公司</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-secondary mt-1 mr-3"></i>
+                                <span><strong>规格：</strong>10mg*14片</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-secondary mt-1 mr-3"></i>
+                                <span><strong>适应症：</strong>2型糖尿病，可单独使用或与其他降糖药联合使用</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-light rounded-lg p-6">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">血糖控制建议</h3>
+                        <div class="bg-warning bg-opacity-10 border-l-4 border-warning p-4 mb-4">
+                            <p class="text-warning font-medium">空腹血糖10-11mmol/L仍偏高，建议及时就医调整治疗方案</p>
+                        </div>
+                        <p class="text-gray-600 mb-4">达格列净片是一种SGLT2抑制剂，通过促进尿糖排泄来降低血糖。通常建议剂量为每日一次，每次10mg。</p>
+                        <div class="flex items-center text-info">
+                            <i class="fa fa-info-circle mr-2"></i>
+                            <span>请在医生指导下使用，定期监测血糖变化</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 报销比例对比 -->
+        <section id="comparison" class="mb-16">
+            <div class="bg-white rounded-xl shadow-card p-8 card-transition hover:shadow-card-hover">
+                <div class="flex items-center mb-8">
+                    <div class="w-12 h-12 bg-info rounded-full flex items-center justify-center text-white mr-4">
+                        <i class="fa fa-calculator text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800">医保报销比例对比</h2>
+                </div>
+
+                <!-- 医院选择对比 -->
+                <div class="mb-10">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-6">医院级别报销对比</h3>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="border border-gray-300 px-6 py-3 text-left text-gray-700">医院类型</th>
+                                    <th class="border border-gray-300 px-6 py-3 text-left text-gray-700">职工医保报销</th>
+                                    <th class="border border-gray-300 px-6 py-3 text-left text-gray-700">居民医保报销</th>
+                                    <th class="border border-gray-300 px-6 py-3 text-left text-gray-700">个人自付</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="border border-gray-300 px-6 py-4 font-medium">社区医院</td>
+                                    <td class="border border-gray-300 px-6 py-4 text-secondary font-bold">92%</td>
+                                    <td class="border border-gray-300 px-6 py-4 text-secondary font-bold">85%</td>
+                                    <td class="border border-gray-300 px-6 py-4">3.91元</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="border border-gray-300 px-6 py-4 font-medium">一级医院</td>
+                                    <td class="border border-gray-300 px-6 py-4 text-secondary font-bold">92%</td>
+                                    <td class="border border-gray-300 px-6 py-4 text-secondary font-bold">85%</td>
+                                    <td class="border border-gray-300 px-6 py-4">3.91元</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="border border-gray-300 px-6 py-4 font-medium">二级医院</td>
+                                    <td class="border border-gray-300 px-6 py-4 text-info font-bold">88%</td>
+                                    <td class="border border-gray-300 px-6 py-4 text-info font-bold">80%</td>
+                                    <td class="border border-gray-300 px-6 py-4">5.86元</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="border border-gray-300 px-6 py-4 font-medium">三级医院</td>
+                                    <td class="border border-gray-300 px-6 py-4 text-accent font-bold">86%</td>
+                                    <td class="border border-gray-300 px-6 py-4 text-accent font-bold">70%</td>
+                                    <td class="border border-gray-300 px-6 py-4">6.84元</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50 bg-yellow-50">
+                                    <td class="border border-gray-300 px-6 py-4 font-medium text-warning">青岛大学附属医院</td>
+                                    <td class="border border-gray-300 px-6 py-4 text-warning font-bold">86%</td>
+                                    <td class="border border-gray-300 px-6 py-4 text-warning font-bold">70%</td>
+                                    <td class="border border-gray-300 px-6 py-4 text-warning">6.84元</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-6 bg-blue-50 border-l-4 border-primary p-4">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fa fa-info-circle text-primary"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-gray-700">
+                                    <strong>关键发现：</strong>社区医院和一级医院报销比例最高，个人自付最少。青岛大学附属医院作为三级医院，报销比例相对较低。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 起付线对比 -->
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-700 mb-6">起付线对比</h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="text-lg font-medium text-gray-700 mb-4">职工医保起付线</h4>
+                            <ul class="space-y-3">
+                                <li class="flex items-center justify-between bg-gray-50 px-4 py-3 rounded-lg">
+                                    <span>社区/一级医院</span>
+                                    <span class="font-bold text-primary">200元</span>
+                                </li>
+                                <li class="flex items-center justify-between bg-gray-50 px-4 py-3 rounded-lg">
+                                    <span>二级医院</span>
+                                    <span class="font-bold text-info">500元</span>
+                                </li>
+                                <li class="flex items-center justify-between bg-gray-50 px-4 py-3 rounded-lg">
+                                    <span>三级医院</span>
+                                    <span class="font-bold text-accent">800元</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-lg font-medium text-gray-700 mb-4">居民医保起付线</h4>
+                            <ul class="space-y-3">
+                                <li class="flex items-center justify-between bg-gray-50 px-4 py-3 rounded-lg">
+                                    <span>社区/一级医院</span>
+                                    <span class="font-bold text-primary">200元</span>
+                                </li>
+                                <li class="flex items-center justify-between bg-gray-50 px-4 py-3 rounded-lg">
+                                    <span>二级医院</span>
+                                    <span class="font-bold text-info">500元</span>
+                                </li>
+                                <li class="flex items-center justify-between bg-gray-50 px-4 py-3 rounded-lg">
+                                    <span>三级医院</span>
+                                    <span class="font-bold text-accent">800元</span>
+                                </li>
+                                <li class="flex items-center justify-between bg-yellow-50 px-4 py-3 rounded-lg">
+                                    <span>青大附院等6家医院</span>
+                                    <span class="font-bold text-warning">1000元</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 bg-yellow-50 border-l-4 border-warning p-4">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fa fa-exclamation-triangle text-warning"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-gray-700">
+                                    <strong>重要提示：</strong>起付线是医保报销的门槛，只有超过起付线的部分才能享受医保报销。首次住院全额收取起付线，第二次减半，第三次及以上统一为100元。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 家庭共济使用指南 -->
+        <section id="family" class="mb-16">
+            <div class="bg-white rounded-xl shadow-card p-8 card-transition hover:shadow-card-hover">
+                <div class="flex items-center mb-8">
+                    <div class="w-12 h-12 bg-secondary rounded-full flex items-center justify-center text-white mr-4">
+                        <i class="fa fa-users text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800">医保家庭共济使用指南</h2>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-700 mb-4">能否使用职工医保为奶奶买药？</h3>
+                        
+                        <div class="bg-red-50 border-l-4 border-warning p-4 mb-6">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fa fa-times-circle text-warning"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-gray-700">
+                                        <strong>不能直接使用：</strong>医保遵循"本人参保、本人享受待遇"原则，不能直接用您的医保卡为奶奶挂号就医并享受医保报销。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-green-50 border-l-4 border-secondary p-4">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fa fa-check-circle text-secondary"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-gray-700">
+                                        <strong>可以使用家庭共济：</strong>您可以通过医保个人账户家庭共济功能，将您职工医保个人账户的资金给奶奶使用。
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-4">家庭共济绑定条件</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-secondary mt-1 mr-3"></i>
+                                <span>奶奶已参加山东省内基本医保（居民医保）</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-secondary mt-1 mr-3"></i>
+                                <span>您的职工医保个人账户余额大于0</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-secondary mt-1 mr-3"></i>
+                                <span>奶奶未被其他职工医保参保人绑定</span>
+                            </li>
+                        </ul>
+
+                        <div class="mt-6">
+                            <h4 class="font-medium text-gray-700 mb-3">绑定流程</h4>
+                            <ol class="space-y-2 text-gray-600">
+                                <li class="flex items-start">
+                                    <span class="bg-secondary text-white rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">1</span>
+                                    <span>搜索"青岛医疗保障"微信公众号</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="bg-secondary text-white rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">2</span>
+                                    <span>点击"掌办大厅"-"掌上办·我的医保"</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="bg-secondary text-white rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">3</span>
+                                    <span>进入"医保个账"-"职工医保个人账户家庭共济办理"</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="bg-secondary text-white rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">4</span>
+                                    <span>填写奶奶的相关信息，完成绑定</span>
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-4">使用方式</h3>
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <p class="text-gray-700 mb-4">绑定成功后，奶奶在青岛定点医药机构就医购药时：</p>
+                        <ol class="space-y-3 text-gray-600">
+                            <li class="flex items-start">
+                                <span class="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5 flex-shrink-0">1</span>
+                                <span>使用奶奶本人的医保卡或电子医保码</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5 flex-shrink-0">2</span>
+                                <span>告知收费人员使用共济方式缴费</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5 flex-shrink-0">3</span>
+                                <span>系统会自动从您的职工医保个人账户中支付奶奶个人负担的部分</span>
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 购买建议 -->
+        <section id="recommendations" class="mb-16">
+            <div class="bg-white rounded-xl shadow-card p-8 card-transition hover:shadow-card-hover">
+                <div class="flex items-center mb-8">
+                    <div class="w-12 h-12 bg-accent rounded-full flex items-center justify-center text-white mr-4">
+                        <i class="fa fa-lightbulb-o text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800">最优惠购买方案</h2>
+                </div>
+
+                <!-- 短期解决方案 -->
+                <div class="mb-10">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-6">短期购买建议</h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="bg-gradient-to-br from-blue-50 to-green-50 rounded-lg p-6 border border-blue-100">
+                            <div class="flex items-center mb-4">
+                                <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white mr-3">
+                                    <i class="fa fa-user-md"></i>
+                                </div>
+                                <h4 class="text-lg font-medium text-gray-800">使用奶奶的居民医保</h4>
+                            </div>
+                            <ul class="space-y-3 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                                    <span><strong>首选社区医院：</strong>报销比例85%，个人自付仅3.91元/盒</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                                    <span><strong>次选一级医院：</strong>报销比例相同，但可能药品种类更全</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                                    <span><strong>避免三级医院：</strong>青大附院等三级医院报销比例低，起付线高</span>
+                                </li>
+                            </ul>
+                            <div class="mt-4 text-sm text-gray-500">
+                                <i class="fa fa-info-circle mr-1"></i>
+                                提示：首次就诊需要起付线，但后续复诊拿药不再收取起付线
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-lg p-6 border border-yellow-100">
+                            <div class="flex items-center mb-4">
+                                <div class="w-10 h-10 bg-accent rounded-full flex items-center justify-center text-white mr-3">
+                                    <i class="fa fa-handshake-o"></i>
+                                </div>
+                                <h4 class="text-lg font-medium text-gray-800">使用家庭共济</h4>
+                            </div>
+                            <ul class="space-y-3 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fa fa-angle-right text-accent mt-1 mr-2"></i>
+                                    <span><strong>立即办理共济：</strong>按前述流程绑定奶奶的信息</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-angle-right text-accent mt-1 mr-2"></i>
+                                    <span><strong>社区医院购药：</strong>奶奶使用自己的医保卡，通过共济支付个人负担部分</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-angle-right text-accent mt-1 mr-2"></i>
+                                    <span><strong>零自付：</strong>通过居民医保报销+职工医保共济，奶奶基本不需自付现金</span>
+                                </li>
+                            </ul>
+                            <div class="mt-4 text-sm text-gray-500">
+                                <i class="fa fa-info-circle mr-1"></i>
+                                提示：共济仅支付个人负担部分，不影响医保报销比例
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 长期解决方案 -->
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-700 mb-6">长期解决方案</h3>
+                    
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex items-center mb-4">
+                                <div class="w-10 h-10 bg-info rounded-full flex items-center justify-center text-white mr-3">
+                                    <i class="fa fa-file-text-o"></i>
+                                </div>
+                                <h4 class="font-medium text-gray-800">申请慢病门诊</h4>
+                            </div>
+                            <p class="text-gray-600 mb-4">为奶奶申请糖尿病慢病门诊待遇，可享受更高的报销比例和年度限额。</p>
+                            <ul class="space-y-2 text-sm text-gray-600">
+                                <li class="flex items-start">
+                                    <i class="fa fa-check text-info mt-1 mr-2"></i>
+                                    <span>报销比例提高至90%左右</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-check text-info mt-1 mr-2"></i>
+                                    <span>年度报销限额大幅提高</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-check text-info mt-1 mr-2"></i>
+                                    <span>可在社区医院"免申即享"</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex items-center mb-4">
+                                <div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center text-white mr-3">
+                                    <i class="fa fa-hospital-o"></i>
+                                </div>
+                                <h4 class="font-medium text-gray-800">社区医院签约</h4>
+                            </div>
+                            <p class="text-gray-600 mb-4">与社区医院签约家庭医生，享受慢性病长期处方服务。</p>
+                            <ul class="space-y-2 text-sm text-gray-600">
+                                <li class="flex items-start">
+                                    <i class="fa fa-check text-secondary mt-1 mr-2"></i>
+                                    <span>可开1-3个月长期处方</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-check text-secondary mt-1 mr-2"></i>
+                                    <span>报销比例再提高5个百分点</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-check text-secondary mt-1 mr-2"></i>
+                                    <span>送药上门服务（部分社区）</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex items-center mb-4">
+                                <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white mr-3">
+                                    <i class="fa fa-refresh"></i>
+                                </div>
+                                <h4 class="font-medium text-gray-800">医保政策关注</h4>
+                            </div>
+                            <p class="text-gray-600 mb-4">关注青岛医保政策变化，及时调整购药策略。</p>
+                            <ul class="space-y-2 text-sm text-gray-600">
+                                <li class="flex items-start">
+                                    <i class="fa fa-check text-primary mt-1 mr-2"></i>
+                                    <span>定期查看医保目录更新</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-check text-primary mt-1 mr-2"></i>
+                                    <span>关注报销比例调整</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-check text-primary mt-1 mr-2"></i>
+                                    <span>了解新药纳入情况</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 综合建议 -->
+                <div class="mt-10 bg-gradient-to-r from-blue-600 to-green-600 rounded-lg p-6 text-white">
+                    <h3 class="text-xl font-bold mb-4">综合建议</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="font-semibold mb-3 flex items-center">
+                                <i class="fa fa-star mr-2"></i>
+                                最佳购买方案
+                            </h4>
+                            <p class="mb-4">综合考虑报销比例、起付线和便利性，建议：</p>
+                            <ol class="space-y-2">
+                                <li class="flex items-start">
+                                    <span class="bg-white text-blue-600 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5 flex-shrink-0">1</span>
+                                    <span>优先选择奶奶签约的社区医院购买</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="bg-white text-blue-600 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5 flex-shrink-0">2</span>
+                                    <span>通过家庭共济支付个人负担部分</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="bg-white text-blue-600 rounded-full w-6 h-6 flex items-center justify-center mr-3 mt-0.5 flex-shrink-0">3</span>
+                                    <span>申请糖尿病慢病门诊待遇</span>
+                                </li>
+                            </ol>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold mb-3 flex items-center">
+                                <i class="fa fa-heartbeat mr-2"></i>
+                                血糖管理建议
+                            </h4>
+                            <p class="mb-4">除了药物治疗，还应注意：</p>
+                            <ul class="space-y-2">
+                                <li class="flex items-start">
+                                    <i class="fa fa-check-circle mr-2 mt-1"></i>
+                                    <span>定期监测血糖，记录变化趋势</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-check-circle mr-2 mt-1"></i>
+                                    <span>控制饮食，适当运动</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-check-circle mr-2 mt-1"></i>
+                                    <span>3-6个月到医院复诊一次</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-check-circle mr-2 mt-1"></i>
+                                    <span>如有不适及时就医</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 常见问题 -->
+        <section class="mb-16">
+            <div class="bg-white rounded-xl shadow-card p-8 card-transition hover:shadow-card-hover">
+                <div class="flex items-center mb-8">
+                    <div class="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white mr-4">
+                        <i class="fa fa-question-circle text-xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800">常见问题解答</h2>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="faq-toggle w-full flex items-center justify-between bg-gray-50 px-6 py-4 text-left focus:outline-none">
+                            <span class="font-medium text-gray-800">达格列净片是否可以用医保报销？</span>
+                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                        </button>
+                        <div class="faq-content hidden px-6 py-4 bg-white">
+                            <p class="text-gray-700">是的，达格列净片属于医保目录乙类药品，可以享受医保报销。但需要注意的是，乙类药品通常需要先自付一定比例（一般为10-20%），剩余部分再按医保规定报销。</p>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="faq-toggle w-full flex items-center justify-between bg-gray-50 px-6 py-4 text-left focus:outline-none">
+                            <span class="font-medium text-gray-800">为什么社区医院比三甲医院报销比例高？</span>
+                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                        </button>
+                        <div class="faq-content hidden px-6 py-4 bg-white">
+                            <p class="text-gray-700">这是医保政策的引导机制，目的是合理分配医疗资源，引导患者根据病情选择合适的医疗机构。社区医院主要承担常见病、多发病的诊疗和慢性病管理，报销比例高可以鼓励患者在社区解决日常医疗需求，减轻大医院的就诊压力。</p>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="faq-toggle w-full flex items-center justify-between bg-gray-50 px-6 py-4 text-left focus:outline-none">
+                            <span class="font-medium text-gray-800">家庭共济后，奶奶的医保待遇会有变化吗？</span>
+                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                        </button>
+                        <div class="faq-content hidden px-6 py-4 bg-white">
+                            <p class="text-gray-700">不会。家庭共济只是共享个人账户的资金，不涉及医保报销的资格、待遇及政策。奶奶的医保待遇、报销比例、起付线、封顶线等仍按照青岛居民医保的规定执行，不会因为使用家庭共济而改变。</p>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="faq-toggle w-full flex items-center justify-between bg-gray-50 px-6 py-4 text-left focus:outline-none">
+                            <span class="font-medium text-gray-800">如果奶奶需要长期服用达格列净片，如何申请慢病门诊？</span>
+                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                        </button>
+                        <div class="faq-content hidden px-6 py-4 bg-white">
+                            <p class="text-gray-700">申请糖尿病慢病门诊通常需要：1）有明确的糖尿病诊断证明；2）近半年内的血糖检测报告；3）到医保定点医院的内分泌科或糖尿病专科就诊，由医生填写慢病申请表；4）携带相关材料到医保经办机构办理备案手续。具体要求可能因地区而异，建议咨询当地医保部门。</p>
+                        </div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg overflow-hidden">
+                        <button class="faq-toggle w-full flex items-center justify-between bg-gray-50 px-6 py-4 text-left focus:outline-none">
+                            <span class="font-medium text-gray-800">达格列净片有国产替代药吗？价格如何？</span>
+                            <i class="fa fa-chevron-down text-gray-500 transition-transform"></i>
+                        </button>
+                        <div class="faq-content hidden px-6 py-4 bg-white">
+                            <p class="text-gray-700">是的，达格列净片已有国产仿制药上市，价格通常比原研药便宜30%-50%。国产达格列净片同样属于医保目录乙类药品，报销比例与原研药相同。如果经济条件有限，可以在医生指导下考虑使用国产替代药。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fa fa-heartbeat mr-2"></i>
+                        关于本指南
+                    </h3>
+                    <p class="text-gray-300">本指南基于2025-2026年青岛市医保政策编写，旨在帮助糖尿病患者及其家属了解达格列净片的医保报销和购买方案，提供最优惠的购药建议。</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fa fa-phone mr-2"></i>
+                        联系方式
+                    </h3>
+                    <ul class="space-y-2 text-gray-300">
+                        <li class="flex items-center">
+                            <i class="fa fa-phone-square mr-2"></i>
+                            <span>青岛市医保局咨询电话：12345</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fa fa-envelope mr-2"></i>
+                            <span>医保服务邮箱：service@qingdao.gov.cn</span>
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fa fa-map-marker mr-2"></i>
+                            <span>青岛市医保局地址：青岛市市南区福州南路17号</span>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 flex items-center">
+                        <i class="fa fa-link mr-2"></i>
+                        相关链接
+                    </h3>
+                    <ul class="space-y-2">
+                        <li>
+                            <a href="http://ybj.qingdao.gov.cn/" class="text-gray-300 hover:text-white transition-colors flex items-center">
+                                <i class="fa fa-external-link mr-2"></i>
+                                青岛市医疗保障局官网
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.nhsa.gov.cn/" class="text-gray-300 hover:text-white transition-colors flex items-center">
+                                <i class="fa fa-external-link mr-2"></i>
+                                国家医疗保障局官网
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="text-gray-300 hover:text-white transition-colors flex items-center">
+                                <i class="fa fa-external-link mr-2"></i>
+                                青岛医保APP下载
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2026 医保用药指南 - 青岛地区达格列净片购买指南 | 数据更新日期：2026年3月</p>
+                <p class="mt-2 text-sm">免责声明：本指南仅供参考，具体医保政策请以官方公告为准</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // 移动端菜单切换
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // FAQ 切换
+        document.querySelectorAll('.faq-toggle').forEach(button => {
+            button.addEventListener('click', () => {
+                const content = button.nextElementSibling;
+                const icon = button.querySelector('i');
+                
+                // 切换显示/隐藏
+                content.classList.toggle('hidden');
+                
+                // 旋转图标
+                if (content.classList.contains('hidden')) {
+                    icon.style.transform = 'rotate(0deg)';
+                } else {
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            });
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // 如果是移动端，点击后关闭菜单
+                    const mobileMenu = document.getElementById('mobile-menu');
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+
+        // 页面加载动画
+        window.addEventListener('load', function() {
+            document.body.classList.add('loaded');
+        });
+
+        // 滚动时导航栏效果
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('shadow-md');
+                nav.classList.add('bg-opacity-95');
+            } else {
+                nav.classList.remove('shadow-md');
+                nav.classList.remove('bg-opacity-95');
+            }
+        });
+
+        // 添加卡片悬停效果
+        document.querySelectorAll('.card-transition').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>
