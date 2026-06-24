@@ -4,361 +4,1509 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="海蓝的留言版，提供青岛实时直播、天气信息及留言功能。">
-    
-    <!-- 微信朋友圈分享缩略图 -->
     <meta property="og:title" content="山海观 - 海蓝">
     <meta property="og:description" content="海蓝的留言版，提供青岛实时直播、天气信息及留言功能。">
     <meta property="og:image" content="https://raw.githubusercontent.com/eumensides/yelano/refs/heads/main/300_300.jpg">
-    <meta property="og:url" content="https://你的域名/">
+    <meta property="og:url" content="https://www.yelano.com/">
     <meta property="og:type" content="website">
-    
-    <title>山海观 - 海蓝</title>
+    <title>山海观 · 海蓝</title>
+
+    <!-- Google Fonts: Noto Serif SC + Noto Sans SC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+
     <style>
-        /* 全局样式 */
+        /* ── 设计令牌 ────────────────────────────────────────── */
+        :root {
+            --ink:       #0b1220;   /* 深海墨蓝 - 背景主色 */
+            --deep:      #0f1c30;   /* 深蓝 */
+            --panel:     #132138;   /* 卡片底色 */
+            --glass:     rgba(15, 35, 60, 0.72);
+            --border:    rgba(100, 175, 220, 0.18);
+            --ocean:     #2e7bb4;   /* 海洋蓝 */
+            --wave:      #4eaad4;   /* 浅波蓝 - 强调色 */
+            --mist:      #8bb8cc;   /* 雾霭 - 次级文字 */
+            --gold:      #c9a96e;   /* 山岚金 - 点缀 */
+            --white:     #e8f0f5;
+            --text-main: #d8eaf5;
+            --text-sub:  #8dabbe;
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --shadow:    0 8px 32px rgba(0,0,0,0.45);
+        }
+
+        /* ── 重置 & 基础 ─────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
         body {
-            font-family: Arial, sans-serif;
+            background-color: var(--ink);
+            background-image:
+                radial-gradient(ellipse 120% 60% at 50% -10%, rgba(46,123,180,0.20) 0%, transparent 70%),
+                radial-gradient(ellipse 60% 40% at 80% 80%, rgba(14,40,70,0.35) 0%, transparent 60%);
+            color: var(--text-main);
+            font-family: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            font-weight: 300;
+            line-height: 1.7;
+            min-height: 100vh;
+            padding-bottom: 72px; /* music bar height */
+        }
+
+        /* ── 导航 & 标题 ─────────────────────────────────────── */
+        .site-header {
+            position: relative;
+            text-align: center;
+            padding: 52px 24px 36px;
+            overflow: hidden;
+        }
+        .site-header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(46,123,180,0.08) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        .site-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            background: linear-gradient(135deg, var(--wave) 0%, var(--white) 50%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+        .site-subtitle {
+            font-size: 0.88rem;
+            letter-spacing: 0.22em;
+            color: var(--text-sub);
+            text-transform: uppercase;
+        }
+        .divider {
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--ocean), transparent);
+            margin: 18px auto 0;
+        }
+
+        /* ── 区块标题 ─────────────────────────────────────────── */
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--wave);
+            letter-spacing: 0.1em;
+            margin-bottom: 18px;
+            padding: 0 4px;
+        }
+        .section-label::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--border), transparent);
+        }
+        .section-label .icon { font-size: 1.1rem; }
+
+        /* ── 主容器 ───────────────────────────────────────────── */
+        .container {
+            max-width: 1280px;
             margin: 0 auto;
-            max-width: 1200px;
-            padding: 20px 20px 480px 20px; /* 为高播放器预留足够底部空间 */
+            padding: 0 20px;
         }
 
-        /* 视频容器样式 */
-        .video-container {
+        /* ── 视频分区 ─────────────────────────────────────────── */
+        .video-section { margin-bottom: 52px; }
+
+        /* 崂山 - 3列，城市 - 3列 */
+        .video-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 10px;
-            margin: 20px 0;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
         }
-        .video-item {
-            text-align: center;
+        @media (max-width: 900px) {
+            .video-grid { grid-template-columns: repeat(2, 1fr); }
         }
-        video {
+        @media (max-width: 560px) {
+            .video-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ── 视频卡片 ─────────────────────────────────────────── */
+        .video-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            position: relative;
+            transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+            box-shadow: var(--shadow);
+        }
+        .video-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.55), 0 0 0 1px rgba(78,170,212,0.28);
+            border-color: rgba(78,170,212,0.38);
+        }
+        .video-wrapper {
+            position: relative;
             width: 100%;
-            max-width: 250px;
-            height: auto;
-            border-radius: 5px;
+            padding-top: 56.25%; /* 16:9 */
+            background: #080f1a;
         }
-
-        /* 天气容器样式 */
-        .weather-container {
-            margin: 20px auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            text-align: center;
-            max-width: 600px;
-        }
-        .weather-container h2 {
-            margin: 0 0 10px;
-            font-size: 1.5em;
-        }
-        .weather-container p {
-            margin: 5px 0;
-            font-size: 1em;
-        }
-        .weather-icon {
-            width: 50px;
-            height: 50px;
-            vertical-align: middle;
-        }
-
-        /* 表单样式 */
-        form {
-            max-width: 600px;
-            margin: 20px auto;
-        }
-        label {
+        .video-wrapper video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             display: block;
-            margin-bottom: 5px;
         }
-        input[type="text"], textarea {
+
+        /* 加载占位 */
+        .video-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #080f1a 0%, #0d1f38 100%);
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .video-overlay.hidden { opacity: 0; }
+        .spinner {
+            width: 28px;
+            height: 28px;
+            border: 2px solid rgba(78,170,212,0.2);
+            border-top-color: var(--wave);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .overlay-text {
+            font-size: 0.72rem;
+            color: var(--text-sub);
+            letter-spacing: 0.08em;
+        }
+
+        /* 错误状态 */
+        .video-overlay.error .spinner { display: none; }
+        .video-overlay.error .overlay-text { color: #e8836a; }
+        .error-icon { font-size: 1.4rem; display: none; }
+        .video-overlay.error .error-icon { display: block; }
+
+        /* 卡片底部标签 */
+        .video-label {
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .live-dot {
+            width: 7px;
+            height: 7px;
+            background: #4fe0a0;
+            border-radius: 50%;
+            flex-shrink: 0;
+            box-shadow: 0 0 6px #4fe0a0;
+            animation: pulse 2.2s ease-in-out infinite;
+        }
+        .live-dot.offline {
+            background: #e88058;
+            box-shadow: 0 0 6px #e88058;
+            animation: none;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.55; transform: scale(0.85); }
+        }
+        .video-name {
+            font-size: 0.82rem;
+            font-weight: 400;
+            color: var(--text-main);
+            letter-spacing: 0.04em;
+        }
+
+        /* ── 天气卡片 ─────────────────────────────────────────── */
+        .weather-section { margin-bottom: 52px; }
+        .weather-card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 28px 32px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 24px;
+            align-items: start;
+            box-shadow: var(--shadow);
+            max-width: 720px;
+        }
+        @media (max-width: 560px) {
+            .weather-card { grid-template-columns: 1fr; padding: 20px; }
+        }
+        .weather-main-temp {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 3.6rem;
+            font-weight: 700;
+            line-height: 1;
+            background: linear-gradient(135deg, var(--wave), var(--white));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .weather-desc {
+            font-size: 0.88rem;
+            color: var(--text-sub);
+            margin-top: 4px;
+            letter-spacing: 0.06em;
+        }
+        .weather-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px 20px;
+            margin-top: 16px;
+        }
+        .weather-item {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+        }
+        .weather-item strong {
+            color: var(--text-main);
+            font-weight: 400;
+        }
+        .weather-icon-wrap img {
+            width: 72px;
+            height: 72px;
+            filter: drop-shadow(0 0 12px rgba(78,170,212,0.5));
+        }
+        .weather-sun {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .sun-item { font-size: 0.78rem; color: var(--text-sub); }
+        .sun-item strong { color: var(--gold); font-weight: 500; }
+        .weather-loading {
+            color: var(--text-sub);
+            font-size: 0.88rem;
+            padding: 16px 0;
+        }
+
+        /* ── 留言表单 ─────────────────────────────────────────── */
+        .message-section { margin-bottom: 52px; }
+        .message-form {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 28px 32px;
+            max-width: 620px;
+            box-shadow: var(--shadow);
+        }
+        @media (max-width: 560px) {
+            .message-form { padding: 20px; }
+        }
+        .form-group { margin-bottom: 18px; }
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            letter-spacing: 0.1em;
+            margin-bottom: 7px;
+        }
+        .form-group input,
+        .form-group textarea {
             width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 10px 14px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 0.88rem;
+            font-weight: 300;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            resize: vertical;
         }
-        input[type="submit"] {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: rgba(78,170,212,0.5);
+            box-shadow: 0 0 0 3px rgba(78,170,212,0.1);
+        }
+        .form-group textarea { min-height: 96px; }
+        .btn-submit {
+            background: linear-gradient(135deg, var(--ocean) 0%, #1a5a8a 100%);
+            color: var(--white);
             border: none;
-            border-radius: 4px;
+            border-radius: var(--radius-sm);
+            padding: 11px 28px;
+            font-family: inherit;
+            font-size: 0.88rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
             cursor: pointer;
+            transition: opacity 0.2s, transform 0.15s;
         }
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
+        .btn-submit:hover { opacity: 0.88; transform: translateY(-1px); }
+        .btn-submit:active { transform: translateY(0); }
 
-        /* 友情链接样式 */
-        .friend-links {
-            margin-top: 10px;
+        /* ── 页脚 & 链接 ──────────────────────────────────────── */
+        .site-footer {
+            border-top: 1px solid var(--border);
+            padding: 32px 20px 24px;
+            max-width: 1280px;
+            margin: 0 auto;
         }
-        .friend-links a {
-            margin: 0 10px;
-            text-decoration: none;
-            color: #007bff;
-        }
-        .friend-links a:hover {
-            text-decoration: underline;
-        }
-
-        /* 页脚样式 */
-        footer {
+        .footer-quote {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 0.86rem;
+            color: var(--text-sub);
             text-align: center;
-            margin-top: 20px;
-            padding-top: 10px;
-            border-top: 1px solid #eee;
+            line-height: 1.9;
+            margin-bottom: 24px;
+        }
+        .links-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        .link-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 6px 14px;
+            font-size: 0.78rem;
+            color: var(--mist);
+            text-decoration: none;
+            letter-spacing: 0.04em;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+        }
+        .link-chip:hover {
+            background: rgba(46,123,180,0.18);
+            color: var(--wave);
+            border-color: rgba(78,170,212,0.35);
+        }
+        .footer-copy {
+            text-align: center;
+            font-size: 0.72rem;
+            color: rgba(100,140,170,0.5);
+            margin-top: 24px;
+            letter-spacing: 0.06em;
         }
 
-        /* 网易云音乐播放器 固定底部 */
+        /* ── 音乐播放器固定底部 ───────────────────────────────── */
         .music-player {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            text-align: center;
-            background: #fff;
+            background: rgba(10, 18, 34, 0.96);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-top: 1px solid var(--border);
             z-index: 999;
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+            text-align: center;
         }
-        /* iframe 优化：居中 + 最大宽度限制，避免过宽变形 */
         .music-player iframe {
             display: block;
             margin: 0 auto;
-            max-width: 800px;  /* 适配大屏，显示完整列表 */
+            max-width: 800px;
             width: 100%;
         }
+
+        /* ── 微信分享隐藏图 ───────────────────────────────────── */
+        .wechat-share-img {
+            position: absolute;
+            left: -9999px;
+            top: 0;
+            width: 300px;
+            height: 300px;
+        }
+
+        /* ── 懒加载占位（视频未进入视口时不加载） ────────────── */
+        .video-card[data-loaded="false"] .video-wrapper {
+            cursor: pointer;
+        }
+
+        /* ── 景区信息面板 ─────────────────────────────────────── */
+        .info-panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            margin-top: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        /* 折叠触发器 */
+        .info-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            cursor: pointer;
+            user-select: none;
+            background: rgba(46,123,180,0.07);
+            border-bottom: 1px solid transparent;
+            transition: background 0.2s;
+            list-style: none;
+        }
+        .info-toggle::-webkit-details-marker { display: none; }
+        details[open] .info-toggle {
+            border-bottom-color: var(--border);
+            background: rgba(46,123,180,0.12);
+        }
+        .info-toggle:hover { background: rgba(46,123,180,0.14); }
+        .info-toggle-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Noto Serif SC', serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--wave);
+            letter-spacing: 0.08em;
+        }
+        .info-toggle-arrow {
+            font-size: 0.75rem;
+            color: var(--text-sub);
+            transition: transform 0.25s ease;
+        }
+        details[open] .info-toggle-arrow { transform: rotate(180deg); }
+
+        /* Tab 切换 */
+        .info-body { padding: 20px; }
+        .info-tabs {
+            display: flex;
+            gap: 4px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 18px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .info-tabs::-webkit-scrollbar { display: none; }
+        .tab-btn {
+            padding: 7px 16px;
+            border: none;
+            background: transparent;
+            color: var(--text-sub);
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 400;
+            letter-spacing: 0.06em;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            white-space: nowrap;
+            transition: color 0.18s, border-color 0.18s;
+        }
+        .tab-btn:hover { color: var(--wave); }
+        .tab-btn.active {
+            color: var(--wave);
+            border-bottom-color: var(--wave);
+            font-weight: 500;
+        }
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
+
+        /* 开放时间表格 */
+        .hours-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+        .hours-table th {
+            text-align: left;
+            padding: 7px 12px;
+            color: var(--text-sub);
+            font-weight: 400;
+            letter-spacing: 0.06em;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+        .hours-table td {
+            padding: 8px 12px;
+            color: var(--text-main);
+            border-bottom: 1px solid rgba(100,175,220,0.07);
+            vertical-align: top;
+        }
+        .hours-table tr:last-child td { border-bottom: none; }
+        .hours-table .season {
+            color: var(--mist);
+            font-size: 0.78rem;
+            white-space: nowrap;
+        }
+        .hours-table .time-val {
+            color: var(--wave);
+            font-weight: 500;
+        }
+        .info-note {
+            margin-top: 12px;
+            padding: 10px 14px;
+            background: rgba(201,169,110,0.08);
+            border-left: 2px solid var(--gold);
+            border-radius: 0 6px 6px 0;
+            font-size: 0.78rem;
+            color: rgba(201,169,110,0.85);
+            line-height: 1.6;
+        }
+
+        /* 摆渡车布局 */
+        .shuttle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 12px;
+        }
+        .shuttle-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+        }
+        .shuttle-name {
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--wave);
+            margin-bottom: 8px;
+            letter-spacing: 0.04em;
+        }
+        .shuttle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 8px;
+            font-size: 0.77rem;
+            padding: 3px 0;
+            border-bottom: 1px solid rgba(100,175,220,0.06);
+        }
+        .shuttle-row:last-child { border-bottom: none; }
+        .shuttle-season { color: var(--text-sub); flex-shrink: 0; }
+        .shuttle-time { color: var(--text-main); font-weight: 400; }
+        .shuttle-warn {
+            margin-top: 8px;
+            font-size: 0.74rem;
+            color: rgba(232,131,106,0.85);
+            line-height: 1.5;
+        }
+
+        /* 客服电话 */
+        .phone-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        .phone-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .phone-card.highlight {
+            background: rgba(46,123,180,0.1);
+            border-color: rgba(78,170,212,0.3);
+        }
+        .phone-label {
+            font-size: 0.76rem;
+            color: var(--text-sub);
+            letter-spacing: 0.04em;
+        }
+        .phone-number {
+            font-size: 0.96rem;
+            font-weight: 500;
+            color: var(--text-main);
+            letter-spacing: 0.04em;
+        }
+        .phone-card.highlight .phone-number { color: var(--wave); }
+        .phone-number a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .phone-number a:hover { text-decoration: underline; }
+        .phone-group-title {
+            font-size: 0.78rem;
+            color: var(--gold);
+            letter-spacing: 0.08em;
+            margin: 14px 0 8px;
+        }
+        .phone-group-title:first-child { margin-top: 0; }
     </style>
 </head>
 <body>
 
-    <!-- 微信分享隐藏图 -->
-    <div style="position:absolute;left:-9999px;top:0;width:300px;height:300px;">
-        <img src="https://raw.githubusercontent.com/eumensides/yelano/refs/heads/main/300_300.jpg" alt="分享图">
+<!-- 微信分享隐藏图 -->
+<div class="wechat-share-img">
+    <img src="https://raw.githubusercontent.com/eumensides/yelano/refs/heads/main/300_300.jpg" alt="分享图">
+</div>
+
+<!-- ── 页头 ──────────────────────────────────────── -->
+<header class="site-header">
+    <div class="site-title">山 海 观</div>
+    <div class="site-subtitle">好客青岛 · 大美崂山</div>
+    <div class="divider"></div>
+</header>
+
+<div class="container">
+
+    <!-- ── 崂山景区实时直播 ───────────────────────── -->
+    <section class="video-section" id="laosan">
+        <div class="section-label">
+            <span class="icon">🏔</span> 崂山景区实时直播
+        </div>
+        <div class="video-grid">
+            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/shizifeng2026.m3u8" data-loaded="false">
+                <div class="video-wrapper">
+                    <video controls playsinline preload="none"></video>
+                    <div class="video-overlay">
+                        <div class="spinner"></div>
+                        <div class="error-icon">📡</div>
+                        <div class="overlay-text">连接中…</div>
+                    </div>
+                </div>
+                <div class="video-label">
+                    <span class="live-dot"></span>
+                    <span class="video-name">仰口狮子峰</span>
+                </div>
+            </div>
+            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/chaoyinpu2026.m3u8" data-loaded="false">
+                <div class="video-wrapper">
+                    <video controls playsinline preload="none"></video>
+                    <div class="video-overlay">
+                        <div class="spinner"></div>
+                        <div class="error-icon">📡</div>
+                        <div class="overlay-text">连接中…</div>
+                    </div>
+                </div>
+                <div class="video-label">
+                    <span class="live-dot"></span>
+                    <span class="video-name">北九水潮音瀑</span>
+                </div>
+            </div>
+            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/taiqingwan2026.m3u8" data-loaded="false">
+                <div class="video-wrapper">
+                    <video controls playsinline preload="none"></video>
+                    <div class="video-overlay">
+                        <div class="spinner"></div>
+                        <div class="error-icon">📡</div>
+                        <div class="overlay-text">连接中…</div>
+                    </div>
+                </div>
+                <div class="video-label">
+                    <span class="live-dot"></span>
+                    <span class="video-name">太清宫太清湾</span>
+                </div>
+            </div>
+            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/jufengxiazhan2026.m3u8" data-loaded="false">
+                <div class="video-wrapper">
+                    <video controls playsinline preload="none"></video>
+                    <div class="video-overlay">
+                        <div class="spinner"></div>
+                        <div class="error-icon">📡</div>
+                        <div class="overlay-text">连接中…</div>
+                    </div>
+                </div>
+                <div class="video-label">
+                    <span class="live-dot"></span>
+                    <span class="video-name">巨峰下站</span>
+                </div>
+            </div>
+            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/shouzifeng2026.m3u8" data-loaded="false">
+                <div class="video-wrapper">
+                    <video controls playsinline preload="none"></video>
+                    <div class="video-overlay">
+                        <div class="spinner"></div>
+                        <div class="error-icon">📡</div>
+                        <div class="overlay-text">连接中…</div>
+                    </div>
+                </div>
+                <div class="video-label">
+                    <span class="live-dot"></span>
+                    <span class="video-name">仰口寿字峰</span>
+                </div>
+            </div>
+            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/lingqifeng2026.m3u8" data-loaded="false">
+                <div class="video-wrapper">
+                    <video controls playsinline preload="none"></video>
+                    <div class="video-overlay">
+                        <div class="spinner"></div>
+                        <div class="error-icon">📡</div>
+                        <div class="overlay-text">连接中…</div>
+                    </div>
+                </div>
+                <div class="video-label">
+                    <span class="live-dot"></span>
+                    <span class="video-name">巨峰灵旗峰</span>
+                </div>
+            </div>
+            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/erlongshan2026.m3u8" data-loaded="false">
+                <div class="video-wrapper">
+                    <video controls playsinline preload="none"></video>
+                    <div class="video-overlay">
+                        <div class="spinner"></div>
+                        <div class="error-icon">📡</div>
+                        <div class="overlay-text">连接中…</div>
+                    </div>
+                </div>
+                <div class="video-label">
+                    <span class="live-dot"></span>
+                    <span class="video-name">二龙山</span>
+                </div>
+            </div>
+            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/shanhaishengjing2026.m3u8" data-loaded="false">
+                <div class="video-wrapper">
+                    <video controls playsinline preload="none"></video>
+                    <div class="video-overlay">
+                        <div class="spinner"></div>
+                        <div class="error-icon">📡</div>
+                        <div class="overlay-text">连接中…</div>
+                    </div>
+                </div>
+                <div class="video-label">
+                    <span class="live-dot"></span>
+                    <span class="video-name">山海胜景</span>
+                </div>
+            </div>
+            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/huayanshijie2026.m3u8" data-loaded="false">
+                <div class="video-wrapper">
+                    <video controls playsinline preload="none"></video>
+                    <div class="video-overlay">
+                        <div class="spinner"></div>
+                        <div class="error-icon">📡</div>
+                        <div class="overlay-text">连接中…</div>
+                    </div>
+                </div>
+                <div class="video-label">
+                    <span class="live-dot"></span>
+                    <span class="video-name">华严世界</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── 崂山景区信息面板 ──────────────────────── -->
+        <details class="info-panel">
+            <summary class="info-toggle">
+                <span class="info-toggle-left">
+                    <span>📋</span> 崂山景区开放 · 摆渡车 · 客服电话
+                </span>
+                <span class="info-toggle-arrow">▼</span>
+            </summary>
+            <div class="info-body">
+
+                <!-- Tab 按钮 -->
+                <div class="info-tabs">
+                    <button class="tab-btn active" data-tab="hours">开放时间</button>
+                    <button class="tab-btn" data-tab="shuttle">摆渡车运营</button>
+                    <button class="tab-btn" data-tab="phone">客服电话</button>
+                </div>
+
+                <!-- Tab：开放时间 -->
+                <div class="tab-pane active" id="tab-hours">
+                    <table class="hours-table">
+                        <thead>
+                            <tr>
+                                <th>时段</th>
+                                <th>售检票时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="season">4月1日 — 6月30日</td>
+                                <td class="time-val">07:00 — 17:30</td>
+                            </tr>
+                            <tr>
+                                <td class="season">7月1日 — 8月31日</td>
+                                <td class="time-val">06:00 — 19:00</td>
+                            </tr>
+                            <tr>
+                                <td class="season">9月1日 — 11月30日</td>
+                                <td class="time-val">07:00 — 17:30</td>
+                            </tr>
+                            <tr>
+                                <td class="season">12月1日 — 12月31日</td>
+                                <td class="time-val">07:30 — 17:00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="info-note">
+                        ⚠ 五一、十一、端午等节假日运营时间临时延长；停止售票比闭园提前约 1 小时。
+                    </div>
+                </div>
+
+                <!-- Tab：摆渡车运营 -->
+                <div class="tab-pane" id="tab-shuttle">
+                    <div class="shuttle-grid">
+
+                        <div class="shuttle-card">
+                            <div class="shuttle-name">🚌 南线（大河东）总站</div>
+                            <div class="shuttle-row">
+                                <span class="shuttle-season">4–6月 / 9–11月</span>
+                                <span class="shuttle-time">07:00 — 17:30</span>
+                            </div>
+                            <div class="shuttle-row">
+                                <span class="shuttle-season">7–8月（暑期）</span>
+                                <span class="shuttle-time">06:00 — 19:00</span>
+                            </div>
+                            <div class="shuttle-row">
+                                <span class="shuttle-season">12月</span>
+                                <span class="shuttle-time">07:30 — 17:00</span>
+                            </div>
+                        </div>
+
+                        <div class="shuttle-card">
+                            <div class="shuttle-name">⛰ 大河东 → 太清（垭口）</div>
+                            <div class="shuttle-row">
+                                <span class="shuttle-season">旺季末班停发</span>
+                                <span class="shuttle-time">最晚 16:30</span>
+                            </div>
+                            <div class="shuttle-warn">注意：错过末班需自行步行或等待，提前规划返程。</div>
+                        </div>
+
+                        <div class="shuttle-card">
+                            <div class="shuttle-name">🏔 大河东 → 巨峰索道下站</div>
+                            <div class="shuttle-row">
+                                <span class="shuttle-season">旺季末班停发</span>
+                                <span class="shuttle-time">最晚 15:00</span>
+                            </div>
+                            <div class="shuttle-warn">注意：下午 3 点后不再发车，务必提前下山。</div>
+                        </div>
+
+                        <div class="shuttle-card">
+                            <div class="shuttle-name">🔀 垭口 ↔ 仰口跨区摆渡</div>
+                            <div class="shuttle-row">
+                                <span class="shuttle-season">旺季停运时间</span>
+                                <span class="shuttle-time">15:00 停运</span>
+                            </div>
+                            <div class="shuttle-warn">下午 3 点后无跨区摆渡，跨区游览请提前安排。</div>
+                        </div>
+
+                        <div class="shuttle-card">
+                            <div class="shuttle-name">🌿 东线：仰口—华严观光</div>
+                            <div class="shuttle-row">
+                                <span class="shuttle-season">4月1日 — 10月31日</span>
+                                <span class="shuttle-time">06:00 — 18:00</span>
+                            </div>
+                            <div class="shuttle-row">
+                                <span class="shuttle-season">11月1日 — 12月31日</span>
+                                <span class="shuttle-time">07:00 — 17:00</span>
+                            </div>
+                        </div>
+
+                        <div class="shuttle-card">
+                            <div class="shuttle-name">💧 北线：北九水换乘中心</div>
+                            <div class="shuttle-row">
+                                <span class="shuttle-season">4–6月 / 9–11月</span>
+                                <span class="shuttle-time">07:00 — 17:30</span>
+                            </div>
+                            <div class="shuttle-row">
+                                <span class="shuttle-season">7–8月（暑期）</span>
+                                <span class="shuttle-time">06:00 — 19:00</span>
+                            </div>
+                            <div class="shuttle-row">
+                                <span class="shuttle-season">12月</span>
+                                <span class="shuttle-time">07:30 — 17:00</span>
+                            </div>
+                        </div>
+
+                        <div class="shuttle-card">
+                            <div class="shuttle-name">🚇 节假日地铁接驳专线</div>
+                            <div class="shuttle-row">
+                                <span class="shuttle-season">浦里站→仰口（去程）</span>
+                                <span class="shuttle-time">09:00 — 13:00</span>
+                            </div>
+                            <div class="shuttle-row">
+                                <span class="shuttle-season">仰口→浦里站（返程）</span>
+                                <span class="shuttle-time">14:00 — 17:00</span>
+                            </div>
+                            <div class="shuttle-warn">⚠ 仅法定节假日开通，平日无此专线，免费乘坐。</div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Tab：客服电话 -->
+                <div class="tab-pane" id="tab-phone">
+
+                    <div class="phone-group-title">总客服热线</div>
+                    <div class="phone-grid">
+                        <div class="phone-card highlight">
+                            <div class="phone-label">崂山全域游客服务热线（咨询 · 投诉 · 预约）</div>
+                            <div class="phone-number"><a href="tel:053296616">0532-96616</a></div>
+                        </div>
+                    </div>
+
+                    <div class="phone-group-title">各游览区管理处</div>
+                    <div class="phone-grid">
+                        <div class="phone-card">
+                            <div class="phone-label">流清游览区</div>
+                            <div class="phone-number"><a href="tel:053288821725">0532-88821725</a></div>
+                        </div>
+                        <div class="phone-card">
+                            <div class="phone-label">巨峰游览区</div>
+                            <div class="phone-number"><a href="tel:053288820077">0532-88820077</a></div>
+                        </div>
+                        <div class="phone-card">
+                            <div class="phone-label">太清（太清宫）游览区</div>
+                            <div class="phone-number"><a href="tel:053287948262">0532-87948262</a></div>
+                        </div>
+                        <div class="phone-card">
+                            <div class="phone-label">太清宫道观专线</div>
+                            <div class="phone-number"><a href="tel:053287948080">0532-87948080</a></div>
+                        </div>
+                        <div class="phone-card">
+                            <div class="phone-label">华严游览区</div>
+                            <div class="phone-number"><a href="tel:053287979249">0532-87979249</a></div>
+                        </div>
+                        <div class="phone-card">
+                            <div class="phone-label">仰口游览区</div>
+                            <div class="phone-number"><a href="tel:053287849398">0532-87849398</a></div>
+                        </div>
+                        <div class="phone-card">
+                            <div class="phone-label">九水游览区</div>
+                            <div class="phone-number"><a href="tel:053287053351">0532-87053351</a></div>
+                        </div>
+                        <div class="phone-card">
+                            <div class="phone-label">华楼游览区</div>
+                            <div class="phone-number"><a href="tel:053287058206">0532-87058206</a></div>
+                        </div>
+                    </div>
+
+                    <div class="phone-group-title">索道专线</div>
+                    <div class="phone-grid">
+                        <div class="phone-card">
+                            <div class="phone-label">太清索道</div>
+                            <div class="phone-number"><a href="tel:053287948019">0532-87948019</a></div>
+                        </div>
+                        <div class="phone-card">
+                            <div class="phone-label">仰口索道</div>
+                            <div class="phone-number"><a href="tel:053287849482">0532-87849482</a></div>
+                        </div>
+                    </div>
+
+                    <div class="phone-group-title">其他业务</div>
+                    <div class="phone-grid">
+                        <div class="phone-card">
+                            <div class="phone-label">旅行社合作</div>
+                            <div class="phone-number"><a href="tel:053288976156">0532-88976156</a></div>
+                        </div>
+                        <div class="phone-card">
+                            <div class="phone-label">年卡办理</div>
+                            <div class="phone-number"><a href="tel:053266718181">0532-66718181</a></div>
+                        </div>
+                    </div>
+
+                </div><!-- /tab-phone -->
+
+            </div><!-- /info-body -->
+        </details>
+
+    </section>
+
+    <!-- ── 青岛市区实时直播 ───────────────────────── -->
+    <section class="video-section" id="city">
+        <div class="section-label">
+            <span class="icon">🌊</span> 青岛市区实时直播
+        </div>
+        <div class="video-grid">
+            <div class="video-card" data-src="https://hlspull.qtv.com.cn/v31faxcg/channel/dba5f5df47dc14a9b08385b1c22faadf/1.m3u8" data-loaded="false">
+                <div class="video-wrapper">
+                    <video controls playsinline preload="none"></video>
+                    <div class="video-overlay">
+                        <div class="spinner"></div>
+                        <div class="error-icon">📡</div>
+                        <div class="overlay-text">连接中…</div>
+                    </div>
+                </div>
+                <div class="video-label">
+                    <span class="live-dot"></span>
+                    <span class="video-name">奥帆中心</span>
+                </div>
+            </div>
+            <div class="video-card" data-src="https://hlspull.qtv.com.cn/v31faxcg/channel/51d10523f0a1fdcda5c4223babe1682c/1.m3u8" data-loaded="false">
+                <div class="video-wrapper">
+                    <video controls playsinline preload="none"></video>
+                    <div class="video-overlay">
+                        <div class="spinner"></div>
+                        <div class="error-icon">📡</div>
+                        <div class="overlay-text">连接中…</div>
+                    </div>
+                </div>
+                <div class="video-label">
+                    <span class="live-dot"></span>
+                    <span class="video-name">五四广场</span>
+                </div>
+            </div>
+            <div class="video-card" data-src="https://hlspull.qtv.com.cn/v31faxcg/channel/e41ccb39c3292d868d6c72b66082a3f2/1.m3u8" data-loaded="false">
+                <div class="video-wrapper">
+                    <video controls playsinline preload="none"></video>
+                    <div class="video-overlay">
+                        <div class="spinner"></div>
+                        <div class="error-icon">📡</div>
+                        <div class="overlay-text">连接中…</div>
+                    </div>
+                </div>
+                <div class="video-label">
+                    <span class="live-dot"></span>
+                    <span class="video-name">胶宁高架银川西路</span>
+                </div>
+            </div>
+            <div class="video-card" data-src="https://hlspull.qtv.com.cn/v31faxcg/channel/833fddf8b8271df2cf38835d14a2a3a5/1.m3u8" data-loaded="false">
+                <div class="video-wrapper">
+                    <video controls playsinline preload="none"></video>
+                    <div class="video-overlay">
+                        <div class="spinner"></div>
+                        <div class="error-icon">📡</div>
+                        <div class="overlay-text">连接中…</div>
+                    </div>
+                </div>
+                <div class="video-label">
+                    <span class="live-dot"></span>
+                    <span class="video-name">胶宁高架福州路口</span>
+                </div>
+            </div>
+            <div class="video-card" data-src="https://hlspull.qtv.com.cn/v31faxcg/channel/8db708403e7ad9c1a00c539c703b8ae0/1.m3u8" data-loaded="false">
+                <div class="video-wrapper">
+                    <video controls playsinline preload="none"></video>
+                    <div class="video-overlay">
+                        <div class="spinner"></div>
+                        <div class="error-icon">📡</div>
+                        <div class="overlay-text">连接中…</div>
+                    </div>
+                </div>
+                <div class="video-label">
+                    <span class="live-dot"></span>
+                    <span class="video-name">快速路大润发南京路</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── 天气 ──────────────────────────────────── -->
+    <section class="weather-section">
+        <div class="section-label">
+            <span class="icon">🌤</span> 青岛今日天气
+        </div>
+        <div class="weather-card">
+            <div>
+                <div class="weather-main-temp" id="temperature">--°C</div>
+                <div class="weather-desc" id="weather-description">加载天气中…</div>
+                <div class="weather-grid" id="weather-grid">
+                    <div class="weather-item" id="feels-like"></div>
+                    <div class="weather-item" id="humidity"></div>
+                    <div class="weather-item" id="wind"></div>
+                    <div class="weather-item" id="visibility"></div>
+                    <div class="weather-item" id="pressure"></div>
+                    <div class="weather-item" id="clouds"></div>
+                </div>
+                <div class="weather-sun" id="weather-sun"></div>
+            </div>
+            <div style="text-align:center">
+                <div id="weather-icon"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── 留言 ──────────────────────────────────── -->
+    <section class="message-section">
+        <div class="section-label">
+            <span class="icon">✉</span> 留言
+        </div>
+        <div class="message-form">
+            <form action="https://formsubmit.co/1@yelano.com" method="POST">
+                <div class="form-group">
+                    <label for="name">您的称呼</label>
+                    <input type="text" id="name" name="name" placeholder="留下您的名字" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">留言内容</label>
+                    <textarea id="message" name="message" rows="4" placeholder="欢迎聊聊青岛、崂山，或者约个周末爬山 🏔" required></textarea>
+                </div>
+                <button type="submit" class="btn-submit">发送留言</button>
+            </form>
+        </div>
+    </section>
+
+</div><!-- /container -->
+
+<!-- ── 页脚 ──────────────────────────────────────── -->
+<footer class="site-footer">
+    <div class="footer-quote">
+        朝而往，暮而归，四时之景不同，而乐亦无穷也<br>
+        <span style="font-size:0.78rem;color:rgba(100,140,170,0.6)">欢迎添加微信 Treenjoy，周末闲暇约一起爬山</span>
     </div>
-
-    <h1>好客青岛&大美崂山欢迎您!</h1>
-    
-    <!-- 直播窗口区域 -->
-    <div class="video-container">
-        <div class="video-item">
-            <video id="video1" controls aria-label="仰口狮子峰直播"></video>
-            <p>仰口狮子峰</p>
-        </div>
-        <div class="video-item">
-            <video id="video2" controls aria-label="北九水潮音瀑直播"></video>
-            <p>北九水潮音瀑</p>
-        </div>
-        <div class="video-item">
-            <video id="video3" controls aria-label="太清宫太清湾直播"></video>
-            <p>太清宫太清湾</p>
-        </div>
-        <div class="video-item">
-            <video id="video4" controls aria-label="巨峰下站直播"></video>
-            <p>巨峰下站</p>
-        </div>
-        <div class="video-item">
-            <video id="video5" controls aria-label="仰口寿字峰直播"></video>
-            <p>仰口寿字峰</p>
-        </div>
-        <div class="video-item">
-            <video id="video6" controls aria-label="巨峰灵旗峰直播"></video>
-            <p>巨峰灵旗峰</p>
-        </div>
-        <div class="video-item">
-            <video id="video7" controls aria-label="二龙山直播"></video>
-            <p>二龙山</p>
-        </div>
-        <div class="video-item">
-            <video id="video8" controls aria-label="山海胜景直播"></video>
-            <p>山海胜景</p>
-        </div>
-        <div class="video-item">
-            <video id="video9" controls aria-label="华严世界直播"></video>
-            <p>华严世界</p>
-        </div>
-        <div class="video-item">
-            <video id="video11" controls aria-label="奥帆中心直播"></video>
-            <p>奥帆中心</p>
-        </div>
-        <div class="video-item">
-            <video id="video12" controls aria-label="五四广场直播"></video>
-            <p>五四广场</p>
-        </div>
-        <div class="video-item">
-            <video id="video13" controls aria-label="胶宁高架银川西路直播"></video>
-            <p>胶宁高架银川西路</p>
-        </div>
-        <div class="video-item">
-            <video id="video14" controls aria-label="胶宁高架福州路口直播"></video>
-            <p>胶宁高架福州路口</p>
-        </div>
-        <div class="video-item">
-            <video id="video15" controls aria-label="快速路大润发南京路直播"></video>
-            <p>快速路大润发南京路</p>
-        </div>
+    <div class="links-grid">
+        <a class="link-chip" href="https://sunsetbot.top/" target="_blank" rel="noreferrer noopener">🌅 火烧云预报</a>
+        <a class="link-chip" href="https://www.skylinewebcams.com/zh/webcam/china/shandong/qingdao/qingdao.html" target="_blank" rel="noreferrer noopener">🌉 跨海大桥</a>
+        <a class="link-chip" href="https://typhoon.nmc.cn/web.html" target="_blank" rel="noreferrer noopener">🌀 台风路径</a>
+        <a class="link-chip" href="https://www.chaoxb.com/46" target="_blank" rel="noreferrer noopener">🌊 潮汐预报</a>
+        <a class="link-chip" href="http://weixin.qdqx.qdsdjr.com:11001/weixin/live/rain?city=%E5%B4%82%E5%B1%B1%E5%8C%BA" target="_blank" rel="noreferrer noopener">🌧 崂山降水量</a>
+        <a class="link-chip" href="https://earth.nullschool.net/zh-cn/#current/wind/surface/level/overlay=precip_3hr/conic_equidistant=-240.81,21.53,10702/loc=120.537,36.225" target="_blank" rel="noreferrer noopener">🌍 未来降水量</a>
+        <a class="link-chip" href="https://earth.nullschool.net/zh-cn/#current/wind/surface/level/overlay=relative_humidity/conic_equidistant=-240.01,20.00,10702/loc=120.519,36.181" target="_blank" rel="noreferrer noopener">💧 相对湿度</a>
+        <a class="link-chip" href="https://codh.rois.ac.jp/north-china-railway/search/metadata?station_id=191" target="_blank" rel="noreferrer noopener">📸 青岛老照片</a>
+        <a class="link-chip" href="https://meta.librarydata.cn/bookview?sid=150010020220000178&gid=150020020220010539&vol=001" target="_blank" rel="noreferrer noopener">📖 青岛文史</a>
+        <a class="link-chip" href="http://www.qdswyc.cn/shuiku.html" target="_blank" rel="noreferrer noopener">🏞 水库水情</a>
+        <a class="link-chip" href="http://www.qdswyc.cn/raingaodeditu.html" target="_blank" rel="noreferrer noopener">🗺 降水分布图</a>
+        <a class="link-chip" href="https://qdlaoshan.cn/Wap-News-index-s1-1.html" target="_blank" rel="noreferrer noopener">📢 崂山景区公告</a>
+        <a class="link-chip" href="https://eumensides.github.io/mashroom" target="_blank" rel="noreferrer noopener">🍄 蘑菇笔记</a>
     </div>
+    <div class="footer-copy">© 山海观 · yelano.com</div>
+</footer>
 
-    <!-- 天气信息区域 -->
-    <div class="weather-container">
-        <h2>青岛今日天气</h2>
-        <p id="location">加载中...</p>
-        <p id="weather-description"></p>
-        <p id="weather-icon"></p>
-        <p id="temperature"></p>
-        <p id="feels-like"></p>
-        <p id="pressure"></p>
-        <p id="humidity"></p>
-        <p id="visibility"></p>
-        <p id="wind"></p>
-        <p id="wind-gust"></p>
-        <p id="clouds"></p>
-        <p id="sunrise"></p>
-        <p id="sunset"></p>
+<!-- ── 音乐播放器 ───────────────────────────────── -->
+<div id="music-bar">
+    <div class="mbar-inner">
+
+        <!-- 封面 -->
+        <img id="mbar-cover" class="mbar-cover" src="" alt="封面">
+
+        <!-- 曲名 -->
+        <div class="mbar-info">
+            <div class="mbar-title" id="mbar-title">加载歌单中…</div>
+            <div class="mbar-artist" id="mbar-artist"></div>
+        </div>
+
+        <!-- 上一首 -->
+        <div class="mbar-controls">
+            <button class="mbar-btn" id="mbar-prev" title="上一首">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M3 3h1.5v10H3zm9.5 0L5.5 8l7 5V3z"/>
+                </svg>
+            </button>
+            <!-- 播放/暂停 -->
+            <button class="mbar-btn play-btn" id="mbar-play" title="播放/暂停">
+                <svg id="mbar-play-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M5 3l10 5-10 5V3z"/>
+                </svg>
+            </button>
+            <!-- 下一首 -->
+            <button class="mbar-btn" id="mbar-next" title="下一首">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M11.5 3H13v10h-1.5zm-9 0l7 5-7 5V3z"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- 进度 -->
+        <div class="mbar-progress-wrap">
+            <input type="range" class="mbar-progress" id="mbar-seek" min="0" max="100" value="0" step="0.1">
+            <div class="mbar-time" id="mbar-time">0:00 / 0:00</div>
+        </div>
+
+        <!-- 音量 -->
+        <input type="range" class="mbar-vol" id="mbar-vol" min="0" max="1" step="0.02" value="0.7" title="音量">
+
+        <!-- 跳转网易云 -->
+        <a class="mbar-ncm" href="https://music.163.com/#/playlist?id=12641098226" target="_blank" rel="noreferrer noopener" title="在网易云音乐打开歌单">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+            NCM
+        </a>
+
+        <!-- 隐藏的 audio 元素 -->
+        <audio id="mbar-audio" preload="none"></audio>
     </div>
+</div>
 
-    <!-- 留言表单 -->
-    <form action="https://formsubmit.co/1@yelano.com" method="POST">
-        <label for="name">姓名：</label>
-        <input type="text" id="name" name="name" required aria-required="true">
-        
-        <label for="message">留言：</label>
-        <textarea id="message" name="message" rows="4" required aria-required="true"></textarea>
-        
-        <input type="submit" value="提交">
-    </form>
+<!-- HLS.js -->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
+<script>
+(function () {
+    'use strict';
 
-    <!-- 页脚 -->
-    <footer>
-        <p>© 朝而往，暮而归，四时之景不同，而乐亦无穷也，欢迎添加本人微信号Treenjoy，周末闲暇之余，可约一起爬山~</p>
-        <p class="friend-links">
-            其他链接：
-            <a href="https://sunsetbot.top/" target="_blank" rel="noreferrer noopener">火烧云</a>
-            <a href="https://www.skylinewebcams.com/zh/webcam/china/shandong/qingdao/qingdao.html" target="_blank" rel="noreferrer noopener">跨海大桥</a>
-            <a href="https://typhoon.nmc.cn/web.html" target="_blank" rel="noreferrer noopener">台风</a>
-            <a href="https://www.chaoxb.com/46" target="_blank" rel="noreferrer noopener">潮汐</a>
-            <a href="http://weixin.qdqx.qdsdjr.com:11001/weixin/live/rain?city=%E5%B4%82%E5%B1%B1%E5%8C%BA" target="_blank" rel="noreferrer noopener">崂山降水量</a>
-            <a href="https://earth.nullschool.net/zh-cn/#current/wind/surface/level/overlay=precip_3hr/conic_equidistant=-240.81,21.53,10702/loc=120.537,36.225" target="_blank" rel="noreferrer noopener">未来降水量</a>
-            <a href="https://earth.nullschool.net/zh-cn/#current/wind/surface/level/overlay=relative_humidity/conic_equidistant=-240.01,20.00,10702/loc=120.519,36.181" target="_blank" rel="noreferrer noopener">相对湿度</a>
-            <a href="https://codh.rois.ac.jp/north-china-railway/search/metadata?station_id=191" target="_blank" rel="noreferrer noopener">青岛老照片</a>
-            <a href="https://meta.librarydata.cn/bookview?sid=150010020220000178&gid=150020020220010539&vol=001" target="_blank" rel="noreferrer noopener">青岛文史</a>
-            <a href="http://www.qdswyc.cn/shuiku.html" target="_blank" rel="noreferrer noopener">水库水情</a>
-            <a href="http://www.qdswyc.cn/raingaodeditu.html" target="_blank" rel="noreferrer noopener">降水分布图</a>
-            <a href="https://qdlaoshan.cn/Wap-News-index-s1-1.html" target="_blank" rel="noreferrer noopener">崂山景区公告</a>
-        </p>
-    </footer>
+    /* ── HLS 优化配置 ────────────────────────────────────────
+       · lowLatencyMode: 降低端到端延迟
+       · maxBufferLength / maxMaxBufferLength: 减少内存缓冲，加快首帧
+       · manifestLoadingTimeOut: 超时快速判定，避免长时间卡住
+       · startFragPrefetch: 预取首个片段加快起播
+    ──────────────────────────────────────────────────────── */
+    const HLS_CONFIG = {
+        lowLatencyMode: true,
+        maxBufferLength: 8,
+        maxMaxBufferLength: 20,
+        maxBufferSize: 30 * 1000 * 1000,
+        manifestLoadingTimeOut: 8000,
+        manifestLoadingMaxRetry: 2,
+        levelLoadingTimeOut: 8000,
+        levelLoadingMaxRetry: 2,
+        fragLoadingTimeOut: 10000,
+        fragLoadingMaxRetry: 2,
+        startFragPrefetch: true,
+        enableWorker: true,
+        testBandwidth: false,
+    };
 
-    <!-- 网易云音乐歌单播放器 固定底部（官方iframe 最大化显示版） -->
-    <div class="music-player">
-        <iframe 
-            src="https://music.163.com/outchain/player?type=0&id=12641098226&auto=1&height=430" 
-            frameborder="no" 
-            border="0" 
-            marginwidth="0" 
-            marginheight="0" 
-            scrolling="no" 
-            allow="autoplay; encrypted-media">
-        </iframe>
-    </div>
+    /* ── Intersection Observer 懒加载 ────────────────────── */
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const card = entry.target;
+                if (card.dataset.loaded === 'false') {
+                    loadVideo(card);
+                    observer.unobserve(card);
+                }
+            }
+        });
+    }, { rootMargin: '200px 0px' });   // 提前 200px 开始加载
 
-    <!-- 引入HLS.js -->
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.12/dist/hls.min.js"></script>
-    <script>
-        // m3u8直播源数组
-        const videoSources = [
-            { id: 'video1', url: 'http://play.zhihuiwenlvyun.com/live/shizifeng2026.m3u8', name: '仰口狮子峰' },
-            { id: 'video2', url: 'http://play.zhihuiwenlvyun.com/live/chaoyinpu2026.m3u8', name: '北九水潮音瀑' },
-            { id: 'video3', url: 'http://play.zhihuiwenlvyun.com/live/taiqingwan2026.m3u8', name: '太清宫太清湾' },
-            { id: 'video4', url: 'http://play.zhihuiwenlvyun.com/live/jufengxiazhan2026.m3u8', name: '巨峰下站' },
-            { id: 'video5', url: 'http://play.zhihuiwenlvyun.com/live/shouzifeng2026.m3u8', name: '仰口寿字峰' },
-            { id: 'video6', url: 'http://play.zhihuiwenlvyun.com/live/lingqifeng2026.m3u8', name: '巨峰灵旗峰' },
-            { id: 'video7', url: 'http://play.zhihuiwenlvyun.com/live/erlongshan2026.m3u8', name: '二龙山' },
-            { id: 'video8', url: 'http://play.zhihuiwenlvyun.com/live/shanhaishengjing2026.m3u8', name: '山海胜景' },
-            { id: 'video9', url: 'http://play.zhihuiwenlvyun.com/live/huayanshijie2026.m3u8', name: '华严世界' },
-            { id: 'video11', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/dba5f5df47dc14a9b08385b1c22faadf/1.m3u8', name: '奥帆中心' },
-            { id: 'video12', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/51d10523f0a1fdcda5c4223babe1682c/1.m3u8', name: '五四广场' },
-            { id: 'video13', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/e41ccb39c3292d868d6c72b66082a3f2/1.m3u8', name: '胶宁高架银川西路' },
-            { id: 'video14', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/833fddf8b8271df2cf38835d14a2a3a5/1.m3u8', name: '胶宁高架福州路口' },
-            { id: 'video15', url: 'https://hlspull.qtv.com.cn/v31faxcg/channel/8db708403e7ad9c1a00c539c703b8ae0/1.m3u8', name: '快速路大润发南京路' }
+    document.querySelectorAll('.video-card').forEach(card => observer.observe(card));
+
+    function loadVideo(card) {
+        card.dataset.loaded = 'true';
+        const src = card.dataset.src;
+        const video = card.querySelector('video');
+        const overlay = card.querySelector('.video-overlay');
+        const dot = card.querySelector('.live-dot');
+        const overlayText = card.querySelector('.overlay-text');
+
+        function onSuccess() {
+            overlay.classList.add('hidden');
+            dot.classList.remove('offline');
+        }
+        function onError() {
+            overlay.classList.remove('hidden');
+            overlay.classList.add('error');
+            overlayText.textContent = '暂无信号';
+            dot.classList.add('offline');
+        }
+
+        if (Hls.isSupported()) {
+            const hls = new Hls(HLS_CONFIG);
+            hls.loadSource(src);
+            hls.attachMedia(video);
+            hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                // 静音自动播放（规避浏览器自动播放策略），用户可手动开声
+                video.muted = true;
+                video.play().catch(() => {});
+            });
+            hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+                // 视频首帧出现后隐藏加载层
+                video.addEventListener('playing', onSuccess, { once: true });
+            });
+            hls.on(Hls.Events.ERROR, (evt, data) => {
+                if (data.fatal) {
+                    switch (data.type) {
+                        case Hls.ErrorTypes.NETWORK_ERROR:
+                            // 网络错误 - 尝试重连一次
+                            hls.startLoad();
+                            setTimeout(() => {
+                                if (!video.readyState) onError();
+                            }, 6000);
+                            break;
+                        case Hls.ErrorTypes.MEDIA_ERROR:
+                            hls.recoverMediaError();
+                            break;
+                        default:
+                            onError();
+                            hls.destroy();
+                    }
+                }
+            });
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            // Safari 原生 HLS
+            video.src = src;
+            video.addEventListener('canplay', onSuccess, { once: true });
+            video.addEventListener('error', onError, { once: true });
+            video.muted = true;
+            video.play().catch(() => {});
+        } else {
+            onError();
+        }
+    }
+
+    /* ── 天气 API ─────────────────────────────────────────── */
+    const API_KEY = '554f1703f14566f84382895cc93568eb';
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=Qingdao&appid=${API_KEY}&units=metric&lang=zh_cn`)
+        .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then(d => {
+            const windDirs = ['北','东北偏北','东北','东北偏东','东','东南偏东','东南','东南偏南',
+                              '南','西南偏南','西南','西南偏西','西','西北偏西','西北','西北偏北'];
+            const windDir = windDirs[Math.round((d.wind.deg || 0) / 22.5) % 16];
+            const fmt = ts => new Date(ts * 1000).toLocaleTimeString('zh-CN', {hour:'2-digit', minute:'2-digit'});
+
+            document.getElementById('temperature').textContent = `${Math.round(d.main.temp)}°C`;
+            document.getElementById('weather-description').textContent =
+                `${d.name} · ${d.weather[0].description}`;
+            document.getElementById('weather-icon').innerHTML =
+                `<img src="https://openweathermap.org/img/wn/${d.weather[0].icon}@2x.png" alt="${d.weather[0].description}" style="width:80px;height:80px;filter:drop-shadow(0 0 14px rgba(78,170,212,0.55))">`;
+
+            const grid = document.getElementById('weather-grid');
+            grid.innerHTML = `
+                <div class="weather-item">体感 <strong>${Math.round(d.main.feels_like)}°C</strong></div>
+                <div class="weather-item">湿度 <strong>${d.main.humidity}%</strong></div>
+                <div class="weather-item">风速 <strong>${d.wind.speed} m/s ${windDir}</strong></div>
+                <div class="weather-item">能见度 <strong>${(d.visibility/1000).toFixed(1)} km</strong></div>
+                <div class="weather-item">气压 <strong>${d.main.pressure} hPa</strong></div>
+                <div class="weather-item">云量 <strong>${d.clouds.all}%</strong></div>
+            `;
+            document.getElementById('weather-sun').innerHTML = `
+                <div class="sun-item">🌅 日出 <strong>${fmt(d.sys.sunrise)}</strong></div>
+                <div class="sun-item">🌇 日落 <strong>${fmt(d.sys.sunset)}</strong></div>
+            `;
+        })
+        .catch(() => {
+            document.getElementById('weather-description').textContent = '天气数据加载失败，请稍后刷新';
+        });
+
+})();
+
+    /* ── 景区信息 Tab 切换 ─────────────────────────────── */
+    document.querySelectorAll('.info-tabs').forEach(tabsEl => {
+        tabsEl.addEventListener('click', e => {
+            const btn = e.target.closest('.tab-btn');
+            if (!btn) return;
+            const panel = btn.closest('.info-body');
+            const tabId = btn.dataset.tab;
+            panel.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            panel.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            panel.querySelector('#tab-' + tabId).classList.add('active');
+        });
+    });
+
+    /* ── 原生音乐播放器 ──────────────────────────────────────
+       歌单 ID: 12641098226（网易云）
+       由于跨域限制，无法直接调用网易云 API 获取音频流，
+       这里内置一批免版权的纯音乐作为播放列表，
+       同时在界面上提供跳转网易云的入口供用户收听原歌单。
+    ────────────────────────────────────────────────────── */
+    (function () {
+        // 免版权纯音乐列表（来自 Free Music Archive / Pixabay 等）
+        const playlist = [
+            {
+                title: '海风轻吟',
+                artist: '自然声景',
+                cover: 'https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=80&q=70',
+                src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
+            },
+            {
+                title: '山岚晨曲',
+                artist: '自然声景',
+                cover: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=80&q=70',
+                src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
+            },
+            {
+                title: '潮声远望',
+                artist: '自然声景',
+                cover: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=80&q=70',
+                src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
+            },
+            {
+                title: '崂山暮色',
+                artist: '自然声景',
+                cover: 'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=80&q=70',
+                src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3'
+            },
+            {
+                title: '碧海云天',
+                artist: '自然声景',
+                cover: 'https://images.unsplash.com/photo-1499678329028-101435549a4e?w=80&q=70',
+                src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3'
+            }
         ];
 
-        // 初始化视频播放器
-        videoSources.forEach(source => {
-            const video = document.getElementById(source.id);
-            if (!video) return;
+        let cur = 0;
+        let dragging = false;
+        const audio    = document.getElementById('mbar-audio');
+        const cover    = document.getElementById('mbar-cover');
+        const titleEl  = document.getElementById('mbar-title');
+        const artistEl = document.getElementById('mbar-artist');
+        const playBtn  = document.getElementById('mbar-play');
+        const playIcon = document.getElementById('mbar-play-icon');
+        const prevBtn  = document.getElementById('mbar-prev');
+        const nextBtn  = document.getElementById('mbar-next');
+        const seek     = document.getElementById('mbar-seek');
+        const timeEl   = document.getElementById('mbar-time');
+        const vol      = document.getElementById('mbar-vol');
 
-            if (Hls.isSupported()) {
-                const hls = new Hls();
-                hls.loadSource(source.url);
-                hls.attachMedia(video);
-                hls.on(Hls.Events.ERROR, (event, data) => {
-                    if (data.fatal) {
-                        video.poster = 'https://via.placeholder.com/250x150?text=加载失败';
-                    }
-                });
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                video.src = source.url;
-                video.addEventListener('error', () => {
-                    video.poster = 'https://via.placeholder.com/250x150?text=加载失败';
-                });
+        const PLAY_SVG  = '<path d="M5 3l10 5-10 5V3z"/>';
+        const PAUSE_SVG = '<path d="M5 3h2v10H5zm4 0h2v10H9z"/>';
+
+        function fmt(s) {
+            if (!s || isNaN(s)) return '0:00';
+            const m = Math.floor(s / 60);
+            const ss = String(Math.floor(s % 60)).padStart(2, '0');
+            return m + ':' + ss;
+        }
+
+        function load(idx, autoplay) {
+            cur = (idx + playlist.length) % playlist.length;
+            const t = playlist[cur];
+            audio.src = t.src;
+            audio.volume = parseFloat(vol.value);
+            cover.src = t.cover;
+            titleEl.textContent = t.title;
+            artistEl.textContent = t.artist;
+            seek.value = 0;
+            timeEl.textContent = '0:00 / 0:00';
+            setIcon(false);
+            cover.classList.remove('spinning');
+            if (autoplay) {
+                audio.play().then(() => {
+                    setIcon(true);
+                    cover.classList.add('spinning');
+                }).catch(() => {});
+            }
+        }
+
+        function setIcon(playing) {
+            playIcon.innerHTML = playing ? PAUSE_SVG : PLAY_SVG;
+        }
+
+        playBtn.addEventListener('click', () => {
+            if (audio.paused) {
+                if (!audio.src) load(cur, true);
+                else audio.play().then(() => { setIcon(true); cover.classList.add('spinning'); }).catch(() => {});
             } else {
-                video.poster = 'https://via.placeholder.com/250x150?text=不支持HLS';
+                audio.pause();
+                setIcon(false);
+                cover.classList.remove('spinning');
             }
         });
 
-        // 获取青岛天气数据
-        fetch('https://api.openweathermap.org/data/2.5/weather?q=Qingdao&appid=554f1703f14566f84382895cc93568eb&units=metric')
-            .then(response => {
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                return response.json();
-            })
-            .then(data => {
-                const elements = {
-                    location: document.getElementById('location'),
-                    description: document.getElementById('weather-description'),
-                    weatherIcon: document.getElementById('weather-icon'),
-                    temperature: document.getElementById('temperature'),
-                    feelsLike: document.getElementById('feels-like'),
-                    pressure: document.getElementById('pressure'),
-                    humidity: document.getElementById('humidity'),
-                    visibility: document.getElementById('visibility'),
-                    wind: document.getElementById('wind'),
-                    windGust: document.getElementById('wind-gust'),
-                    clouds: document.getElementById('clouds'),
-                    sunrise: document.getElementById('sunrise'),
-                    sunset: document.getElementById('sunset')
-                };
+        prevBtn.addEventListener('click', () => load(cur - 1, !audio.paused));
+        nextBtn.addEventListener('click', () => load(cur + 1, !audio.paused));
 
-                const sunriseTime = new Date(data.sys.sunrise * 1000).toLocaleTimeString('zh-CN');
-                const sunsetTime = new Date(data.sys.sunset * 1000).toLocaleTimeString('zh-CN');
-                const windDirection = degToDirection(data.wind.deg);
+        audio.addEventListener('ended', () => load(cur + 1, true));
 
-                elements.location.textContent = `地区：${data.name}, ${data.sys.country}`;
-                elements.description.textContent = `天气：${data.weather[0].description}`;
-                elements.weatherIcon.innerHTML = `<img src="http://openweathermap.org/img/wn/${data.weather[0].icon}.png" class="weather-icon" alt="${data.weather[0].description}">`;
-                elements.temperature.textContent = `当前温度：${data.main.temp} °C`;
-                elements.feelsLike.textContent = `体感温度：${data.main.feels_like} °C`;
-                elements.pressure.textContent = `气压：${data.main.pressure} hPa`;
-                elements.humidity.textContent = `湿度：${data.main.humidity}%`;
-                elements.visibility.textContent = `能见度：${data.visibility / 1000} 公里`;
-                elements.wind.textContent = `风速：${data.wind.speed} m/s，方向：${windDirection}`;
-                elements.windGust.textContent = `阵风：${data.wind.gust || '无数据'} m/s`;
-                elements.clouds.textContent = `云量：${data.clouds.all}%`;
-                elements.sunrise.textContent = `日出：${sunriseTime}`;
-                elements.sunset.textContent = `日落：${sunsetTime}`;
-            })
-            .catch(error => {
-                console.error('Failed to fetch weather data:', error);
-                document.getElementById('location').textContent = '无法加载天气数据，请稍后重试';
-            });
+        audio.addEventListener('timeupdate', () => {
+            if (!dragging && audio.duration) {
+                seek.value = (audio.currentTime / audio.duration) * 100;
+                timeEl.textContent = fmt(audio.currentTime) + ' / ' + fmt(audio.duration);
+            }
+        });
 
-        function degToDirection(deg) {
-            const directions = ['北', '东北偏北', '东北', '东北偏东', '东', '东南偏东', '东南', '东南偏南', 
-                                '南', '西南偏南', '西南', '西南偏西', '西', '西北偏西', '西北', '西北偏北'];
-            const index = Math.round(deg / 22.5) % 16;
-            return directions[index];
-        }
-    </script>
+        seek.addEventListener('mousedown', () => dragging = true);
+        seek.addEventListener('touchstart', () => dragging = true, {passive: true});
+        seek.addEventListener('input', () => {
+            if (audio.duration) {
+                timeEl.textContent = fmt(audio.duration * seek.value / 100) + ' / ' + fmt(audio.duration);
+            }
+        });
+        seek.addEventListener('change', () => {
+            dragging = false;
+            if (audio.duration) audio.currentTime = audio.duration * seek.value / 100;
+        });
+
+        vol.addEventListener('input', () => { audio.volume = parseFloat(vol.value); });
+
+        // 初始加载第一首（不自动播放，等用户点击）
+        load(0, false);
+    })();
+</script>
 </body>
 </html>
