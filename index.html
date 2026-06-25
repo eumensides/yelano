@@ -52,7 +52,7 @@
             font-weight: 300;
             line-height: 1.7;
             min-height: 100vh;
-            padding-bottom: 72px; /* music bar height */
+            padding-bottom: 24px;
         }
 
         /* ── 导航 & 标题 ─────────────────────────────────────── */
@@ -1165,63 +1165,6 @@
     </div>
     <div class="footer-copy">© 山海观 · yelano.com</div>
 </footer>
-
-<!-- ── 音乐播放器 ───────────────────────────────── -->
-<div id="music-bar">
-    <div class="mbar-inner">
-
-        <!-- 封面 -->
-        <img id="mbar-cover" class="mbar-cover" src="" alt="封面">
-
-        <!-- 曲名 -->
-        <div class="mbar-info">
-            <div class="mbar-title" id="mbar-title">加载歌单中…</div>
-            <div class="mbar-artist" id="mbar-artist"></div>
-        </div>
-
-        <!-- 上一首 -->
-        <div class="mbar-controls">
-            <button class="mbar-btn" id="mbar-prev" title="上一首">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                    <path d="M3 3h1.5v10H3zm9.5 0L5.5 8l7 5V3z"/>
-                </svg>
-            </button>
-            <!-- 播放/暂停 -->
-            <button class="mbar-btn play-btn" id="mbar-play" title="播放/暂停">
-                <svg id="mbar-play-icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                    <path d="M5 3l10 5-10 5V3z"/>
-                </svg>
-            </button>
-            <!-- 下一首 -->
-            <button class="mbar-btn" id="mbar-next" title="下一首">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                    <path d="M11.5 3H13v10h-1.5zm-9 0l7 5-7 5V3z"/>
-                </svg>
-            </button>
-        </div>
-
-        <!-- 进度 -->
-        <div class="mbar-progress-wrap">
-            <input type="range" class="mbar-progress" id="mbar-seek" min="0" max="100" value="0" step="0.1">
-            <div class="mbar-time" id="mbar-time">0:00 / 0:00</div>
-        </div>
-
-        <!-- 音量 -->
-        <input type="range" class="mbar-vol" id="mbar-vol" min="0" max="1" step="0.02" value="0.7" title="音量">
-
-        <!-- 跳转网易云 -->
-        <a class="mbar-ncm" href="https://music.163.com/#/playlist?id=12641098226" target="_blank" rel="noreferrer noopener" title="在网易云音乐打开歌单">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/>
-            </svg>
-            NCM
-        </a>
-
-        <!-- 隐藏的 audio 元素 -->
-        <audio id="mbar-audio" preload="none"></audio>
-    </div>
-</div>
-
 <!-- HLS.js -->
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
 <script>
@@ -1377,136 +1320,6 @@
             panel.querySelector('#tab-' + tabId).classList.add('active');
         });
     });
-
-    /* ── 原生音乐播放器 ──────────────────────────────────────
-       歌单 ID: 12641098226（网易云）
-       由于跨域限制，无法直接调用网易云 API 获取音频流，
-       这里内置一批免版权的纯音乐作为播放列表，
-       同时在界面上提供跳转网易云的入口供用户收听原歌单。
-    ────────────────────────────────────────────────────── */
-    (function () {
-        // 免版权纯音乐列表（来自 Free Music Archive / Pixabay 等）
-        const playlist = [
-            {
-                title: '海风轻吟',
-                artist: '自然声景',
-                cover: 'https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=80&q=70',
-                src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
-            },
-            {
-                title: '山岚晨曲',
-                artist: '自然声景',
-                cover: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=80&q=70',
-                src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'
-            },
-            {
-                title: '潮声远望',
-                artist: '自然声景',
-                cover: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=80&q=70',
-                src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
-            },
-            {
-                title: '崂山暮色',
-                artist: '自然声景',
-                cover: 'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=80&q=70',
-                src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3'
-            },
-            {
-                title: '碧海云天',
-                artist: '自然声景',
-                cover: 'https://images.unsplash.com/photo-1499678329028-101435549a4e?w=80&q=70',
-                src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3'
-            }
-        ];
-
-        let cur = 0;
-        let dragging = false;
-        const audio    = document.getElementById('mbar-audio');
-        const cover    = document.getElementById('mbar-cover');
-        const titleEl  = document.getElementById('mbar-title');
-        const artistEl = document.getElementById('mbar-artist');
-        const playBtn  = document.getElementById('mbar-play');
-        const playIcon = document.getElementById('mbar-play-icon');
-        const prevBtn  = document.getElementById('mbar-prev');
-        const nextBtn  = document.getElementById('mbar-next');
-        const seek     = document.getElementById('mbar-seek');
-        const timeEl   = document.getElementById('mbar-time');
-        const vol      = document.getElementById('mbar-vol');
-
-        const PLAY_SVG  = '<path d="M5 3l10 5-10 5V3z"/>';
-        const PAUSE_SVG = '<path d="M5 3h2v10H5zm4 0h2v10H9z"/>';
-
-        function fmt(s) {
-            if (!s || isNaN(s)) return '0:00';
-            const m = Math.floor(s / 60);
-            const ss = String(Math.floor(s % 60)).padStart(2, '0');
-            return m + ':' + ss;
-        }
-
-        function load(idx, autoplay) {
-            cur = (idx + playlist.length) % playlist.length;
-            const t = playlist[cur];
-            audio.src = t.src;
-            audio.volume = parseFloat(vol.value);
-            cover.src = t.cover;
-            titleEl.textContent = t.title;
-            artistEl.textContent = t.artist;
-            seek.value = 0;
-            timeEl.textContent = '0:00 / 0:00';
-            setIcon(false);
-            cover.classList.remove('spinning');
-            if (autoplay) {
-                audio.play().then(() => {
-                    setIcon(true);
-                    cover.classList.add('spinning');
-                }).catch(() => {});
-            }
-        }
-
-        function setIcon(playing) {
-            playIcon.innerHTML = playing ? PAUSE_SVG : PLAY_SVG;
-        }
-
-        playBtn.addEventListener('click', () => {
-            if (audio.paused) {
-                if (!audio.src) load(cur, true);
-                else audio.play().then(() => { setIcon(true); cover.classList.add('spinning'); }).catch(() => {});
-            } else {
-                audio.pause();
-                setIcon(false);
-                cover.classList.remove('spinning');
-            }
-        });
-
-        prevBtn.addEventListener('click', () => load(cur - 1, !audio.paused));
-        nextBtn.addEventListener('click', () => load(cur + 1, !audio.paused));
-
-        audio.addEventListener('ended', () => load(cur + 1, true));
-
-        audio.addEventListener('timeupdate', () => {
-            if (!dragging && audio.duration) {
-                seek.value = (audio.currentTime / audio.duration) * 100;
-                timeEl.textContent = fmt(audio.currentTime) + ' / ' + fmt(audio.duration);
-            }
-        });
-
-        seek.addEventListener('mousedown', () => dragging = true);
-        seek.addEventListener('touchstart', () => dragging = true, {passive: true});
-        seek.addEventListener('input', () => {
-            if (audio.duration) {
-                timeEl.textContent = fmt(audio.duration * seek.value / 100) + ' / ' + fmt(audio.duration);
-            }
-        });
-        seek.addEventListener('change', () => {
-            dragging = false;
-            if (audio.duration) audio.currentTime = audio.duration * seek.value / 100;
-        });
-
-        vol.addEventListener('input', () => { audio.volume = parseFloat(vol.value); });
-
-        // 初始加载第一首（不自动播放，等用户点击）
-        load(0, false);
-    })();
 </script>
 </body>
 </html>
