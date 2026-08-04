@@ -353,6 +353,61 @@
             .map-panel-frame { padding-top: 95%; }
         }
 
+        /* 防误触锁：默认锁定，遮罩拦截所有触摸/点击，解锁后才能操作地图 */
+        .map-lock-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 10px;
+            background: transparent;
+            cursor: pointer;
+            text-align: center;
+            padding: 0 20px 16px;
+            touch-action: none;
+        }
+        .map-lock-overlay .lock-icon {
+            font-size: 1.7rem;
+            filter: drop-shadow(0 1px 4px rgba(0,0,0,0.85));
+        }
+        .map-lock-overlay .lock-text {
+            font-size: 0.78rem;
+            color: var(--text-main);
+            letter-spacing: 0.04em;
+            line-height: 1.5;
+            background: rgba(8, 15, 26, 0.6);
+            padding: 5px 12px;
+            border-radius: 999px;
+            -webkit-backdrop-filter: blur(4px);
+            backdrop-filter: blur(4px);
+        }
+        .map-panel-frame.unlocked .map-lock-overlay { display: none; }
+
+        .map-relock-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 6;
+            display: none;
+            align-items: center;
+            gap: 4px;
+            background: rgba(15, 35, 60, 0.88);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            font-size: 0.72rem;
+            font-family: inherit;
+            padding: 7px 12px;
+            border-radius: 999px;
+            cursor: pointer;
+            -webkit-backdrop-filter: blur(6px);
+            backdrop-filter: blur(6px);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+        }
+        .map-panel-frame.unlocked .map-relock-btn { display: flex; }
+
         /* ── 留言表单 ─────────────────────────────────────────── */
         .message-section { margin-bottom: 52px; }
         .message-form {
@@ -1176,24 +1231,44 @@
                 <div class="map-panel-title">🌡 温度</div>
                 <div class="map-panel-frame">
                     <iframe src="https://earth.nullschool.net/zh-cn/#current/wind/surface/level/overlay=temp/conic_equidistant=-237.48,20.27,2302/loc=120.499,36.220" loading="lazy" title="温度" allowfullscreen></iframe>
+                    <div class="map-lock-overlay">
+                        <span class="lock-icon">🔒</span>
+                        <span class="lock-text">触摸已锁定，点击解锁后可拖动地图 / 定位当前区域</span>
+                    </div>
+                    <button type="button" class="map-relock-btn">🔓 点击锁定</button>
                 </div>
             </div>
             <div class="map-panel">
                 <div class="map-panel-title">🥵 体感温度</div>
                 <div class="map-panel-frame">
                     <iframe src="https://earth.nullschool.net/zh-cn/#current/wind/surface/level/overlay=misery_index/conic_equidistant=-238.38,20.58,2329/loc=120.481,36.204" loading="lazy" title="体感温度" allowfullscreen></iframe>
+                    <div class="map-lock-overlay">
+                        <span class="lock-icon">🔒</span>
+                        <span class="lock-text">触摸已锁定，点击解锁后可拖动地图 / 定位当前区域</span>
+                    </div>
+                    <button type="button" class="map-relock-btn">🔓 点击锁定</button>
                 </div>
             </div>
             <div class="map-panel">
                 <div class="map-panel-title">🌧 未来三小时降水量</div>
                 <div class="map-panel-frame">
                     <iframe src="https://earth.nullschool.net/zh-cn/#current/wind/surface/level/overlay=precip_3hr/conic_equidistant=-236.89,20.95,2329/loc=120.520,36.195" loading="lazy" title="未来三小时降水量" allowfullscreen></iframe>
+                    <div class="map-lock-overlay">
+                        <span class="lock-icon">🔒</span>
+                        <span class="lock-text">触摸已锁定，点击解锁后可拖动地图 / 定位当前区域</span>
+                    </div>
+                    <button type="button" class="map-relock-btn">🔓 点击锁定</button>
                 </div>
             </div>
             <div class="map-panel">
                 <div class="map-panel-title">💧 相对湿度</div>
                 <div class="map-panel-frame">
                     <iframe src="https://earth.nullschool.net/zh-cn/#current/wind/surface/level/overlay=relative_humidity/conic_equidistant=-237.26,20.06,2329/loc=120.438,36.222" loading="lazy" title="相对湿度" allowfullscreen></iframe>
+                    <div class="map-lock-overlay">
+                        <span class="lock-icon">🔒</span>
+                        <span class="lock-text">触摸已锁定，点击解锁后可拖动地图 / 定位当前区域</span>
+                    </div>
+                    <button type="button" class="map-relock-btn">🔓 点击锁定</button>
                 </div>
             </div>
         </div>
@@ -1385,6 +1460,21 @@
         });
 
 })();
+
+    /* ── 气象地图防误触锁 ─────────────────────────────── */
+    document.querySelectorAll('.map-panel-frame').forEach(frame => {
+        const overlay = frame.querySelector('.map-lock-overlay');
+        const relockBtn = frame.querySelector('.map-relock-btn');
+        if (!overlay || !relockBtn) return;
+
+        overlay.addEventListener('click', () => {
+            frame.classList.add('unlocked');
+        });
+        relockBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            frame.classList.remove('unlocked');
+        });
+    });
 
     /* ── 景区信息 Tab 切换 ─────────────────────────────── */
     document.querySelectorAll('.info-tabs').forEach(tabsEl => {
