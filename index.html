@@ -1255,7 +1255,7 @@
             <span class="icon">🌊</span> 青岛市区实时直播
         </div>
         <div class="video-grid">
-            <div class="video-card" data-src="https://hlspull.qtv.com.cn/v31faxcg/channel/dba5f5df47dc14a9b08385b1c22faadf/1.m3u8" data-loaded="false">
+            <div class="video-card" data-src="https://hlspull.qtv.com.cn/v31faxcg/channel/dba5f5df47dc14a9b08385b1c22faadf/1.m3u8" data-loaded="false" data-timelapse="aofanzhongxin">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -1297,7 +1297,7 @@
                     </div>
                 </div>
             </div>
-            <div class="video-card" data-src="https://hlspull.qtv.com.cn/v31faxcg/channel/e41ccb39c3292d868d6c72b66082a3f2/1.m3u8" data-loaded="false">
+            <div class="video-card" data-src="https://hlspull.qtv.com.cn/v31faxcg/channel/e41ccb39c3292d868d6c72b66082a3f2/1.m3u8" data-loaded="false" data-timelapse="yinchuanxilu">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -1318,7 +1318,7 @@
                     </div>
                 </div>
             </div>
-            <div class="video-card" data-src="https://hlspull.qtv.com.cn/v31faxcg/channel/833fddf8b8271df2cf38835d14a2a3a5/1.m3u8" data-loaded="false">
+            <div class="video-card" data-src="https://hlspull.qtv.com.cn/v31faxcg/channel/833fddf8b8271df2cf38835d14a2a3a5/1.m3u8" data-loaded="false" data-timelapse="fuzhoulu">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -1339,7 +1339,7 @@
                     </div>
                 </div>
             </div>
-            <div class="video-card" data-src="https://hlspull.qtv.com.cn/v31faxcg/channel/8db708403e7ad9c1a00c539c703b8ae0/1.m3u8" data-loaded="false">
+            <div class="video-card" data-src="https://hlspull.qtv.com.cn/v31faxcg/channel/8db708403e7ad9c1a00c539c703b8ae0/1.m3u8" data-loaded="false" data-timelapse="nanjinglu">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -1637,23 +1637,24 @@
         });
     });
 
-    /* ── 昨日动态回放（延时摄影，直接探测 Release 资源）───
+    /* ── 昨日动态回放（延时摄影）──────────────────────────
        每个机位在 video-card 上通过 data-timelapse="<slug>" 声明其
        在 https://github.com/eumensides/laoshan/releases 中对应的
        release 标签前缀（如 timelapse-wusiguangchang-2026-08-03）。
-       不走 GitHub API（公共 API 每 IP 每小时仅 60 次，站点一有访客
-       就很容易触发限流导致全部加载失败），而是按固定命名规律直接
-       拼出下载链接，用 <video>/<img> 自身的加载结果判断资源是否
-       存在：先试"昨天"，若当天素材还没生成或探测失败，再依次往前
-       多试几天，直到找到可用的 mp4（优先）或 gif。若某机位暂未标
-       注 data-timelapse，按钮会提示尚未配置。
+       直接把真实的 <video>/<img> 元素挂到附属窗口里加载，用它自身
+       的 load/error 事件判断资源是否存在（不用离屏元素预探测——
+       离屏元素在部分移动端浏览器上事件不可靠，会造成"明明文件存
+       在却显示失败"）。先试"昨天"的 mp4，失败则依次尝试同一天的
+       gif、再往前的日期，直到成功或用完重试次数。视频用 muted +
+       playsinline + autoplay 并显式调用 play()，与本页直播区块保持
+       一致的写法，避免移动端只显示静态首帧不播放的问题。
     ──────────────────────────────────────────────────── */
     (function () {
         'use strict';
         const REPO = 'eumensides/laoshan';
         const BASE_URL = `https://github.com/${REPO}/releases/download`;
-        const MAX_DAYS_BACK = 4;   // 从昨天起最多回溯几天寻找可用回放
-        const PROBE_TIMEOUT = 7000; // 单次探测超时（毫秒）
+        const MAX_DAYS_BACK = 4;    // 从昨天起最多回溯几天寻找可用回放
+        const LOAD_TIMEOUT = 15000; // 单个候选资源的加载超时（毫秒）
 
         function shanghaiDate(daysAgo) {
             // 用亚洲/上海时区计算日期，和 GitHub Action 出片的时区保持一致
@@ -1671,90 +1672,20 @@
             return `${BASE_URL}/${tag}/${tag}.${ext}`;
         }
 
-        function probeVideo(url) {
-            return new Promise(resolve => {
-                const video = document.createElement('video');
-                let done = false;
-                const timer = setTimeout(() => finish(false), PROBE_TIMEOUT);
-                function finish(ok) {
-                    if (done) return;
-                    done = true;
-                    clearTimeout(timer);
-                    video.src = '';
-                    resolve(ok);
-                }
-                video.addEventListener('loadedmetadata', () => finish(true), { once: true });
-                video.addEventListener('error', () => finish(false), { once: true });
-                video.preload = 'metadata';
-                video.muted = true;
-                video.src = url;
-            });
-        }
-
-        function probeImage(url) {
-            return new Promise(resolve => {
-                const img = new Image();
-                let done = false;
-                const timer = setTimeout(() => finish(false), PROBE_TIMEOUT);
-                function finish(ok) {
-                    if (done) return;
-                    done = true;
-                    clearTimeout(timer);
-                    resolve(ok);
-                }
-                img.onload = () => finish(true);
-                img.onerror = () => finish(false);
-                img.src = url;
-            });
-        }
-
-        async function findForDate(slug, date) {
-            const mp4Url = assetUrl(slug, date, 'mp4');
-            const gifUrl = assetUrl(slug, date, 'gif');
-            const [mp4Ok, gifOk] = await Promise.all([probeVideo(mp4Url), probeImage(gifUrl)]);
-            if (mp4Ok) return { type: 'video', url: mp4Url, date };
-            if (gifOk) return { type: 'gif', url: gifUrl, date };
-            return null;
-        }
-
-        async function findTimelapse(slug) {
+        function buildCandidates(slug) {
+            const list = [];
             for (let i = 1; i <= MAX_DAYS_BACK; i++) {
                 const date = shanghaiDate(i);
-                const result = await findForDate(slug, date);
-                if (result) return result;
+                list.push({ type: 'video', url: assetUrl(slug, date, 'mp4'), date });
+                list.push({ type: 'gif', url: assetUrl(slug, date, 'gif'), date });
             }
-            return null;
+            return list;
         }
 
         function setStatus(panel, text, isError) {
             const statusEl = panel.querySelector('.timelapse-status');
             statusEl.textContent = text;
             statusEl.classList.toggle('error', !!isError);
-        }
-
-        function renderMedia(panel, result) {
-            const body = panel.querySelector('.timelapse-body');
-            panel.querySelector('.timelapse-date').textContent = `📅 ${result.date} 全天动态`;
-            setStatus(panel, '');
-            const mediaWrap = document.createElement('div');
-            mediaWrap.className = 'timelapse-media-wrap';
-            if (result.type === 'video') {
-                const video = document.createElement('video');
-                video.src = result.url;
-                video.controls = true;
-                video.loop = true;
-                video.muted = true;
-                video.playsInline = true;
-                video.preload = 'metadata';
-                mediaWrap.appendChild(video);
-            } else {
-                const img = document.createElement('img');
-                img.src = result.url;
-                img.alt = '昨日动态回放';
-                img.loading = 'lazy';
-                mediaWrap.appendChild(img);
-            }
-            body.appendChild(mediaWrap);
         }
 
         function loadTimelapse(card, panel) {
@@ -1766,18 +1697,62 @@
             }
             panel.dataset.state = 'loading';
             setStatus(panel, '正在查找昨日动态…');
-            findTimelapse(slug).then(result => {
-                if (!result) {
-                    setStatus(panel, '暂未找到该机位近几日的回放', true);
-                    panel.dataset.state = 'empty';
-                    return;
-                }
-                renderMedia(panel, result);
+            tryCandidate(panel, buildCandidates(slug), 0);
+        }
+
+        function tryCandidate(panel, candidates, idx) {
+            const body = panel.querySelector('.timelapse-body');
+            body.querySelectorAll('.timelapse-media-wrap').forEach(n => n.remove());
+
+            if (idx >= candidates.length) {
+                setStatus(panel, '暂未找到该机位近几日的回放', true);
+                panel.dataset.state = 'empty';
+                return;
+            }
+
+            const c = candidates[idx];
+            const mediaWrap = document.createElement('div');
+            mediaWrap.className = 'timelapse-media-wrap';
+
+            let el, settled = false;
+            const timer = setTimeout(() => onFail(), LOAD_TIMEOUT);
+
+            function onOk() {
+                if (settled) return;
+                settled = true;
+                clearTimeout(timer);
+                panel.querySelector('.timelapse-date').textContent = `📅 ${c.date} 全天动态`;
+                setStatus(panel, '');
                 panel.dataset.state = 'loaded';
-            }).catch(() => {
-                setStatus(panel, '回放加载出错，请稍后重试', true);
-                panel.dataset.state = 'error';
-            });
+                if (c.type === 'video') el.play().catch(() => {});
+            }
+            function onFail() {
+                if (settled) return;
+                settled = true;
+                clearTimeout(timer);
+                mediaWrap.remove();
+                tryCandidate(panel, candidates, idx + 1);
+            }
+
+            if (c.type === 'video') {
+                el = document.createElement('video');
+                el.controls = true;
+                el.loop = true;
+                el.muted = true;
+                el.playsInline = true;
+                el.autoplay = true;
+                el.preload = 'auto';
+                el.addEventListener('loadeddata', onOk, { once: true });
+                el.addEventListener('error', onFail, { once: true });
+            } else {
+                el = document.createElement('img');
+                el.alt = '昨日动态回放';
+                el.addEventListener('load', onOk, { once: true });
+                el.addEventListener('error', onFail, { once: true });
+            }
+            el.src = c.url;
+            mediaWrap.appendChild(el);
+            body.appendChild(mediaWrap);
         }
 
         document.querySelectorAll('.timelapse-toggle').forEach(btn => {
