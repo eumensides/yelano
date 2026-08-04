@@ -235,6 +235,69 @@
             letter-spacing: 0.04em;
         }
 
+        /* ── 昨日动态回放（附属窗口）──────────────────────────── */
+        .timelapse-toggle {
+            margin-left: auto;
+            flex-shrink: 0;
+            background: rgba(78,170,212,0.10);
+            border: 1px solid var(--border);
+            color: var(--mist);
+            font-family: inherit;
+            font-size: 0.7rem;
+            letter-spacing: 0.03em;
+            padding: 5px 10px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+            white-space: nowrap;
+        }
+        .timelapse-toggle:hover {
+            background: rgba(78,170,212,0.22);
+            color: var(--white);
+            border-color: rgba(78,170,212,0.4);
+        }
+        .timelapse-toggle.active {
+            background: var(--ocean);
+            color: var(--white);
+            border-color: var(--ocean);
+        }
+        .timelapse-panel {
+            max-height: 0;
+            overflow: hidden;
+            border-top: 1px solid transparent;
+            transition: max-height 0.35s ease, border-color 0.35s ease;
+        }
+        .timelapse-panel.open {
+            max-height: 520px;
+            border-top: 1px solid var(--border);
+        }
+        .timelapse-body { padding: 12px 14px 16px; }
+        .timelapse-media-wrap {
+            position: relative;
+            width: 100%;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            background: #080f1a;
+        }
+        .timelapse-media-wrap video,
+        .timelapse-media-wrap img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        .timelapse-date {
+            font-size: 0.7rem;
+            color: var(--gold);
+            letter-spacing: 0.06em;
+            margin-bottom: 6px;
+        }
+        .timelapse-status {
+            font-size: 0.76rem;
+            color: var(--text-sub);
+            letter-spacing: 0.03em;
+        }
+        .timelapse-status.error { color: #e8836a; }
+
         /* ── 天气卡片 ─────────────────────────────────────────── */
         .weather-section { margin-bottom: 52px; }
         .weather-card {
@@ -776,7 +839,7 @@
             <span class="icon">🏔</span> 崂山景区实时直播
         </div>
         <div class="video-grid">
-            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/shizifeng2026.m3u8" data-loaded="false">
+            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/shizifeng2026.m3u8" data-loaded="false" data-timelapse="shizifeng">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -788,9 +851,16 @@
                 <div class="video-label">
                     <span class="live-dot"></span>
                     <span class="video-name">仰口狮子峰</span>
+                    <button class="timelapse-toggle" type="button">🎞 昨日回放</button>
+                </div>
+                <div class="timelapse-panel">
+                    <div class="timelapse-body">
+                        <div class="timelapse-date"></div>
+                        <div class="timelapse-status"></div>
+                    </div>
                 </div>
             </div>
-            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/chaoyinpu2026.m3u8" data-loaded="false">
+            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/chaoyinpu2026.m3u8" data-loaded="false" data-timelapse="chaoyinpu">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -802,9 +872,16 @@
                 <div class="video-label">
                     <span class="live-dot"></span>
                     <span class="video-name">北九水潮音瀑</span>
+                    <button class="timelapse-toggle" type="button">🎞 昨日回放</button>
+                </div>
+                <div class="timelapse-panel">
+                    <div class="timelapse-body">
+                        <div class="timelapse-date"></div>
+                        <div class="timelapse-status"></div>
+                    </div>
                 </div>
             </div>
-            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/taiqingwan2026.m3u8" data-loaded="false">
+            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/taiqingwan2026.m3u8" data-loaded="false" data-timelapse="taiqingwan">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -816,9 +893,16 @@
                 <div class="video-label">
                     <span class="live-dot"></span>
                     <span class="video-name">太清宫太清湾</span>
+                    <button class="timelapse-toggle" type="button">🎞 昨日回放</button>
+                </div>
+                <div class="timelapse-panel">
+                    <div class="timelapse-body">
+                        <div class="timelapse-date"></div>
+                        <div class="timelapse-status"></div>
+                    </div>
                 </div>
             </div>
-            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/jufengxiazhan2026.m3u8" data-loaded="false">
+            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/jufengxiazhan2026.m3u8" data-loaded="false" data-timelapse="jufengxiazhan">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -830,9 +914,16 @@
                 <div class="video-label">
                     <span class="live-dot"></span>
                     <span class="video-name">巨峰下站</span>
+                    <button class="timelapse-toggle" type="button">🎞 昨日回放</button>
+                </div>
+                <div class="timelapse-panel">
+                    <div class="timelapse-body">
+                        <div class="timelapse-date"></div>
+                        <div class="timelapse-status"></div>
+                    </div>
                 </div>
             </div>
-            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/shouzifeng2026.m3u8" data-loaded="false">
+            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/shouzifeng2026.m3u8" data-loaded="false" data-timelapse="shouzifeng">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -844,9 +935,16 @@
                 <div class="video-label">
                     <span class="live-dot"></span>
                     <span class="video-name">仰口寿字峰</span>
+                    <button class="timelapse-toggle" type="button">🎞 昨日回放</button>
+                </div>
+                <div class="timelapse-panel">
+                    <div class="timelapse-body">
+                        <div class="timelapse-date"></div>
+                        <div class="timelapse-status"></div>
+                    </div>
                 </div>
             </div>
-            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/lingqifeng2026.m3u8" data-loaded="false">
+            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/lingqifeng2026.m3u8" data-loaded="false" data-timelapse="lingqifeng">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -858,9 +956,16 @@
                 <div class="video-label">
                     <span class="live-dot"></span>
                     <span class="video-name">巨峰灵旗峰</span>
+                    <button class="timelapse-toggle" type="button">🎞 昨日回放</button>
+                </div>
+                <div class="timelapse-panel">
+                    <div class="timelapse-body">
+                        <div class="timelapse-date"></div>
+                        <div class="timelapse-status"></div>
+                    </div>
                 </div>
             </div>
-            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/erlongshan2026.m3u8" data-loaded="false">
+            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/erlongshan2026.m3u8" data-loaded="false" data-timelapse="erlongshan">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -872,9 +977,16 @@
                 <div class="video-label">
                     <span class="live-dot"></span>
                     <span class="video-name">二龙山</span>
+                    <button class="timelapse-toggle" type="button">🎞 昨日回放</button>
+                </div>
+                <div class="timelapse-panel">
+                    <div class="timelapse-body">
+                        <div class="timelapse-date"></div>
+                        <div class="timelapse-status"></div>
+                    </div>
                 </div>
             </div>
-            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/shanhaishengjing2026.m3u8" data-loaded="false">
+            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/shanhaishengjing2026.m3u8" data-loaded="false" data-timelapse="shanhaishengjing">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -886,9 +998,16 @@
                 <div class="video-label">
                     <span class="live-dot"></span>
                     <span class="video-name">山海胜景</span>
+                    <button class="timelapse-toggle" type="button">🎞 昨日回放</button>
+                </div>
+                <div class="timelapse-panel">
+                    <div class="timelapse-body">
+                        <div class="timelapse-date"></div>
+                        <div class="timelapse-status"></div>
+                    </div>
                 </div>
             </div>
-            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/huayanshijie2026.m3u8" data-loaded="false">
+            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/huayanshijie2026.m3u8" data-loaded="false" data-timelapse="huayanshijie">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -900,6 +1019,13 @@
                 <div class="video-label">
                     <span class="live-dot"></span>
                     <span class="video-name">华严世界</span>
+                    <button class="timelapse-toggle" type="button">🎞 昨日回放</button>
+                </div>
+                <div class="timelapse-panel">
+                    <div class="timelapse-body">
+                        <div class="timelapse-date"></div>
+                        <div class="timelapse-status"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1141,9 +1267,16 @@
                 <div class="video-label">
                     <span class="live-dot"></span>
                     <span class="video-name">奥帆中心</span>
+                    <button class="timelapse-toggle" type="button">🎞 昨日回放</button>
+                </div>
+                <div class="timelapse-panel">
+                    <div class="timelapse-body">
+                        <div class="timelapse-date"></div>
+                        <div class="timelapse-status"></div>
+                    </div>
                 </div>
             </div>
-            <div class="video-card" data-src="https://hlspull.qtv.com.cn/v31faxcg/channel/51d10523f0a1fdcda5c4223babe1682c/1.m3u8" data-loaded="false">
+            <div class="video-card" data-src="https://hlspull.qtv.com.cn/v31faxcg/channel/51d10523f0a1fdcda5c4223babe1682c/1.m3u8" data-loaded="false" data-timelapse="wusiguangchang">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -1155,6 +1288,13 @@
                 <div class="video-label">
                     <span class="live-dot"></span>
                     <span class="video-name">五四广场</span>
+                    <button class="timelapse-toggle" type="button">🎞 昨日回放</button>
+                </div>
+                <div class="timelapse-panel">
+                    <div class="timelapse-body">
+                        <div class="timelapse-date"></div>
+                        <div class="timelapse-status"></div>
+                    </div>
                 </div>
             </div>
             <div class="video-card" data-src="https://hlspull.qtv.com.cn/v31faxcg/channel/e41ccb39c3292d868d6c72b66082a3f2/1.m3u8" data-loaded="false">
@@ -1169,6 +1309,13 @@
                 <div class="video-label">
                     <span class="live-dot"></span>
                     <span class="video-name">胶宁高架银川西路</span>
+                    <button class="timelapse-toggle" type="button">🎞 昨日回放</button>
+                </div>
+                <div class="timelapse-panel">
+                    <div class="timelapse-body">
+                        <div class="timelapse-date"></div>
+                        <div class="timelapse-status"></div>
+                    </div>
                 </div>
             </div>
             <div class="video-card" data-src="https://hlspull.qtv.com.cn/v31faxcg/channel/833fddf8b8271df2cf38835d14a2a3a5/1.m3u8" data-loaded="false">
@@ -1183,6 +1330,13 @@
                 <div class="video-label">
                     <span class="live-dot"></span>
                     <span class="video-name">胶宁高架福州路口</span>
+                    <button class="timelapse-toggle" type="button">🎞 昨日回放</button>
+                </div>
+                <div class="timelapse-panel">
+                    <div class="timelapse-body">
+                        <div class="timelapse-date"></div>
+                        <div class="timelapse-status"></div>
+                    </div>
                 </div>
             </div>
             <div class="video-card" data-src="https://hlspull.qtv.com.cn/v31faxcg/channel/8db708403e7ad9c1a00c539c703b8ae0/1.m3u8" data-loaded="false">
@@ -1197,6 +1351,13 @@
                 <div class="video-label">
                     <span class="live-dot"></span>
                     <span class="video-name">快速路大润发南京路</span>
+                    <button class="timelapse-toggle" type="button">🎞 昨日回放</button>
+                </div>
+                <div class="timelapse-panel">
+                    <div class="timelapse-body">
+                        <div class="timelapse-date"></div>
+                        <div class="timelapse-status"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1475,6 +1636,126 @@
             frame.classList.remove('unlocked');
         });
     });
+
+    /* ── 昨日动态回放（GitHub Releases 延时摄影）─────────
+       每个机位在 video-card 上通过 data-timelapse="<slug>" 声明其
+       在 https://github.com/eumensides/laoshan/releases 中对应的
+       release 标签前缀（如 timelapse-wusiguangchang-2026-08-03）。
+       首次点击"昨日回放"按钮时才会拉取 GitHub Releases 列表（全站
+       只请求一次并缓存），自动匹配该机位最新一天的 gif/mp4 并展示
+       在卡片下方的附属窗口区域。若某机位暂未标注 data-timelapse，
+       按钮会提示尚未配置，届时只需在 HTML 里补上对应 slug 即可。
+    ──────────────────────────────────────────────────── */
+    (function () {
+        'use strict';
+        const REPO = 'eumensides/laoshan';
+        const API_URL = `https://api.github.com/repos/${REPO}/releases?per_page=100`;
+        const TAG_RE = /^timelapse-(.+)-(\d{4}-\d{2}-\d{2})$/;
+
+        let releasesPromise = null;
+
+        function fetchReleases() {
+            if (!releasesPromise) {
+                releasesPromise = fetch(API_URL, { headers: { 'Accept': 'application/vnd.github+json' } })
+                    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+                    .then(list => {
+                        const bySlug = new Map();
+                        (Array.isArray(list) ? list : []).forEach(rel => {
+                            const m = TAG_RE.exec(rel.tag_name || '');
+                            if (!m) return;
+                            const [, slug, date] = m;
+                            const existing = bySlug.get(slug);
+                            if (!existing || date > existing.date) {
+                                bySlug.set(slug, { date, assets: rel.assets || [] });
+                            }
+                        });
+                        return bySlug;
+                    });
+            }
+            return releasesPromise;
+        }
+
+        function pickAsset(assets) {
+            const mp4 = assets.find(a => /\.mp4$/i.test(a.name));
+            if (mp4) return { type: 'video', url: mp4.browser_download_url };
+            const gif = assets.find(a => /\.gif$/i.test(a.name));
+            if (gif) return { type: 'gif', url: gif.browser_download_url };
+            return null;
+        }
+
+        function setStatus(panel, text, isError) {
+            const statusEl = panel.querySelector('.timelapse-status');
+            statusEl.textContent = text;
+            statusEl.classList.toggle('error', !!isError);
+        }
+
+        function renderMedia(panel, asset, date) {
+            const body = panel.querySelector('.timelapse-body');
+            panel.querySelector('.timelapse-date').textContent = `📅 ${date} 全天动态`;
+            setStatus(panel, '');
+            const mediaWrap = document.createElement('div');
+            mediaWrap.className = 'timelapse-media-wrap';
+            if (asset.type === 'video') {
+                const video = document.createElement('video');
+                video.src = asset.url;
+                video.controls = true;
+                video.loop = true;
+                video.muted = true;
+                video.playsInline = true;
+                video.preload = 'metadata';
+                mediaWrap.appendChild(video);
+            } else {
+                const img = document.createElement('img');
+                img.src = asset.url;
+                img.alt = '昨日动态回放';
+                img.loading = 'lazy';
+                mediaWrap.appendChild(img);
+            }
+            body.appendChild(mediaWrap);
+        }
+
+        function loadTimelapse(card, panel) {
+            const slug = card.dataset.timelapse;
+            if (!slug) {
+                setStatus(panel, '该机位暂未配置回放标识（data-timelapse）', true);
+                panel.dataset.state = 'empty';
+                return;
+            }
+            panel.dataset.state = 'loading';
+            setStatus(panel, '正在加载昨日动态…');
+            fetchReleases().then(bySlug => {
+                const entry = bySlug.get(slug);
+                if (!entry) {
+                    setStatus(panel, '暂未找到该机位的历史回放', true);
+                    panel.dataset.state = 'empty';
+                    return;
+                }
+                const asset = pickAsset(entry.assets);
+                if (!asset) {
+                    setStatus(panel, '回放素材缺失', true);
+                    panel.dataset.state = 'empty';
+                    return;
+                }
+                renderMedia(panel, asset, entry.date);
+                panel.dataset.state = 'loaded';
+            }).catch(() => {
+                setStatus(panel, '回放数据加载失败，请稍后重试', true);
+                panel.dataset.state = 'error';
+            });
+        }
+
+        document.querySelectorAll('.timelapse-toggle').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const card = btn.closest('.video-card');
+                const panel = card.querySelector('.timelapse-panel');
+                const isOpen = panel.classList.toggle('open');
+                btn.classList.toggle('active', isOpen);
+                if (isOpen && panel.dataset.state !== 'loaded' && panel.dataset.state !== 'loading') {
+                    loadTimelapse(card, panel);
+                }
+            });
+        });
+    })();
 
     /* ── 景区信息 Tab 切换 ─────────────────────────────── */
     document.querySelectorAll('.info-tabs').forEach(tabsEl => {
