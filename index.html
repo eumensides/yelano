@@ -1637,49 +1637,92 @@
         });
     });
 
-    /* ── 昨日动态回放（GitHub Releases 延时摄影）─────────
+    /* ── 昨日动态回放（延时摄影，直接探测 Release 资源）───
        每个机位在 video-card 上通过 data-timelapse="<slug>" 声明其
        在 https://github.com/eumensides/laoshan/releases 中对应的
        release 标签前缀（如 timelapse-wusiguangchang-2026-08-03）。
-       首次点击"昨日回放"按钮时才会拉取 GitHub Releases 列表（全站
-       只请求一次并缓存），自动匹配该机位最新一天的 gif/mp4 并展示
-       在卡片下方的附属窗口区域。若某机位暂未标注 data-timelapse，
-       按钮会提示尚未配置，届时只需在 HTML 里补上对应 slug 即可。
+       不走 GitHub API（公共 API 每 IP 每小时仅 60 次，站点一有访客
+       就很容易触发限流导致全部加载失败），而是按固定命名规律直接
+       拼出下载链接，用 <video>/<img> 自身的加载结果判断资源是否
+       存在：先试"昨天"，若当天素材还没生成或探测失败，再依次往前
+       多试几天，直到找到可用的 mp4（优先）或 gif。若某机位暂未标
+       注 data-timelapse，按钮会提示尚未配置。
     ──────────────────────────────────────────────────── */
     (function () {
         'use strict';
         const REPO = 'eumensides/laoshan';
-        const API_URL = `https://api.github.com/repos/${REPO}/releases?per_page=100`;
-        const TAG_RE = /^timelapse-(.+)-(\d{4}-\d{2}-\d{2})$/;
+        const BASE_URL = `https://github.com/${REPO}/releases/download`;
+        const MAX_DAYS_BACK = 4;   // 从昨天起最多回溯几天寻找可用回放
+        const PROBE_TIMEOUT = 7000; // 单次探测超时（毫秒）
 
-        let releasesPromise = null;
-
-        function fetchReleases() {
-            if (!releasesPromise) {
-                releasesPromise = fetch(API_URL, { headers: { 'Accept': 'application/vnd.github+json' } })
-                    .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-                    .then(list => {
-                        const bySlug = new Map();
-                        (Array.isArray(list) ? list : []).forEach(rel => {
-                            const m = TAG_RE.exec(rel.tag_name || '');
-                            if (!m) return;
-                            const [, slug, date] = m;
-                            const existing = bySlug.get(slug);
-                            if (!existing || date > existing.date) {
-                                bySlug.set(slug, { date, assets: rel.assets || [] });
-                            }
-                        });
-                        return bySlug;
-                    });
-            }
-            return releasesPromise;
+        function shanghaiDate(daysAgo) {
+            // 用亚洲/上海时区计算日期，和 GitHub Action 出片的时区保持一致
+            const now = new Date();
+            const sh = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Shanghai' }));
+            sh.setDate(sh.getDate() - daysAgo);
+            const y = sh.getFullYear();
+            const m = String(sh.getMonth() + 1).padStart(2, '0');
+            const d = String(sh.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
         }
 
-        function pickAsset(assets) {
-            const mp4 = assets.find(a => /\.mp4$/i.test(a.name));
-            if (mp4) return { type: 'video', url: mp4.browser_download_url };
-            const gif = assets.find(a => /\.gif$/i.test(a.name));
-            if (gif) return { type: 'gif', url: gif.browser_download_url };
+        function assetUrl(slug, date, ext) {
+            const tag = `timelapse-${slug}-${date}`;
+            return `${BASE_URL}/${tag}/${tag}.${ext}`;
+        }
+
+        function probeVideo(url) {
+            return new Promise(resolve => {
+                const video = document.createElement('video');
+                let done = false;
+                const timer = setTimeout(() => finish(false), PROBE_TIMEOUT);
+                function finish(ok) {
+                    if (done) return;
+                    done = true;
+                    clearTimeout(timer);
+                    video.src = '';
+                    resolve(ok);
+                }
+                video.addEventListener('loadedmetadata', () => finish(true), { once: true });
+                video.addEventListener('error', () => finish(false), { once: true });
+                video.preload = 'metadata';
+                video.muted = true;
+                video.src = url;
+            });
+        }
+
+        function probeImage(url) {
+            return new Promise(resolve => {
+                const img = new Image();
+                let done = false;
+                const timer = setTimeout(() => finish(false), PROBE_TIMEOUT);
+                function finish(ok) {
+                    if (done) return;
+                    done = true;
+                    clearTimeout(timer);
+                    resolve(ok);
+                }
+                img.onload = () => finish(true);
+                img.onerror = () => finish(false);
+                img.src = url;
+            });
+        }
+
+        async function findForDate(slug, date) {
+            const mp4Url = assetUrl(slug, date, 'mp4');
+            const gifUrl = assetUrl(slug, date, 'gif');
+            const [mp4Ok, gifOk] = await Promise.all([probeVideo(mp4Url), probeImage(gifUrl)]);
+            if (mp4Ok) return { type: 'video', url: mp4Url, date };
+            if (gifOk) return { type: 'gif', url: gifUrl, date };
+            return null;
+        }
+
+        async function findTimelapse(slug) {
+            for (let i = 1; i <= MAX_DAYS_BACK; i++) {
+                const date = shanghaiDate(i);
+                const result = await findForDate(slug, date);
+                if (result) return result;
+            }
             return null;
         }
 
@@ -1689,15 +1732,15 @@
             statusEl.classList.toggle('error', !!isError);
         }
 
-        function renderMedia(panel, asset, date) {
+        function renderMedia(panel, result) {
             const body = panel.querySelector('.timelapse-body');
-            panel.querySelector('.timelapse-date').textContent = `📅 ${date} 全天动态`;
+            panel.querySelector('.timelapse-date').textContent = `📅 ${result.date} 全天动态`;
             setStatus(panel, '');
             const mediaWrap = document.createElement('div');
             mediaWrap.className = 'timelapse-media-wrap';
-            if (asset.type === 'video') {
+            if (result.type === 'video') {
                 const video = document.createElement('video');
-                video.src = asset.url;
+                video.src = result.url;
                 video.controls = true;
                 video.loop = true;
                 video.muted = true;
@@ -1706,7 +1749,7 @@
                 mediaWrap.appendChild(video);
             } else {
                 const img = document.createElement('img');
-                img.src = asset.url;
+                img.src = result.url;
                 img.alt = '昨日动态回放';
                 img.loading = 'lazy';
                 mediaWrap.appendChild(img);
@@ -1722,24 +1765,17 @@
                 return;
             }
             panel.dataset.state = 'loading';
-            setStatus(panel, '正在加载昨日动态…');
-            fetchReleases().then(bySlug => {
-                const entry = bySlug.get(slug);
-                if (!entry) {
-                    setStatus(panel, '暂未找到该机位的历史回放', true);
+            setStatus(panel, '正在查找昨日动态…');
+            findTimelapse(slug).then(result => {
+                if (!result) {
+                    setStatus(panel, '暂未找到该机位近几日的回放', true);
                     panel.dataset.state = 'empty';
                     return;
                 }
-                const asset = pickAsset(entry.assets);
-                if (!asset) {
-                    setStatus(panel, '回放素材缺失', true);
-                    panel.dataset.state = 'empty';
-                    return;
-                }
-                renderMedia(panel, asset, entry.date);
+                renderMedia(panel, result);
                 panel.dataset.state = 'loaded';
             }).catch(() => {
-                setStatus(panel, '回放数据加载失败，请稍后重试', true);
+                setStatus(panel, '回放加载出错，请稍后重试', true);
                 panel.dataset.state = 'error';
             });
         }
