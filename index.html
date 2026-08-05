@@ -1670,7 +1670,7 @@
         // Content-Type:application/octet-stream 响应头被当成"下载文件"，
         // 无法在 <video> 里直接播放（桌面浏览器更宽容，大多能正常播放，
         // 因此表现为"电脑正常、手机不行"）。填好 Worker 域名后该问题即可解决。
-        const PROXY_BASE_URL = '';
+        const PROXY_BASE_URL = 'https://laoshan-proxy.eumensides.workers.dev';
         const BASE_URL = PROXY_BASE_URL || `https://github.com/${REPO}/releases/download`;
         const MAX_DAYS_BACK = 4;    // 从昨天起最多回溯几天寻找可用回放
         const LOAD_TIMEOUT = 20000; // 单个候选资源的加载超时（毫秒，手机网络放宽一些）
