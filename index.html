@@ -846,7 +846,7 @@
             <span class="icon">🏔</span> 崂山景区实时直播
         </div>
         <div class="video-grid">
-            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/shizifeng2026.m3u8" data-loaded="false" data-timelapse="shizifeng">
+            <div class="video-card" data-src="https://play.zhihuiwenlvyun.com/live/shizifeng2026.m3u8" data-loaded="false" data-timelapse="shizifeng">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -867,7 +867,7 @@
                     </div>
                 </div>
             </div>
-            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/chaoyinpu2026.m3u8" data-loaded="false" data-timelapse="chaoyinpu">
+            <div class="video-card" data-src="https://play.zhihuiwenlvyun.com/live/chaoyinpu2026.m3u8" data-loaded="false" data-timelapse="chaoyinpu">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -888,7 +888,7 @@
                     </div>
                 </div>
             </div>
-            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/taiqingwan2026.m3u8" data-loaded="false" data-timelapse="taiqingwan">
+            <div class="video-card" data-src="https://play.zhihuiwenlvyun.com/live/taiqingwan2026.m3u8" data-loaded="false" data-timelapse="taiqingwan">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -909,7 +909,7 @@
                     </div>
                 </div>
             </div>
-            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/jufengxiazhan2026.m3u8" data-loaded="false" data-timelapse="jufengxiazhan">
+            <div class="video-card" data-src="https://play.zhihuiwenlvyun.com/live/jufengxiazhan2026.m3u8" data-loaded="false" data-timelapse="jufengxiazhan">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -930,7 +930,7 @@
                     </div>
                 </div>
             </div>
-            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/shouzifeng2026.m3u8" data-loaded="false" data-timelapse="shouzifeng">
+            <div class="video-card" data-src="https://play.zhihuiwenlvyun.com/live/shouzifeng2026.m3u8" data-loaded="false" data-timelapse="shouzifeng">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -951,7 +951,7 @@
                     </div>
                 </div>
             </div>
-            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/lingqifeng2026.m3u8" data-loaded="false" data-timelapse="lingqifeng">
+            <div class="video-card" data-src="https://play.zhihuiwenlvyun.com/live/lingqifeng2026.m3u8" data-loaded="false" data-timelapse="lingqifeng">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -972,7 +972,7 @@
                     </div>
                 </div>
             </div>
-            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/erlongshan2026.m3u8" data-loaded="false" data-timelapse="erlongshan">
+            <div class="video-card" data-src="https://play.zhihuiwenlvyun.com/live/erlongshan2026.m3u8" data-loaded="false" data-timelapse="erlongshan">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -993,7 +993,7 @@
                     </div>
                 </div>
             </div>
-            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/shanhaishengjing2026.m3u8" data-loaded="false" data-timelapse="shanhaishengjing">
+            <div class="video-card" data-src="https://play.zhihuiwenlvyun.com/live/shanhaishengjing2026.m3u8" data-loaded="false" data-timelapse="shanhaishengjing">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -1014,7 +1014,7 @@
                     </div>
                 </div>
             </div>
-            <div class="video-card" data-src="http://play.zhihuiwenlvyun.com/live/huayanshijie2026.m3u8" data-loaded="false" data-timelapse="huayanshijie">
+            <div class="video-card" data-src="https://play.zhihuiwenlvyun.com/live/huayanshijie2026.m3u8" data-loaded="false" data-timelapse="huayanshijie">
                 <div class="video-wrapper">
                     <video controls playsinline preload="none"></video>
                     <div class="video-overlay">
@@ -1662,7 +1662,16 @@
     (function () {
         'use strict';
         const REPO = 'eumensides/laoshan';
-        const BASE_URL = `https://github.com/${REPO}/releases/download`;
+        // ↓↓↓ 部署好 laoshan-video-proxy-worker.js 后，把 Worker 域名填在这里，
+        // 例如接了自定义域名后填 'https://laoshan-proxy.yelano.com'，
+        // 或者暂时先用 Cloudflare 给的默认域名 'https://xxx.xxx.workers.dev'
+        // 也一样能用（结尾不要带斜杠）。留空时走 GitHub 直链——mp4 在手机端
+        // 会因为 GitHub Release 附件自带的 Content-Disposition:attachment /
+        // Content-Type:application/octet-stream 响应头被当成"下载文件"，
+        // 无法在 <video> 里直接播放（桌面浏览器更宽容，大多能正常播放，
+        // 因此表现为"电脑正常、手机不行"）。填好 Worker 域名后该问题即可解决。
+        const PROXY_BASE_URL = '';
+        const BASE_URL = PROXY_BASE_URL || `https://github.com/${REPO}/releases/download`;
         const MAX_DAYS_BACK = 4;    // 从昨天起最多回溯几天寻找可用回放
         const LOAD_TIMEOUT = 20000; // 单个候选资源的加载超时（毫秒，手机网络放宽一些）
         function shanghaiDate(daysAgo) {
@@ -1713,12 +1722,15 @@
             body.querySelectorAll('.timelapse-media-wrap, .timelapse-test-link').forEach(n => n.remove());
 
             if (idx >= candidates.length) {
-                // 全部候选都判定失败：常见原因是手机网络（尤其国内移动数据）
-                // 访问 GitHub Releases 资源被限速/拦截，而电脑端可能走了代理
-                // 或 WiFi 线路而未受影响，并非该机位真的没有回放。这里给一个
-                // 可直接点击测试的链接，方便判断是"没有回放"还是"网络不通"。
+                // 全部候选都判定失败。经排查，GitHub Release 里的 mp4 默认带
+                // Content-Disposition:attachment 和 Content-Type:application/
+                // octet-stream 响应头，手机浏览器会把它当"下载文件"处理、无法
+                // 在 <video> 里直接播放（桌面浏览器通常更宽容能正常播放）。
+                // 根治办法见 PROXY_BASE_URL 处的说明——部署反代 Worker 并填好
+                // 域名后本问题即可解决。这里先给一个可直接点开测试的链接，
+                // 方便确认现象（未部署反代前，点开大概率会提示"下载"而不是播放）。
                 const testUrl = candidates.length ? candidates[0].url : '';
-                setStatus(panel, '暂未找到该机位近几日的回放，或当前网络无法访问 GitHub 资源', true);
+                setStatus(panel, '暂未找到该机位近几日的回放', true);
                 if (testUrl) {
                     const linkWrap = document.createElement('div');
                     linkWrap.className = 'timelapse-test-link';
@@ -1726,7 +1738,7 @@
                     a.href = testUrl;
                     a.target = '_blank';
                     a.rel = 'noopener';
-                    a.textContent = '点此在新标签页直接测试视频链接';
+                    a.textContent = '点此测试原始文件链接（部署反代前手机端通常会提示下载）';
                     linkWrap.appendChild(a);
                     body.appendChild(linkWrap);
                 }
