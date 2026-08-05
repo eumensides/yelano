@@ -235,7 +235,7 @@
             letter-spacing: 0.04em;
         }
 
-        /* ── 昨日动态回放（附属窗口）──────────────────────────── */
+        /* ── 往日动态回放（附属窗口）──────────────────────────── */
         .timelapse-toggle {
             margin-left: auto;
             flex-shrink: 0;
@@ -296,6 +296,14 @@
             letter-spacing: 0.03em;
         }
         .timelapse-status.error { color: #e8836a; }
+        .timelapse-test-link {
+            margin-top: 8px;
+            font-size: 0.74rem;
+        }
+        .timelapse-test-link a {
+            color: var(--ocean);
+            text-decoration: underline;
+        }
 
         /* ── 天气卡片 ─────────────────────────────────────────── */
         .weather-section { margin-bottom: 52px; }
@@ -1636,7 +1644,7 @@
         });
     });
 
-    /* ── 昨日动态回放（延时摄影）──────────────────────────
+    /* ── 往日动态回放（延时摄影）──────────────────────────
        每个机位在 video-card 上通过 data-timelapse="<slug>" 声明其
        在 https://github.com/eumensides/laoshan/releases 中对应的
        release 标签前缀（如 timelapse-wusiguangchang-2026-08-03）。
@@ -1656,7 +1664,7 @@
         const REPO = 'eumensides/laoshan';
         const BASE_URL = `https://github.com/${REPO}/releases/download`;
         const MAX_DAYS_BACK = 4;    // 从昨天起最多回溯几天寻找可用回放
-        const LOAD_TIMEOUT = 15000; // 单个候选资源的加载超时（毫秒）
+        const LOAD_TIMEOUT = 20000; // 单个候选资源的加载超时（毫秒，手机网络放宽一些）
         function shanghaiDate(daysAgo) {
             // 用亚洲/上海时区计算日期，和 GitHub Action 出片的时区保持一致
             const now = new Date();
@@ -1696,16 +1704,32 @@
                 return;
             }
             panel.dataset.state = 'loading';
-            setStatus(panel, '正在查找昨日动态…');
+            setStatus(panel, '正在查找往日动态…');
             tryCandidate(panel, buildCandidates(slug), 0);
         }
 
         function tryCandidate(panel, candidates, idx) {
             const body = panel.querySelector('.timelapse-body');
-            body.querySelectorAll('.timelapse-media-wrap').forEach(n => n.remove());
+            body.querySelectorAll('.timelapse-media-wrap, .timelapse-test-link').forEach(n => n.remove());
 
             if (idx >= candidates.length) {
-                setStatus(panel, '暂未找到该机位近几日的回放', true);
+                // 全部候选都判定失败：常见原因是手机网络（尤其国内移动数据）
+                // 访问 GitHub Releases 资源被限速/拦截，而电脑端可能走了代理
+                // 或 WiFi 线路而未受影响，并非该机位真的没有回放。这里给一个
+                // 可直接点击测试的链接，方便判断是"没有回放"还是"网络不通"。
+                const testUrl = candidates.length ? candidates[0].url : '';
+                setStatus(panel, '暂未找到该机位近几日的回放，或当前网络无法访问 GitHub 资源', true);
+                if (testUrl) {
+                    const linkWrap = document.createElement('div');
+                    linkWrap.className = 'timelapse-test-link';
+                    const a = document.createElement('a');
+                    a.href = testUrl;
+                    a.target = '_blank';
+                    a.rel = 'noopener';
+                    a.textContent = '点此在新标签页直接测试视频链接';
+                    linkWrap.appendChild(a);
+                    body.appendChild(linkWrap);
+                }
                 panel.dataset.state = 'empty';
                 return;
             }
@@ -1740,10 +1764,17 @@
             video.muted = true;
             video.playsInline = true;
             video.autoplay = true;
-            video.preload = 'auto';
-            video.addEventListener('loadeddata', onOk, { once: true });
+            // 用 metadata 而不是 auto：不少手机浏览器（尤其国内厂商浏览器/
+            // 微信内置浏览器，在省流量或蜂窝网络下）会拒绝按 preload=auto
+            // 主动缓冲整段视频，导致依赖 loadeddata 事件的判断永远等不到、
+            // 触发超时误判成"未找到"。metadata 只需拿到文件头信息即可触发
+            // loadedmetadata，需要的数据量小得多，在这些环境下也能可靠触发。
+            video.preload = 'metadata';
+            video.addEventListener('loadedmetadata', onOk, { once: true });
+            video.addEventListener('canplay', onOk, { once: true });
             video.addEventListener('error', onFail, { once: true });
             video.src = c.url;
+            video.load();
             mediaWrap.appendChild(video);
             body.appendChild(mediaWrap);
         }
