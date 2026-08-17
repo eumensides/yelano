@@ -509,6 +509,42 @@
             line-height: 1.6;
         }
 
+        /* ── 潮汐窗口：日期切换条（前7天 / 后15天）───────────── */
+        .tide-date-nav {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 18px 0;
+        }
+        .tide-date-nav select {
+            flex: 1;
+            background: var(--deep);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 6px 10px;
+            font-size: 0.78rem;
+            font-family: inherit;
+        }
+        .tide-date-nav button {
+            flex: 0 0 auto;
+            background: rgba(255,255,255,0.04);
+            color: var(--wave);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            width: 30px;
+            height: 30px;
+            font-size: 0.9rem;
+            line-height: 1;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .tide-date-nav button.tide-today-btn {
+            width: auto;
+            padding: 0 12px;
+            font-size: 0.74rem;
+        }
+
         /* ── 留言表单 ─────────────────────────────────────────── */
         .message-section { margin-bottom: 52px; }
         .message-form {
@@ -1497,15 +1533,21 @@
             <!-- 窗口二：潮汐预报 -->
             <div class="map-panel">
                 <div class="map-panel-title">🌊 潮汐预报 · 青岛</div>
-                <div class="map-panel-frame">
-                    <iframe src="https://www.chaoxb.com/46/" loading="lazy" title="青岛潮汐" allowfullscreen></iframe>
+                <div class="tide-date-nav">
+                    <button type="button" id="tide-date-prev" aria-label="前一天">‹</button>
+                    <select id="tide-date-select" aria-label="选择潮汐日期"></select>
+                    <button type="button" id="tide-date-next" aria-label="后一天">›</button>
+                    <button type="button" id="tide-date-today" class="tide-today-btn">今天</button>
+                </div>
+                <div class="map-panel-frame" id="tide-frame">
+                    <iframe id="tide-iframe" src="https://www.chaoxb.com/46/" loading="lazy" title="青岛潮汐" allowfullscreen></iframe>
                     <div class="map-lock-overlay">
                         <span class="lock-icon">🔒</span>
                         <span class="lock-text">触摸已锁定，点击解锁后可查看潮汐曲线详情</span>
                     </div>
                     <button type="button" class="map-relock-btn">🔓 点击锁定</button>
                 </div>
-                <div class="panel-note">潮汐曲线来自 chaoxb.com 原始页面。</div>
+                <div class="panel-note">潮汐曲线来自 chaoxb.com 原始页面，可切换查看前 7 天 / 后 15 天的潮汐数据。</div>
             </div>
 
             <!-- 窗口三：崂山降水量 -->
@@ -1718,7 +1760,12 @@
 
 })();
 
-    /* ── 火烧云窗口：青岛今日/明日日出日落（sunrise-sunset.org，免费 CORS API）──── */
+    /* ── 火烧云窗口：青岛今日/明日日出日落（本地天文算法计算，无需任何网络请求）────
+       之前使用 api.sunrise-sunset.org（境外域名）远程计算，在国内网络环境下经常
+       无法访问导致该窗口整体显示失败。日出日落时间本身可以用标准天文公式在浏览器
+       本地直接算出，精度足够（误差通常在 1 分钟以内），因此这里改为本地计算，
+       彻底去掉这一部分对外部接口的依赖。
+    ──────────────────────────────────────────────────── */
     (function () {
         'use strict';
         const LAT = 36.0671, LNG = 120.3826; // 青岛市坐标
@@ -1730,47 +1777,78 @@
         };
         if (!document.getElementById(ids.todaySunrise)) return;
 
-        function fmtTime(iso) {
-            return new Date(iso).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false });
+        // 标准太阳位置算法（NOAA 太阳计算器公开公式），仅依赖日期/经纬度，无需联网
+        const rad = Math.PI / 180;
+        const dayMs = 86400000;
+        const J1970 = 2440588, J2000 = 2451545;
+        function toJulian(d) { return d.valueOf() / dayMs - 0.5 + J1970; }
+        function fromJulian(j) { return new Date((j + 0.5 - J1970) * dayMs); }
+        function toDays(d) { return toJulian(d) - J2000; }
+        const obliquity = rad * 23.4397;
+        function solarMeanAnomaly(d) { return rad * (357.5291 + 0.98560028 * d); }
+        function eclipticLongitude(M) {
+            const C = rad * (1.9148 * Math.sin(M) + 0.02 * Math.sin(2 * M) + 0.0003 * Math.sin(3 * M));
+            const P = rad * 102.9372;
+            return M + C + P + Math.PI;
         }
-        function ymd(d) {
-            const y = d.getFullYear();
-            const m = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            return `${y}-${m}-${day}`;
+        function declination(L) { return Math.asin(Math.sin(obliquity) * Math.sin(L)); }
+        function julianCycle(d, lw) { return Math.round(d - 0.0009 - lw / (2 * Math.PI)); }
+        function approxTransit(Ht, lw, n) { return 0.0009 + (Ht + lw) / (2 * Math.PI) + n; }
+        function solarTransitJ(ds, M, L) { return J2000 + ds + 0.0053 * Math.sin(M) - 0.0069 * Math.sin(2 * L); }
+        function hourAngle(h, phi, dec) {
+            return Math.acos((Math.sin(h) - Math.sin(phi) * Math.sin(dec)) / (Math.cos(phi) * Math.cos(dec)));
         }
-        function fetchDay(dateStr) {
-            return fetch(`https://api.sunrise-sunset.org/json?lat=${LAT}&lng=${LNG}&date=${dateStr}&formatted=0`)
-                .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-                .then(d => d.results);
+        function sunTimes(date, lat, lng) {
+            const lw = rad * -lng, phi = rad * lat;
+            const d = toDays(date);
+            const n = julianCycle(d, lw);
+            const ds = approxTransit(0, lw, n);
+            const M = solarMeanAnomaly(ds);
+            const L = eclipticLongitude(M);
+            const dec = declination(L);
+            const Jnoon = solarTransitJ(ds, M, L);
+            const h0 = -0.833 * rad; // 标准日出日落地平角（含大气折射修正）
+            const w = hourAngle(h0, phi, dec);
+            const a = approxTransit(w, lw, n);
+            const Jset = solarTransitJ(a, M, L);
+            const Jrise = Jnoon - (Jset - Jnoon);
+            return { sunrise: fromJulian(Jrise), sunset: fromJulian(Jset) };
         }
 
-        const tomorrowDate = new Date();
-        tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+        function fmtTime(d) {
+            return d.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Shanghai' });
+        }
 
-        Promise.all([fetchDay('today'), fetchDay(ymd(tomorrowDate))])
-            .then(([today, tomorrow]) => {
-                document.getElementById(ids.todaySunrise).textContent = fmtTime(today.sunrise);
-                document.getElementById(ids.todaySunset).textContent = fmtTime(today.sunset);
-                document.getElementById(ids.tomorrowSunrise).textContent = fmtTime(tomorrow.sunrise);
-                document.getElementById(ids.tomorrowSunset).textContent = fmtTime(tomorrow.sunset);
-            })
-            .catch(() => {
-                Object.values(ids).forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.textContent = '加载失败';
-                });
+        try {
+            const today = new Date();
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+            const todayTimes = sunTimes(today, LAT, LNG);
+            const tomorrowTimes = sunTimes(tomorrow, LAT, LNG);
+
+            document.getElementById(ids.todaySunrise).textContent = fmtTime(todayTimes.sunrise);
+            document.getElementById(ids.todaySunset).textContent = fmtTime(todayTimes.sunset);
+            document.getElementById(ids.tomorrowSunrise).textContent = fmtTime(tomorrowTimes.sunrise);
+            document.getElementById(ids.tomorrowSunset).textContent = fmtTime(tomorrowTimes.sunset);
+        } catch (e) {
+            Object.values(ids).forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = '计算失败';
             });
+        }
     })();
 
     /* ── 火烧云窗口：青岛鲜艳度评分（sunsetbot.top 内部接口）─────
        接口地址是从浏览器开发者工具 Network 面板实际抓包得到的：
        https://sunsetbot.top/?intend=select_city&query_city={城市}&event_date=None&event={rise_1|set_1|rise_2|set_2}&times=None&model=EC
        该站前端是 SPA，不支持通过 URL 直接定位城市，但这个内部接口
-       本身会返回真实 JSON。因为这是第三方站点，接口是否对外开放
-       CORS 跨域访问无法提前确认，所以这里做了完整的失败兜底：一旦
-       浏览器因跨域被拦截（fetch 抛错）或者城市参数格式对不上，
-       都会自动回退成提示文案，不影响下面 iframe 手动搜索的老办法。
+       本身会返回真实 JSON。因为这是第三方站点内部接口（不是给外部
+       网站调用设计的），实测经常会被浏览器的跨域策略（CORS）直接拦截，
+       表现为该窗口"评分"部分一直加载失败——这也是青岛信息和评分加载
+       不出来的主要原因。这里在直连失败时，自动改走一个公共 CORS 代理
+       （allorigins.win）重试一次；两条路都失败才最终回退成提示文案，
+       不影响下面 iframe 手动搜索的老办法。
     ──────────────────────────────────────────────────── */
     (function () {
         'use strict';
@@ -1786,13 +1864,18 @@
             { key: 'rise_2', label: '明日日出' },
             { key: 'set_2',  label: '明日日落' }
         ];
+        // 公共 CORS 代理，直连被跨域拦截时的兜底通道
+        const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
 
         function queryEvent(city, eventKey) {
             const url = 'https://sunsetbot.top/?intend=select_city' +
                 '&query_city=' + encodeURIComponent(city) +
                 '&event_date=None&event=' + eventKey +
                 '&times=None&model=EC';
-            return fetch(url).then(r => { if (!r.ok) throw new Error(String(r.status)); return r.json(); });
+            return fetch(url)
+                .then(r => { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
+                .catch(() => fetch(CORS_PROXY + encodeURIComponent(url))
+                    .then(r => { if (!r.ok) throw new Error(String(r.status)); return r.json(); }));
         }
 
         async function findWorkingCity() {
@@ -1833,7 +1916,94 @@
         })();
     })();
 
-    /* ── 潮汐窗口：已改为直接嵌入 chaoxb.com 原始曲线，其防误触锁由下方通用逻辑统一处理 ─── */
+    /* ── 潮汐窗口：日期切换（前 7 天 / 后 15 天）+ 手机端兼容处理 ─────
+       1) chaoxb.com 支持 ?day=YYYY-MM-DD 参数直接查看任意一天的潮汐曲线，
+          这里加一个日期选择条，把 iframe 的 src 换成对应日期即可，不需要
+          额外接口。范围取「今天」前 7 天到后 15 天。
+       2) chaoxb.com 页面本身会区分桌面/手机 UA，手机访问时经常只显示
+          "需要在手机上查看可以显示二维码"这类精简内容，而不是完整潮汐
+          曲线，嵌入到 iframe 里就表现为"手机版打不开/空白"。这里用一个
+          常见的兼容手法：把 iframe 强制按桌面宽度渲染，再用 CSS transform
+          整体缩放到实际容器大小，让 chaoxb.com 始终认为自己在桌面环境里
+          显示，从而在手机上也能看到完整曲线。
+    ──────────────────────────────────────────────────── */
+    (function () {
+        'use strict';
+        const iframe = document.getElementById('tide-iframe');
+        const frameBox = document.getElementById('tide-frame');
+        const select = document.getElementById('tide-date-select');
+        const prevBtn = document.getElementById('tide-date-prev');
+        const nextBtn = document.getElementById('tide-date-next');
+        const todayBtn = document.getElementById('tide-date-today');
+        if (!iframe || !frameBox || !select) return;
+
+        const PORT_PATH = '46'; // 青岛
+        const DAYS_BACK = 7;
+        const DAYS_FORWARD = 15;
+        const WEEKDAYS = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+
+        function shanghaiToday() {
+            const now = new Date();
+            const sh = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Shanghai' }));
+            sh.setHours(0, 0, 0, 0);
+            return sh;
+        }
+        function ymd(d) {
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${y}-${m}-${day}`;
+        }
+        function addDays(d, n) {
+            const r = new Date(d);
+            r.setDate(r.getDate() + n);
+            return r;
+        }
+
+        const today = shanghaiToday();
+        const todayStr = ymd(today);
+        const dates = [];
+        for (let i = -DAYS_BACK; i <= DAYS_FORWARD; i++) dates.push(addDays(today, i));
+
+        select.innerHTML = dates.map(d => {
+            const val = ymd(d);
+            const label = `${val.slice(5)} ${WEEKDAYS[d.getDay()]}${val === todayStr ? ' · 今天' : ''}`;
+            return `<option value="${val}"${val === todayStr ? ' selected' : ''}>${label}</option>`;
+        }).join('');
+
+        function loadDate(dateStr) {
+            select.value = dateStr;
+            iframe.src = `https://www.chaoxb.com/${PORT_PATH}/?day=${dateStr}`;
+        }
+
+        select.addEventListener('change', () => loadDate(select.value));
+        prevBtn.addEventListener('click', () => {
+            const idx = select.selectedIndex;
+            if (idx > 0) loadDate(select.options[idx - 1].value);
+        });
+        nextBtn.addEventListener('click', () => {
+            const idx = select.selectedIndex;
+            if (idx < select.options.length - 1) loadDate(select.options[idx + 1].value);
+        });
+        if (todayBtn) todayBtn.addEventListener('click', () => loadDate(todayStr));
+
+        // 强制按桌面宽度渲染 chaoxb.com，再整体缩放回容器实际大小
+        const DESKTOP_WIDTH = 900;
+        function rescale() {
+            const containerWidth = frameBox.clientWidth;
+            const containerHeight = frameBox.clientHeight;
+            if (!containerWidth || !containerHeight) return;
+            const scale = containerWidth / DESKTOP_WIDTH;
+            iframe.style.width = DESKTOP_WIDTH + 'px';
+            iframe.style.height = (containerHeight / scale) + 'px';
+            iframe.style.transform = `scale(${scale})`;
+            iframe.style.transformOrigin = 'top left';
+        }
+        window.addEventListener('resize', rescale);
+        window.addEventListener('orientationchange', rescale);
+        iframe.addEventListener('load', rescale);
+        setTimeout(rescale, 50);
+    })();
 
     /* ── 气象地图防误触锁 ─────────────────────────────── */
     document.querySelectorAll('.map-panel-frame').forEach(frame => {
