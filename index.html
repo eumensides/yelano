@@ -1519,15 +1519,18 @@
                     <div class="panel-stat">🌅 明日日出 <strong id="ss-tomorrow-sunrise">--:--</strong></div>
                     <div class="panel-stat">🌇 明日日落 <strong id="ss-tomorrow-sunset">--:--</strong></div>
                 </div>
+                <div class="panel-stat-row" id="sunset-quality-box">
+                    <div class="panel-stat">🔥 火烧云评分 <strong>加载中…</strong></div>
+                </div>
                 <div class="map-panel-frame">
                     <iframe src="https://sunsetbot.top/detailed/" loading="lazy" title="火烧云预报" allowfullscreen></iframe>
                     <div class="map-lock-overlay">
                         <span class="lock-icon">🔒</span>
-                        <span class="lock-text">触摸已锁定，点击解锁后可在窗口内搜索"青岛"查看火烧云鲜艳度评分</span>
+                        <span class="lock-text">触摸已锁定，点击解锁后可在窗口内搜索"青岛"查看更详细的火烧云分析</span>
                     </div>
                     <button type="button" class="map-relock-btn">🔓 点击锁定</button>
                 </div>
-                <div class="panel-note">日出日落时间已按青岛坐标每次自动计算，保证准确；火烧云鲜艳度评分来自 sunsetbot.top，该站不支持城市直链、默认打开显示上海，解锁窗口后请在其搜索框输入"青岛"即可查看本地评分。</div>
+                <div class="panel-note" id="sunset-panel-note">日出日落时间已按青岛坐标每次自动计算，保证准确；上方鲜艳度评分正在尝试直接从 sunsetbot.top 接口获取青岛数据，若浏览器跨域限制导致获取失败，请解锁下方窗口后手动搜索"青岛"查看。</div>
             </div>
 
             <!-- 窗口二：潮汐预报 -->
@@ -1555,14 +1558,14 @@
             <div class="map-panel">
                 <div class="map-panel-title">🏞 水库水情 · 崂山水库</div>
                 <div class="map-panel-frame">
-                    <iframe src="http://www.qdswyc.cn/shuikuguochengwin.html" loading="lazy" title="水库水情" allowfullscreen></iframe>
+                    <iframe src="http://www.qdswyc.cn/shuiku.html" loading="lazy" title="水库水情" allowfullscreen></iframe>
                     <div class="map-lock-overlay">
                         <span class="lock-icon">🔒</span>
-                        <span class="lock-text">触摸已锁定，点击解锁后可在窗口内查看崂山水库详情</span>
+                        <span class="lock-text">触摸已锁定，点击解锁后，在列表里点击"崂山"即可跳转到崂山水库水位过程线</span>
                     </div>
                     <button type="button" class="map-relock-btn">🔓 点击锁定</button>
                 </div>
-                <div class="panel-note">该系统展示全市水库水情，暂无单独的崂山水库直链，解锁窗口后请在页面内定位"崂山水库"查看蓄水量等详情。</div>
+                <div class="panel-note">该系统未提供崂山水库的独立直链，解锁窗口后请点击列表中的"崂山"，即可跳转到崂山水库的水位过程线页面查看蓄水详情。</div>
             </div>
         </div>
     </section>
@@ -1791,6 +1794,74 @@
                     if (el) el.textContent = '加载失败';
                 });
             });
+    })();
+
+    /* ── 火烧云窗口：青岛鲜艳度评分（sunsetbot.top 内部接口）─────
+       接口地址是从浏览器开发者工具 Network 面板实际抓包得到的：
+       https://sunsetbot.top/?intend=select_city&query_city={城市}&event_date=None&event={rise_1|set_1|rise_2|set_2}&times=None&model=EC
+       该站前端是 SPA，不支持通过 URL 直接定位城市，但这个内部接口
+       本身会返回真实 JSON。因为这是第三方站点，接口是否对外开放
+       CORS 跨域访问无法提前确认，所以这里做了完整的失败兜底：一旦
+       浏览器因跨域被拦截（fetch 抛错）或者城市参数格式对不上，
+       都会自动回退成提示文案，不影响下面 iframe 手动搜索的老办法。
+    ──────────────────────────────────────────────────── */
+    (function () {
+        'use strict';
+        const box = document.getElementById('sunset-quality-box');
+        const note = document.getElementById('sunset-panel-note');
+        if (!box) return;
+
+        // 依次尝试几种可能的城市参数写法（接口未公开文档，格式无法提前 100% 确认）
+        const CITY_CANDIDATES = ['青岛', '山东省-青岛', '青岛市-青岛', '青岛市'];
+        const EVENTS = [
+            { key: 'rise_1', label: '今日日出' },
+            { key: 'set_1',  label: '今日日落' },
+            { key: 'rise_2', label: '明日日出' },
+            { key: 'set_2',  label: '明日日落' }
+        ];
+
+        function queryEvent(city, eventKey) {
+            const url = 'https://sunsetbot.top/?intend=select_city' +
+                '&query_city=' + encodeURIComponent(city) +
+                '&event_date=None&event=' + eventKey +
+                '&times=None&model=EC';
+            return fetch(url).then(r => { if (!r.ok) throw new Error(String(r.status)); return r.json(); });
+        }
+
+        async function findWorkingCity() {
+            for (const city of CITY_CANDIDATES) {
+                try {
+                    const d = await queryEvent(city, 'set_1');
+                    if (d && d.display_city_name && d.display_city_name.indexOf('青岛') !== -1) {
+                        return city;
+                    }
+                } catch (e) { /* 换下一个候选写法再试 */ }
+            }
+            return null;
+        }
+
+        (async function run() {
+            const city = await findWorkingCity();
+            if (!city) {
+                box.innerHTML = '<div class="panel-stat">🔥 火烧云评分 <strong>暂未能自动获取</strong></div>';
+                if (note) note.textContent = '未能自动获取青岛评分（该第三方站点可能未开放跨域访问），请解锁下方窗口后手动搜索"青岛"查看鲜艳度评分。';
+                return;
+            }
+            try {
+                const results = await Promise.all(EVENTS.map(e => queryEvent(city, e.key).catch(() => null)));
+                box.innerHTML = results.map((d, i) => {
+                    const label = EVENTS[i].label;
+                    if (!d || d.status !== 'ok') {
+                        return `<div class="panel-stat">${label} <strong>--</strong></div>`;
+                    }
+                    return `<div class="panel-stat">${label} <strong>${d.tb_quality}</strong></div>`;
+                }).join('');
+                if (note) note.textContent = '日出日落时间与火烧云鲜艳度评分均为青岛实时数据，每次打开自动刷新；如需更详细的截面图等信息，可解锁下方窗口查看。';
+            } catch (e) {
+                box.innerHTML = '<div class="panel-stat">🔥 火烧云评分 <strong>加载失败</strong></div>';
+                if (note) note.textContent = '评分加载失败，请刷新页面重试，或解锁下方窗口后手动搜索"青岛"查看。';
+            }
+        })();
     })();
 
     /* ── 潮汐窗口：青岛，默认定位到最近的周末 ─────────────── */
