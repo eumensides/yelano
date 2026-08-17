@@ -493,6 +493,14 @@
             color: var(--gold);
             font-weight: 500;
         }
+        .panel-stat .aod {
+            color: var(--mist);
+            font-weight: 400;
+        }
+        .sunset-quality-row {
+            grid-template-columns: 1fr;
+            gap: 6px;
+        }
         .panel-note {
             font-size: 0.72rem;
             color: var(--text-sub);
@@ -500,45 +508,6 @@
             padding: 10px 18px 16px;
             line-height: 1.6;
         }
-
-        /* 潮汐 Tab（周末优先展示） */
-        .tide-tabs {
-            display: flex;
-            gap: 6px;
-            padding: 14px 18px 0;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-        .tide-tabs::-webkit-scrollbar { display: none; }
-        .tide-tab-btn {
-            padding: 6px 14px;
-            border: 1px solid var(--border);
-            background: rgba(255,255,255,0.02);
-            color: var(--text-sub);
-            font-family: inherit;
-            font-size: 0.76rem;
-            letter-spacing: 0.03em;
-            cursor: pointer;
-            border-radius: 999px;
-            white-space: nowrap;
-            transition: color 0.18s, border-color 0.18s, background 0.18s;
-        }
-        .tide-tab-btn:hover { color: var(--wave); border-color: rgba(78,170,212,0.4); }
-        .tide-tab-btn.active {
-            color: var(--ink);
-            background: var(--wave);
-            border-color: var(--wave);
-            font-weight: 500;
-        }
-        .tide-tab-btn.weekend { border-color: rgba(201,169,110,0.55); color: var(--gold); }
-        .tide-tab-btn.weekend.active {
-            background: var(--gold);
-            border-color: var(--gold);
-            color: var(--ink);
-        }
-        .tide-tab-panes { margin-top: 12px; }
-        .tide-tab-pane { display: none; }
-        .tide-tab-pane.active { display: block; }
 
         /* ── 留言表单 ─────────────────────────────────────────── */
         .message-section { margin-bottom: 52px; }
@@ -1519,26 +1488,24 @@
                     <div class="panel-stat">🌅 明日日出 <strong id="ss-tomorrow-sunrise">--:--</strong></div>
                     <div class="panel-stat">🌇 明日日落 <strong id="ss-tomorrow-sunset">--:--</strong></div>
                 </div>
-                <div class="panel-stat-row" id="sunset-quality-box">
-                    <div class="panel-stat">🔥 火烧云评分 <strong>加载中…</strong></div>
+                <div class="panel-stat-row sunset-quality-row" id="sunset-quality-box">
+                    <div class="panel-stat">🔥 鲜艳度 / 气溶胶 <strong>加载中…</strong></div>
                 </div>
-                <div class="map-panel-frame">
-                    <iframe src="https://sunsetbot.top/detailed/" loading="lazy" title="火烧云预报" allowfullscreen></iframe>
-                    <div class="map-lock-overlay">
-                        <span class="lock-icon">🔒</span>
-                        <span class="lock-text">触摸已锁定，点击解锁后可在窗口内搜索"青岛"查看更详细的火烧云分析</span>
-                    </div>
-                    <button type="button" class="map-relock-btn">🔓 点击锁定</button>
-                </div>
-                <div class="panel-note" id="sunset-panel-note">日出日落时间已按青岛坐标每次自动计算，保证准确；上方鲜艳度评分正在尝试直接从 sunsetbot.top 接口获取青岛数据，若浏览器跨域限制导致获取失败，请解锁下方窗口后手动搜索"青岛"查看。</div>
+                <div class="panel-note" id="sunset-panel-note">日出日落时间与鲜艳度、气溶胶评分均为青岛实时数据，每次打开自动刷新。</div>
             </div>
 
             <!-- 窗口二：潮汐预报 -->
             <div class="map-panel">
                 <div class="map-panel-title">🌊 潮汐预报 · 青岛</div>
-                <div class="tide-tabs" id="tide-tabs"></div>
-                <div class="tide-tab-panes" id="tide-panes"></div>
-                <div class="panel-note">已默认定位到最近的周六，方便安排赶海；点击标签可切换查看今天 / 明天 / 周六 / 周日的潮汐曲线。</div>
+                <div class="map-panel-frame">
+                    <iframe src="https://www.chaoxb.com/46/" loading="lazy" title="青岛潮汐" allowfullscreen></iframe>
+                    <div class="map-lock-overlay">
+                        <span class="lock-icon">🔒</span>
+                        <span class="lock-text">触摸已锁定，点击解锁后可查看潮汐曲线详情</span>
+                    </div>
+                    <button type="button" class="map-relock-btn">🔓 点击锁定</button>
+                </div>
+                <div class="panel-note">潮汐曲线来自 chaoxb.com 原始页面。</div>
             </div>
 
             <!-- 窗口三：崂山降水量 -->
@@ -1843,8 +1810,8 @@
         (async function run() {
             const city = await findWorkingCity();
             if (!city) {
-                box.innerHTML = '<div class="panel-stat">🔥 火烧云评分 <strong>暂未能自动获取</strong></div>';
-                if (note) note.textContent = '未能自动获取青岛评分（该第三方站点可能未开放跨域访问），请解锁下方窗口后手动搜索"青岛"查看鲜艳度评分。';
+                box.innerHTML = '<div class="panel-stat">🔥 鲜艳度 / 气溶胶 <strong>暂未能自动获取</strong></div>';
+                if (note) note.textContent = '未能自动获取青岛数据（该第三方站点可能未开放跨域访问），请稍后刷新重试。';
                 return;
             }
             try {
@@ -1854,96 +1821,19 @@
                     if (!d || d.status !== 'ok') {
                         return `<div class="panel-stat">${label} <strong>--</strong></div>`;
                     }
-                    return `<div class="panel-stat">${label} <strong>${d.tb_quality}</strong></div>`;
+                    const quality = d.tb_quality || '--';
+                    const aod = d.tb_aod || '--';
+                    return `<div class="panel-stat">${label} <strong>鲜艳度 ${quality}</strong> <span class="aod">气溶胶 ${aod}</span></div>`;
                 }).join('');
-                if (note) note.textContent = '日出日落时间与火烧云鲜艳度评分均为青岛实时数据，每次打开自动刷新；如需更详细的截面图等信息，可解锁下方窗口查看。';
+                if (note) note.textContent = '日出日落时间与鲜艳度、气溶胶评分均为青岛实时数据，每次打开自动刷新。';
             } catch (e) {
-                box.innerHTML = '<div class="panel-stat">🔥 火烧云评分 <strong>加载失败</strong></div>';
-                if (note) note.textContent = '评分加载失败，请刷新页面重试，或解锁下方窗口后手动搜索"青岛"查看。';
+                box.innerHTML = '<div class="panel-stat">🔥 鲜艳度 / 气溶胶 <strong>加载失败</strong></div>';
+                if (note) note.textContent = '评分加载失败，请刷新页面重试。';
             }
         })();
     })();
 
-    /* ── 潮汐窗口：青岛，默认定位到最近的周末 ─────────────── */
-    (function () {
-        'use strict';
-        const tabsEl = document.getElementById('tide-tabs');
-        const panesEl = document.getElementById('tide-panes');
-        if (!tabsEl || !panesEl) return;
-
-        function ymd(d) {
-            const y = d.getFullYear();
-            const m = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            return `${y}-${m}-${day}`;
-        }
-        function addDays(d, n) {
-            const nd = new Date(d);
-            nd.setDate(nd.getDate() + n);
-            return nd;
-        }
-        function mdLabel(d) { return `${d.getMonth() + 1}/${d.getDate()}`; }
-
-        const today = new Date();
-        const tomorrow = addDays(today, 1);
-        const dow = today.getDay(); // 0=周日 ... 6=周六
-        const daysToSat = (6 - dow + 7) % 7;
-        const daysToSun = (0 - dow + 7) % 7;
-        const saturday = addDays(today, daysToSat);
-        const sunday = addDays(today, daysToSun);
-
-        const items = [
-            { key: 'today', label: `今天 ${mdLabel(today)}`, date: today, weekend: false },
-            { key: 'tomorrow', label: `明天 ${mdLabel(tomorrow)}`, date: tomorrow, weekend: false },
-            { key: 'sat', label: `周六 ${mdLabel(saturday)}`, date: saturday, weekend: true },
-            { key: 'sun', label: `周日 ${mdLabel(sunday)}`, date: sunday, weekend: true }
-        ];
-        const defaultKey = 'sat'; // 默认优先展示最近的周六，方便安排赶海
-
-        items.forEach(item => {
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'tide-tab-btn' + (item.weekend ? ' weekend' : '') + (item.key === defaultKey ? ' active' : '');
-            btn.textContent = item.label;
-            btn.dataset.tab = item.key;
-            tabsEl.appendChild(btn);
-
-            const pane = document.createElement('div');
-            pane.className = 'tide-tab-pane' + (item.key === defaultKey ? ' active' : '');
-            pane.id = 'tide-pane-' + item.key;
-            pane.innerHTML =
-                '<div class="map-panel-frame">' +
-                    `<iframe src="https://www.chaoxb.com/46/?day=${ymd(item.date)}" loading="lazy" title="青岛潮汐 ${item.label}" allowfullscreen></iframe>` +
-                    '<div class="map-lock-overlay">' +
-                        '<span class="lock-icon">🔒</span>' +
-                        '<span class="lock-text">触摸已锁定，点击解锁后可查看潮汐曲线详情</span>' +
-                    '</div>' +
-                    '<button type="button" class="map-relock-btn">🔓 点击锁定</button>' +
-                '</div>';
-            panesEl.appendChild(pane);
-        });
-
-        tabsEl.addEventListener('click', e => {
-            const btn = e.target.closest('.tide-tab-btn');
-            if (!btn) return;
-            tabsEl.querySelectorAll('.tide-tab-btn').forEach(b => b.classList.remove('active'));
-            panesEl.querySelectorAll('.tide-tab-pane').forEach(p => p.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById('tide-pane-' + btn.dataset.tab).classList.add('active');
-        });
-
-        // 动态插入的 map-panel-frame 需要单独绑定防误触锁（页面初始化时的绑定早于这些节点创建）
-        panesEl.querySelectorAll('.map-panel-frame').forEach(frame => {
-            const overlay = frame.querySelector('.map-lock-overlay');
-            const relockBtn = frame.querySelector('.map-relock-btn');
-            if (!overlay || !relockBtn) return;
-            overlay.addEventListener('click', () => frame.classList.add('unlocked'));
-            relockBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                frame.classList.remove('unlocked');
-            });
-        });
-    })();
+    /* ── 潮汐窗口：已改为直接嵌入 chaoxb.com 原始曲线，其防误触锁由下方通用逻辑统一处理 ─── */
 
     /* ── 气象地图防误触锁 ─────────────────────────────── */
     document.querySelectorAll('.map-panel-frame').forEach(frame => {
