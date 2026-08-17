@@ -478,6 +478,68 @@
         }
         .map-panel-frame.unlocked .map-relock-btn { display: flex; }
 
+        /* ── 出行助手小窗口（火烧云 / 潮汐 / 崂山降水 / 水库水情）──── */
+        .panel-stat-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px 16px;
+            padding: 14px 18px 0;
+        }
+        .panel-stat {
+            font-size: 0.78rem;
+            color: var(--text-sub);
+        }
+        .panel-stat strong {
+            color: var(--gold);
+            font-weight: 500;
+        }
+        .panel-note {
+            font-size: 0.72rem;
+            color: var(--text-sub);
+            opacity: 0.85;
+            padding: 10px 18px 16px;
+            line-height: 1.6;
+        }
+
+        /* 潮汐 Tab（周末优先展示） */
+        .tide-tabs {
+            display: flex;
+            gap: 6px;
+            padding: 14px 18px 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        .tide-tabs::-webkit-scrollbar { display: none; }
+        .tide-tab-btn {
+            padding: 6px 14px;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.02);
+            color: var(--text-sub);
+            font-family: inherit;
+            font-size: 0.76rem;
+            letter-spacing: 0.03em;
+            cursor: pointer;
+            border-radius: 999px;
+            white-space: nowrap;
+            transition: color 0.18s, border-color 0.18s, background 0.18s;
+        }
+        .tide-tab-btn:hover { color: var(--wave); border-color: rgba(78,170,212,0.4); }
+        .tide-tab-btn.active {
+            color: var(--ink);
+            background: var(--wave);
+            border-color: var(--wave);
+            font-weight: 500;
+        }
+        .tide-tab-btn.weekend { border-color: rgba(201,169,110,0.55); color: var(--gold); }
+        .tide-tab-btn.weekend.active {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: var(--ink);
+        }
+        .tide-tab-panes { margin-top: 12px; }
+        .tide-tab-pane { display: none; }
+        .tide-tab-pane.active { display: block; }
+
         /* ── 留言表单 ─────────────────────────────────────────── */
         .message-section { margin-bottom: 52px; }
         .message-form {
@@ -1442,6 +1504,69 @@
         </div>
     </section>
 
+    <!-- ── 出行助手（火烧云 / 潮汐 / 崂山降水 / 水库水情）──── -->
+    <section class="weather-section">
+        <div class="section-label">
+            <span class="icon">🧭</span> 出行助手 · 崂山与青岛
+        </div>
+        <div class="weather-maps-grid">
+            <!-- 窗口一：火烧云预报 -->
+            <div class="map-panel">
+                <div class="map-panel-title">🔥 火烧云预报 · 青岛</div>
+                <div class="panel-stat-row">
+                    <div class="panel-stat">🌅 今日日出 <strong id="ss-today-sunrise">--:--</strong></div>
+                    <div class="panel-stat">🌇 今日日落 <strong id="ss-today-sunset">--:--</strong></div>
+                    <div class="panel-stat">🌅 明日日出 <strong id="ss-tomorrow-sunrise">--:--</strong></div>
+                    <div class="panel-stat">🌇 明日日落 <strong id="ss-tomorrow-sunset">--:--</strong></div>
+                </div>
+                <div class="map-panel-frame">
+                    <iframe src="https://sunsetbot.top/detailed/" loading="lazy" title="火烧云预报" allowfullscreen></iframe>
+                    <div class="map-lock-overlay">
+                        <span class="lock-icon">🔒</span>
+                        <span class="lock-text">触摸已锁定，点击解锁后可在窗口内搜索"青岛"查看火烧云鲜艳度评分</span>
+                    </div>
+                    <button type="button" class="map-relock-btn">🔓 点击锁定</button>
+                </div>
+                <div class="panel-note">日出日落时间已按青岛坐标每次自动计算，保证准确；火烧云鲜艳度评分来自 sunsetbot.top，该站不支持城市直链、默认打开显示上海，解锁窗口后请在其搜索框输入"青岛"即可查看本地评分。</div>
+            </div>
+
+            <!-- 窗口二：潮汐预报 -->
+            <div class="map-panel">
+                <div class="map-panel-title">🌊 潮汐预报 · 青岛</div>
+                <div class="tide-tabs" id="tide-tabs"></div>
+                <div class="tide-tab-panes" id="tide-panes"></div>
+                <div class="panel-note">已默认定位到最近的周六，方便安排赶海；点击标签可切换查看今天 / 明天 / 周六 / 周日的潮汐曲线。</div>
+            </div>
+
+            <!-- 窗口三：崂山降水量 -->
+            <div class="map-panel">
+                <div class="map-panel-title">🌧 崂山降水量</div>
+                <div class="map-panel-frame">
+                    <iframe src="http://weixin.qdqx.qdsdjr.com:11001/weixin/live/rain?city=%E5%B4%82%E5%B1%B1%E5%8C%BA" loading="lazy" title="崂山降水量" allowfullscreen></iframe>
+                    <div class="map-lock-overlay">
+                        <span class="lock-icon">🔒</span>
+                        <span class="lock-text">触摸已锁定，点击解锁后可拖动 / 查看详情</span>
+                    </div>
+                    <button type="button" class="map-relock-btn">🔓 点击锁定</button>
+                </div>
+            </div>
+
+            <!-- 窗口四：水库水情（崂山水库） -->
+            <div class="map-panel">
+                <div class="map-panel-title">🏞 水库水情 · 崂山水库</div>
+                <div class="map-panel-frame">
+                    <iframe src="http://www.qdswyc.cn/shuikuguochengwin.html" loading="lazy" title="水库水情" allowfullscreen></iframe>
+                    <div class="map-lock-overlay">
+                        <span class="lock-icon">🔒</span>
+                        <span class="lock-text">触摸已锁定，点击解锁后可在窗口内查看崂山水库详情</span>
+                    </div>
+                    <button type="button" class="map-relock-btn">🔓 点击锁定</button>
+                </div>
+                <div class="panel-note">该系统展示全市水库水情，暂无单独的崂山水库直链，解锁窗口后请在页面内定位"崂山水库"查看蓄水量等详情。</div>
+            </div>
+        </div>
+    </section>
+
     <!-- ── 留言 ──────────────────────────────────── -->
     <section class="message-section">
         <div class="section-label">
@@ -1471,16 +1596,10 @@
         <span style="font-size:0.78rem;color:rgba(100,140,170,0.6)">欢迎添加微信 Treenjoy，周末闲暇约一起爬山</span>
     </div>
     <div class="links-grid">
-        <a class="link-chip" href="https://sunsetbot.top/" target="_blank" rel="noreferrer noopener">🌅 火烧云预报</a>
         <a class="link-chip" href="https://www.skylinewebcams.com/zh/webcam/china/shandong/qingdao/qingdao.html" target="_blank" rel="noreferrer noopener">🌉 跨海大桥</a>
         <a class="link-chip" href="https://typhoon.nmc.cn/web.html" target="_blank" rel="noreferrer noopener">🌀 台风路径</a>
-        <a class="link-chip" href="https://www.chaoxb.com/46" target="_blank" rel="noreferrer noopener">🌊 潮汐预报</a>
-        <a class="link-chip" href="http://weixin.qdqx.qdsdjr.com:11001/weixin/live/rain?city=%E5%B4%82%E5%B1%B1%E5%8C%BA" target="_blank" rel="noreferrer noopener">🌧 崂山降水量</a>
-        <a class="link-chip" href="https://earth.nullschool.net/zh-cn/#current/wind/surface/level/overlay=precip_3hr/conic_equidistant=-240.81,21.53,10702/loc=120.537,36.225" target="_blank" rel="noreferrer noopener">🌍 未来降水量</a>
-        <a class="link-chip" href="https://earth.nullschool.net/zh-cn/#current/wind/surface/level/overlay=relative_humidity/conic_equidistant=-240.01,20.00,10702/loc=120.519,36.181" target="_blank" rel="noreferrer noopener">💧 相对湿度</a>
         <a class="link-chip" href="https://codh.rois.ac.jp/north-china-railway/search/metadata?station_id=191" target="_blank" rel="noreferrer noopener">📸 青岛老照片</a>
         <a class="link-chip" href="https://meta.librarydata.cn/bookview?sid=150010020220000178&gid=150020020220010539&vol=001" target="_blank" rel="noreferrer noopener">📖 青岛文史</a>
-        <a class="link-chip" href="http://www.qdswyc.cn/shuiku.html" target="_blank" rel="noreferrer noopener">🏞 水库水情</a>
         <a class="link-chip" href="http://www.qdswyc.cn/raingaodeditu.html" target="_blank" rel="noreferrer noopener">🗺 降水分布图</a>
         <a class="link-chip" href="https://qdlaoshan.cn/Wap-News-index-s1-1.html" target="_blank" rel="noreferrer noopener">📢 崂山景区公告</a>
         <a class="link-chip" href="https://eumensides.github.io/mashroom" target="_blank" rel="noreferrer noopener">🍄 蘑菇笔记</a>
@@ -1628,6 +1747,132 @@
         });
 
 })();
+
+    /* ── 火烧云窗口：青岛今日/明日日出日落（sunrise-sunset.org，免费 CORS API）──── */
+    (function () {
+        'use strict';
+        const LAT = 36.0671, LNG = 120.3826; // 青岛市坐标
+        const ids = {
+            todaySunrise: 'ss-today-sunrise',
+            todaySunset: 'ss-today-sunset',
+            tomorrowSunrise: 'ss-tomorrow-sunrise',
+            tomorrowSunset: 'ss-tomorrow-sunset'
+        };
+        if (!document.getElementById(ids.todaySunrise)) return;
+
+        function fmtTime(iso) {
+            return new Date(iso).toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false });
+        }
+        function ymd(d) {
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${y}-${m}-${day}`;
+        }
+        function fetchDay(dateStr) {
+            return fetch(`https://api.sunrise-sunset.org/json?lat=${LAT}&lng=${LNG}&date=${dateStr}&formatted=0`)
+                .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+                .then(d => d.results);
+        }
+
+        const tomorrowDate = new Date();
+        tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+
+        Promise.all([fetchDay('today'), fetchDay(ymd(tomorrowDate))])
+            .then(([today, tomorrow]) => {
+                document.getElementById(ids.todaySunrise).textContent = fmtTime(today.sunrise);
+                document.getElementById(ids.todaySunset).textContent = fmtTime(today.sunset);
+                document.getElementById(ids.tomorrowSunrise).textContent = fmtTime(tomorrow.sunrise);
+                document.getElementById(ids.tomorrowSunset).textContent = fmtTime(tomorrow.sunset);
+            })
+            .catch(() => {
+                Object.values(ids).forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = '加载失败';
+                });
+            });
+    })();
+
+    /* ── 潮汐窗口：青岛，默认定位到最近的周末 ─────────────── */
+    (function () {
+        'use strict';
+        const tabsEl = document.getElementById('tide-tabs');
+        const panesEl = document.getElementById('tide-panes');
+        if (!tabsEl || !panesEl) return;
+
+        function ymd(d) {
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${y}-${m}-${day}`;
+        }
+        function addDays(d, n) {
+            const nd = new Date(d);
+            nd.setDate(nd.getDate() + n);
+            return nd;
+        }
+        function mdLabel(d) { return `${d.getMonth() + 1}/${d.getDate()}`; }
+
+        const today = new Date();
+        const tomorrow = addDays(today, 1);
+        const dow = today.getDay(); // 0=周日 ... 6=周六
+        const daysToSat = (6 - dow + 7) % 7;
+        const daysToSun = (0 - dow + 7) % 7;
+        const saturday = addDays(today, daysToSat);
+        const sunday = addDays(today, daysToSun);
+
+        const items = [
+            { key: 'today', label: `今天 ${mdLabel(today)}`, date: today, weekend: false },
+            { key: 'tomorrow', label: `明天 ${mdLabel(tomorrow)}`, date: tomorrow, weekend: false },
+            { key: 'sat', label: `周六 ${mdLabel(saturday)}`, date: saturday, weekend: true },
+            { key: 'sun', label: `周日 ${mdLabel(sunday)}`, date: sunday, weekend: true }
+        ];
+        const defaultKey = 'sat'; // 默认优先展示最近的周六，方便安排赶海
+
+        items.forEach(item => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'tide-tab-btn' + (item.weekend ? ' weekend' : '') + (item.key === defaultKey ? ' active' : '');
+            btn.textContent = item.label;
+            btn.dataset.tab = item.key;
+            tabsEl.appendChild(btn);
+
+            const pane = document.createElement('div');
+            pane.className = 'tide-tab-pane' + (item.key === defaultKey ? ' active' : '');
+            pane.id = 'tide-pane-' + item.key;
+            pane.innerHTML =
+                '<div class="map-panel-frame">' +
+                    `<iframe src="https://www.chaoxb.com/46/?day=${ymd(item.date)}" loading="lazy" title="青岛潮汐 ${item.label}" allowfullscreen></iframe>` +
+                    '<div class="map-lock-overlay">' +
+                        '<span class="lock-icon">🔒</span>' +
+                        '<span class="lock-text">触摸已锁定，点击解锁后可查看潮汐曲线详情</span>' +
+                    '</div>' +
+                    '<button type="button" class="map-relock-btn">🔓 点击锁定</button>' +
+                '</div>';
+            panesEl.appendChild(pane);
+        });
+
+        tabsEl.addEventListener('click', e => {
+            const btn = e.target.closest('.tide-tab-btn');
+            if (!btn) return;
+            tabsEl.querySelectorAll('.tide-tab-btn').forEach(b => b.classList.remove('active'));
+            panesEl.querySelectorAll('.tide-tab-pane').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('tide-pane-' + btn.dataset.tab).classList.add('active');
+        });
+
+        // 动态插入的 map-panel-frame 需要单独绑定防误触锁（页面初始化时的绑定早于这些节点创建）
+        panesEl.querySelectorAll('.map-panel-frame').forEach(frame => {
+            const overlay = frame.querySelector('.map-lock-overlay');
+            const relockBtn = frame.querySelector('.map-relock-btn');
+            if (!overlay || !relockBtn) return;
+            overlay.addEventListener('click', () => frame.classList.add('unlocked'));
+            relockBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                frame.classList.remove('unlocked');
+            });
+        });
+    })();
 
     /* ── 气象地图防误触锁 ─────────────────────────────── */
     document.querySelectorAll('.map-panel-frame').forEach(frame => {
